@@ -1,9 +1,14 @@
 # WP1.9: Documentation and CRAN preparation
 
-Version 0.9.0. Completed 23 November 2026. Status: **documentation and
-CRAN preparation done locally. Acceptance criterion AC6 needs three owner
-actions: the public repository (for GitHub Actions), and the win-builder and
-macOS-builder uploads.**
+Versions 0.9.0 and 0.9.1. Completed 23 November 2026. Status:
+**documentation and CRAN preparation done; the package is public on GitHub.**
+- GitHub Actions passes on all 9 jobs.
+- win-builder R-release and R-devel give 1 NOTE each (new submission; the
+  cited authors' surnames).
+- The macOS builder was unavailable (HTTP 502).
+- AC6 is proposed as met, with two documented exceptions: the macOS builder
+  was unavailable, and the macOS R-devel CI job runs without the suggested
+  packages. The owner decides.
 
 ## What was done
 
@@ -80,8 +85,8 @@ TriCopula:
 | `CRAN_prepare.R local` (first run of the script) | Tests 650 / 643 (CRAN mode) / 603 (without Suggests) expectations, 0 failures. `verify_math.R` 26/26. Tarball 182 KB. `--as-cran` 1 NOTE (V8). Manual PDF built |
 | GitHub Actions run 1 | 8 of 9 jobs pass: Windows, Ubuntu (release, devel, oldrel-1) and macOS (release, oldrel-1). macOS R-devel failed while installing dependencies: Matrix 1.7-6, needed by a suggested package, does not compile from source on that runner. The package check did not start there |
 | win-builder R-release (R 4.6.2) | 0 errors, 0 warnings, 1 NOTE: "New submission" and the cited authors' surnames in DESCRIPTION. Incoming checks, the HTML manual (math rendering, which needs V8) and the PDF manual are OK |
-| win-builder R-devel | uploaded; result e-mail not yet received |
-| GitHub Actions run 2 | the workflow now runs the macOS R-devel job without the suggested packages (`dependencies: "hard"`, `_R_CHECK_FORCE_SUGGESTS_=false`), so the package check runs there too; result below |
+| win-builder R-devel (2026-11-17 r90926) | 0 errors, 0 warnings, 1 NOTE, the same as R-release. Tests, vignettes, and the PDF and HTML manuals are OK |
+| GitHub Actions run 2 | the workflow now runs the macOS R-devel job without the suggested packages (`dependencies: "hard"`, `_R_CHECK_FORCE_SUGGESTS_=false`), so the package check runs there too. **All 9 jobs pass** (commit 67650d5) |
 | macOS builder | upload refused by the service: HTTP 502 |
 
 ## Acceptance criterion AC6
