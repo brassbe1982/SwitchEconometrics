@@ -20,7 +20,7 @@ date).
 
 | Gate | Requirement | Date | Signed |
 | --- | --- | --- | --- |
-| Econometric | Owner approves BINARY_ESR, LIKELIHOOD_DERIVATION, IDENTIFICATION, PARAMETERIZATION, TREATMENT_EFFECTS and GENERAL_MODEL, including decisions D8 and D9 | | |
+| Econometric | Owner approves BINARY_ESR, LIKELIHOOD_DERIVATION, IDENTIFICATION, PARAMETERIZATION, TREATMENT_EFFECTS and GENERAL_MODEL, including decisions D8 and D9 | 2026-11-22 | Ibrahim Niankara (approved in session: "Approve, start WP1.2"; all six questions of GENERATION_1.md s.3 accepted as proposed) |
 | Computational | AC1, AC2, AC4, AC5 met | | |
 | Software | AC3, AC6 met; documentation complete | | |
 

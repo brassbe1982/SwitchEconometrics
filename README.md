@@ -10,8 +10,15 @@ estimators are documented special cases of that model.
 
 ## Status
 
-**Version 0.1.0: development architecture (Generation 1, work package 1.1).**
-This version contains no estimators yet. It provides:
+**Version 0.2.0: Generation 1, work package 1.2.** This version contains no
+estimators yet. 0.2.0 adds:
+- the model-specification layer (`switch_model()`, and the data builder with
+  its missing-value report);
+- the distribution engine (`distribution()`, Gaussian family);
+- the parameter-transformation engine.
+
+The Generation 1 econometric gate was approved on 22 November 2026. Version
+0.1.0 provided:
 
 - the package infrastructure (DESCRIPTION, tests, continuous-integration
   workflow);

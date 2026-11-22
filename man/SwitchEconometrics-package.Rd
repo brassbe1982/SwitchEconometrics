@@ -14,9 +14,11 @@ model, the Generalized Endogenous Switching System.
 }
 \section{Development status}{
 
-Version 0.1.0 is the development architecture of Generation 1 (classical
-binary endogenous switching regression). It contains the package
-infrastructure only; the estimators are added in versions 0.2.0 to 1.0.0.
+Generation 1 (classical binary endogenous switching regression) is under
+development. Version 0.2.0 provides the model-specification layer
+(\code{\link[=switch_model]{switch_model()}}), the distribution engine (\code{\link[=distribution]{distribution()}}) and the
+parameter-transformation engine; the likelihood and the estimators are
+added in versions 0.3.0 to 1.0.0.
 The authoritative econometric specification, the derivations and the
 delivery plan are kept in the source repository (folders
 \verb{00_Project_Governance} to \verb{05_References}).

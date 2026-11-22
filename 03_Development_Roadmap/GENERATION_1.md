@@ -1,7 +1,8 @@
 # Generation 1: Classical core (v0.1.0 → v1.0.0)
 
-Status: in progress. WP1.1 done (22 November 2026), awaiting the econometric
-gate.
+Status: in progress. WP1.1 done (22 November 2026). **Econometric gate
+approved by the owner on 22 November 2026**: the six questions of section 3
+were accepted as proposed. WP1.2 started.
 
 ## 1. Frozen scope (specification section 16)
 
@@ -19,8 +20,8 @@ plan decision D7); any Stata comparison (owner decision, 22 November 2026).
 
 | WP | Version | Content | Evidence | Status |
 | --- | --- | --- | --- | --- |
-| 1.1 | 0.1.0 | Governance, architecture and G1 derivation documents; `verify_math.R`; package skeleton; git | 26/26 numerical checks; clean `R CMD check` of the skeleton | **done**, gate pending |
-| 1.2 | 0.2.0 | `switch_model()`, `build_switch_data()`, Gaussian margin, transformations, parameter map | unit tests | |
+| 1.1 | 0.1.0 | Governance, architecture and G1 derivation documents; `verify_math.R`; package skeleton; git | 26/26 numerical checks; clean `R CMD check` of the skeleton | **done**; econometric gate approved 2026-11-22 |
+| 1.2 | 0.2.0 | `switch_model()`, data builder (`se_build_data()`), Gaussian margin and `distribution()`, transformations including the CPC correlation-matrix map, parameter map | 279 test expectations; `--as-cran` 1 environment-only NOTE | **done** 2026-11-22 |
 | 1.3 | 0.3.0 | `lik_esr_gaussian()` (log-likelihood, score, Hessian), stable utilities | equals `verify_math.R` references to 1e-10; derivative tests | |
 | 1.4 | 0.4.0 | `est_two_step()`, `est_fiml()` with multistart, `switch_fit()`, `switch_control()` | recovery tests; Monte Carlo smoke test | |
 | 1.5 | 0.5.0 | Covariances, bootstrap, tests, diagnostics, `switch_validate()` | unit tests; coverage spot checks | |

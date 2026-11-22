@@ -46,6 +46,25 @@ G1 values: `regimes = 2`, `model = "esr"`, `selection_family = "probit"`,
 `outcome_family = "gaussian"`, `dependence = "gaussian"`. Other values give
 `switch_error_unsupported`, naming the generation that will add them.
 
+### `distribution()` (implemented in 0.2.0)
+
+```r
+distribution(name, parameters = list())
+```
+
+Distribution engine of specification section 5.3. It returns an
+`se_distribution` with `pdf`, `cdf`, `quantile`, `rng`, `logpdf` and
+`logcdf` bound to the given natural parameters. 0.2.0 provides `"gaussian"`
+(`location`, `scale`). Families of later generations give
+`switch_error_unsupported`. Lifecycle: experimental until 1.0.0.
+
+**Implementation status (0.2.0):**
+- `switch_model()`: complete, including name-based regime matching and
+  declared exclusions.
+- The internal data builder `se_build_data()`: missing-value report, weights,
+  cluster and subset in all three forms, regime coding, finiteness and rank
+  checks.
+
 ### `switch_fit()`
 
 ```r
@@ -233,7 +252,7 @@ Returns two parts (specification section 15):
 | Field | Content |
 | --- | --- |
 | `call`, `spec`, `model`, `method` | how the fit was requested |
-| `coefficients` | natural-scale estimates (named) |
+| `coefficients` | natural-scale estimates (named). The order is by equation: selection coefficients; then the S = 0 regime (outcome coefficients, `sigma`, `rho`); then the S = 1 regime. This is the order of the parameter map `se_parmap_esr()`. The derivation documents write $\theta$ in a different but equivalent order. |
 | `coef_working`, `vcov`, `vcov_working`, `vcov_type` | estimates and covariances |
 | `loglik`, `npar`, `nobs`, `n_regime` | fit summaries (`loglik` is `NA` for two-step) |
 | `two_step` | the two-step estimate (starting values for FIML; the main result for `method = "two_step"`) |

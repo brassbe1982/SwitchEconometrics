@@ -1,7 +1,7 @@
 Package: SwitchEconometrics
 Type: Package
 Title: Unified Estimation of Endogenous Regime-Dependent Economic Systems
-Version: 0.1.0
+Version: 0.2.0
 Authors@R: c(
     person("Ibrahim", "Niankara", role = c("aut", "cre"),
            email = "Ibrahim.niankara@aau.ac.ae"),
@@ -11,19 +11,22 @@ Description: A unified framework for endogenous switching regression,
     endogenous treatment, sample selection, multinomial switching,
     copula-based dependence and longitudinal switching, built on one general
     statistical model of regime selection and regime-specific outcomes.
-    Version 0.1.0 provides the development architecture: package
-    infrastructure, the authoritative econometric specification and the
-    numerically verified derivations of the classical binary endogenous
-    switching regression model (Lokshin and Sajaia (2004)
-    <doi:10.1177/1536867X0400400306>; Heckman (1979) <doi:10.2307/1912352>),
-    whose full-information maximum-likelihood and two-step estimators are
-    added in versions 0.2.0 to 1.0.0.
+    The development versions build the classical binary endogenous switching
+    regression model (Lokshin and Sajaia (2004)
+    <doi:10.1177/1536867X0400400306>; Heckman (1979) <doi:10.2307/1912352>)
+    layer by layer: model specification, distribution and
+    parameter-transformation engines (this version), then the likelihood,
+    full-information maximum-likelihood and two-step estimators, inference,
+    treatment effects and counterfactuals.
 License: MIT + file LICENSE
 Depends:
     R (>= 4.1.0)
+Imports:
+    stats
+Suggests:
+    numDeriv,
+    testthat (>= 3.0.0)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-Suggests:
-    testthat (>= 3.0.0)
 Config/testthat/edition: 3
 Config/roxygen2/version: 8.1.1
