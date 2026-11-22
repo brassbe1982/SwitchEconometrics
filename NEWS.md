@@ -20,8 +20,9 @@ Carlo study. No change to the estimators or to the user interface.
     conservative standard errors of sigma when rho = 0 exactly, and from
     Monte Carlo noise.
   - At N = 5000, mean coverage is 0.949.
-* Acceptance criteria AC1 and AC4 stay open under the pre-registered rule,
-  pending the owner's decision.
+* The owner accepted the diagnosis. Acceptance criteria AC1 and AC4 are met
+  with the failed checks recorded as documented exceptions. The
+  pre-registered thresholds are unchanged.
 * **AC4(b)** (bootstrap and Hessian standard errors within 10% at N = 2000)
   passes on `firms` (15/15) but not on the base-design dataset (12/15).
   There, comparison with the Monte Carlo truth shows that the Hessian

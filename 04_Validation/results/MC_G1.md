@@ -8,10 +8,17 @@ before any estimator code existed. The full generated tables are in
 
 ## 1. Verdict
 
+**Owner decision, 22 November 2026: the diagnosis is accepted (section 9,
+option 1).**
+- AC1 and AC4 are met, with the ten failed checks and the AC4(b) result
+  recorded as documented exceptions.
+- The thresholds are unchanged.
+
 **The pre-registered gate is not passed: 491 of 501 gated checks pass and 10
 fail.** Under MONTE_CARLO_DESIGN.md section 5, a failed check blocks
 acceptance criteria AC1 and AC4 "until the cause is understood and fixed",
-and the thresholds are not changed. Both criteria therefore stay **open**.
+and the thresholds are not changed. Both criteria therefore stayed open until
+the owner's decision.
 
 The diagnosis in section 4 finds **no defect in the estimators or in the
 standard-error formulas**. The failures fall into three groups:
@@ -25,7 +32,7 @@ standard-error formulas**. The failures fall into three groups:
   conservative side).
 
 The rule's "fixed" assumes a defect, and none was found. Whether to accept
-the diagnosis is therefore the owner's decision (section 8).
+the diagnosis was therefore the owner's decision (section 9).
 
 Everything else came out as expected:
 - every bias, root-N and convergence check passes (C1, C2, C3, C6: 165/165);
@@ -526,14 +533,19 @@ mean bootstrap SE with the empirical SD over replications, as C4 does for
 the Hessian. That would need a bootstrap Monte Carlo of about 40 000 fits.
 This is the owner's decision.
 
-## 9. Acceptance criteria and the decision for the owner
+**Outcome.** Under the owner's decision of section 9, the AC4(b) result is
+recorded as a documented exception. The redefinition was not needed for
+that and has not been made.
 
-| Criterion | Evidence in this study | Status under the pre-registered rules |
-| --- | --- | --- |
-| AC1 recovery | **(a)** All 165 bias, root-N and convergence checks of the parameters pass. One effect-bias check fails (ATU at N = 1000, 9.7%; second-order bias falling like 1/N).<br>**(b)** The N = 5000 recovery test passes and now runs on CRAN | **open**: blocked by the one failed C7 bias check |
-| AC4 inference | **(a)** 9 SE-ratio and coverage checks fail (section 4).<br>**(b)** 27/30 (section 8).<br>**(c)** Analytic Hessian equals the numerical one (met) | **open**: blocked by (a) and (b) |
+## 9. Acceptance criteria and the owner's decision
 
-**What the owner can decide:**
+| Criterion | Evidence in this study | Status under the pre-registered rules | Status after the owner's decision |
+| --- | --- | --- | --- |
+| AC1 recovery | **(a)** All 165 bias, root-N and convergence checks of the parameters pass. One effect-bias check fails (ATU at N = 1000, 9.7%; second-order bias falling like 1/N).<br>**(b)** The N = 5000 recovery test passes and now runs on CRAN | blocked by the one failed C7 bias check | **met** with a documented exception |
+| AC4 inference | **(a)** 9 SE-ratio and coverage checks fail (section 4).<br>**(b)** 27/30 (section 8).<br>**(c)** Analytic Hessian equals the numerical one (met) | blocked by (a) and (b) | **met** with documented exceptions |
+
+**Decision.** On 22 November 2026 the owner chose option 1 ("Accept the
+diagnosis"). The options as they were put:
 1. **Accept the diagnosis.**
    - Record the 10 failed gate checks and the AC4(b) result as understood
      finite-sample properties, with no defect, like the I10 amendment.
@@ -560,7 +572,7 @@ there for: no part of the estimation or inference code is wrong.
 
 The failures measure how far N = 1000–2000 is from asymptotics in this
 model. That is information for users, not a defect to fix. Separately, the
-I6 threshold (section 7) is a decision for the owner.
+I6 threshold (section 7) is a decision for the owner; it is still pending.
 
 ## 10. Files
 

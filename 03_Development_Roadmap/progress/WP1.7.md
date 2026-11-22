@@ -1,8 +1,10 @@
 # WP1.7: Pre-registered Monte Carlo study
 
 Version 0.7.0. Completed 22 November 2026. Status: **study done and
-reported. The gate is not passed as pre-registered (491 of 501 checks), so
-AC1 and AC4 remain open pending the owner's decision.**
+reported. The gate is not passed as pre-registered (491 of 501 checks).
+The owner accepted the diagnosis on 22 November 2026, so AC1 and AC4 are
+met with documented exceptions (MC_G1.md s.9). The I6 threshold proposal
+is still pending.**
 
 ## What was done
 
@@ -92,8 +94,19 @@ The generated tables and CSV files come from this rerun.
 - The documentation does not yet tell users about finite-sample coverage at
   N ≤ 1000. This is carried to WP1.9 (vignette `simulation-validation`).
 
+## Owner decision (22 November 2026)
+
+- **The diagnosis is accepted** ("Accept the diagnosis", option 1 of
+  MC_G1.md s.9).
+  - The 10 failed gate checks and the AC4(b) result are recorded as
+    understood finite-sample properties, with no defect.
+  - AC1 and AC4 are met with these documented exceptions, and the
+    computational gate requirement (AC1, AC2, AC4, AC5) is met.
+  - Thresholds unchanged.
+- **Still pending:** the I6 threshold proposal (R² > 0.80; MC_G1.md s.7).
+  The defaults are unchanged until the owner decides.
+
 ## Next
 
-- The owner decides on the diagnosis (MC_G1.md section 9).
 - WP1.8 (v0.8.0): the benchmark report, `sampleSelection` and archived
   `endoSwitch` (AC3).

@@ -1,8 +1,10 @@
 # Generation 1: Classical core (v0.1.0 → v1.0.0)
 
-Status: in progress. WP1.1 done (22 November 2026). **Econometric gate
-approved by the owner on 22 November 2026**: the six questions of section 3
-were accepted as proposed. WP1.2 started.
+Status: in progress; WP1.1-WP1.7 done (22 November 2026), WP1.8 next.
+- **Econometric gate approved by the owner on 22 November 2026**: the six
+  questions of section 3 were accepted as proposed.
+- **Computational gate requirement met on 22 November 2026** (AC1, AC2,
+  AC4, AC5; ACCEPTANCE_TESTS.md section 2).
 
 ## 1. Frozen scope (specification section 16)
 
@@ -26,9 +28,9 @@ plan decision D7); any Stata comparison (owner decision, 22 November 2026).
 | 1.4 | 0.4.0 | `est_two_step()` (model, robust and cluster covariances), `est_fiml()` with multistart and optimiser fallbacks, all four FIML covariance types (moved forward from WP1.5), `switch_fit()`, `switch_control()`, `esr()`, basic methods; Monte Carlo driver | FIML equals `sampleSelection` ML (3e-10); recovery; frequency weights equal replicated data; 434 expectations; Monte Carlo smoke test 200/200 converged (Marquardt NR fix) | **done** 2026-11-22 |
 | 1.5 | 0.5.0 | `switch_test()` (LR, Wald, linear hypotheses), `confint()`, `summary()`, `switch_bootstrap()` (nonparametric, parametric, cluster; parallel equals serial), `switch_validate()` (I1-I11), `switch_diagnostics()`; covariances were delivered in 0.4.0 | 528 expectations; LR equals closed form; bootstrap SEs within 0.75-1.33 of the Hessian SEs; smoke Monte Carlo identical to 0.4.0; I10 amendment (IDENTIFICATION.md s.6) | **done** 2026-11-22 |
 | 1.6 | 0.6.0 | `switch_effects()`, `switch_predict()` with `predict`/`fitted`/`residuals`, `switch_counterfactual()`, `switch_simulate()` with `simulate`, `switch_compare()`/`anova`, `update`, model methods, bootstrap of effects, dataset `firms` (`esr()` and the record were delivered in 0.4.0) | **AC5 met**; 631 expectations; smoke Monte Carlo with effects | **done** 2026-11-22 |
-| 1.7 | 0.7.0 | Monte Carlo study ([MONTE_CARLO_DESIGN.md](../04_Validation/MONTE_CARLO_DESIGN.md)): 38 cells, 28 400 replications; gate evaluation script; sandwich rerun; supplementary I5/I6 study; AC4(b) bootstrap check | `MC_G1.md`:<br>• gate 491/501 (10 failures diagnosed: no defect; finite sample, σ at ρ = 0, noise);<br>• AC4(b) 27/30;<br>• AC1 and AC4 open pending the owner's decision | **done** 2026-11-22 (owner decision pending) |
+| 1.7 | 0.7.0 | Monte Carlo study ([MONTE_CARLO_DESIGN.md](../04_Validation/MONTE_CARLO_DESIGN.md)): 38 cells, 28 400 replications; gate evaluation script; sandwich rerun; supplementary I5/I6 study; AC4(b) bootstrap check | `MC_G1.md`:<br>• gate 491/501 (10 failures diagnosed: no defect; finite sample, σ at ρ = 0, noise);<br>• AC4(b) 27/30;<br>• diagnosis accepted by the owner: **AC1 and AC4 met** with documented exceptions | **done** 2026-11-22 |
 | 1.8 | 0.8.0 | Benchmarks ([BENCHMARK_PROTOCOL.md](../04_Validation/BENCHMARK_PROTOCOL.md)) | `BENCHMARK_G1.md` (AC2, AC3) | |
-| 1.9 | 0.9.0 | Vignettes `classical-esr`, `treatment-effects`, `simulation-validation`; README; CRAN preparation; GitHub Actions (owner creates the repository) | `--as-cran` clean (AC6) | |
+| 1.9 | 0.9.0 | Vignettes `classical-esr`, `treatment-effects`, `simulation-validation` (must state the finite-sample coverage at N ≤ 1000 found in WP1.7, as part of the owner's decision); README; CRAN preparation; GitHub Actions (owner creates the repository) | `--as-cran` clean (AC6) | |
 | 1.10 | 1.0.0 | Release: evidence table, gates, CRAN submission (owner) | gate record | |
 
 ## 3. Questions for the econometric gate (owner)
@@ -62,3 +64,13 @@ never raises a warning. The reason is simulation evidence that it rejects
 valid exclusions under selection on unobservables
 ([IDENTIFICATION.md](../01_Econometric_Architecture/IDENTIFICATION.md)
 section 6).
+
+**Decision by the owner on 22 November 2026 (raised in WP1.7):** the
+diagnosis of the Monte Carlo study is accepted
+([MC_G1.md](../04_Validation/results/MC_G1.md) sections 4 and 9).
+- The 10 failed gate checks and the AC4(b) result (27 of 30) are recorded
+  as understood finite-sample properties, with no defect.
+- AC1 and AC4 are met with these documented exceptions.
+- The pre-registered thresholds are unchanged.
+- The `simulation-validation` vignette (WP1.9) must state the finite-sample
+  coverage at N ≤ 1000.

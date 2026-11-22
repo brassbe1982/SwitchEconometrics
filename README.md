@@ -27,8 +27,10 @@ FIML results equal `sampleSelection`'s maximum-likelihood estimates.
 
 The pre-registered Monte Carlo study has been run: 28 400 replications,
 each fitted by FIML and two-step. 491 of the 501 pre-registered checks pass.
-The 10 failures are diagnosed as finite-sample behaviour, not defects, and
-await the owner's decision. See `04_Validation/results/MC_G1.md`.
+The 10 failures are diagnosed as finite-sample behaviour, not defects. The
+owner accepted this diagnosis, so the recovery and inference criteria (AC1,
+AC4) are met with documented exceptions. See
+`04_Validation/results/MC_G1.md`.
 
 Still to come in Generation 1:
 - the full benchmark report (0.8.0);

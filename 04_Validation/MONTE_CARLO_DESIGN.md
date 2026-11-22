@@ -148,5 +148,10 @@ how the study was run and every departure from the plan.
   N = 2000) is checked by `scripts/ac4b_bootstrap_check.R`. It is defined in
   ACCEPTANCE_TESTS.md, not in this design.
 - **Thresholds.** Not changed. Ten of the 501 gated checks failed. Under
-  section 5, acceptance criteria AC1 and AC4 stay blocked until the owner
-  decides on the diagnosis in MC_G1.md section 4.
+  section 5, acceptance criteria AC1 and AC4 were blocked until the owner
+  decided on the diagnosis in MC_G1.md section 4.
+- **Owner decision, 22 November 2026.** The diagnosis is accepted. The ten
+  failures are recorded as understood finite-sample properties with no
+  defect (MC_G1.md section 9, option 1), and AC1 and AC4 are met with
+  documented exceptions. Sections 1-6, including the thresholds, stay as
+  pre-registered.
