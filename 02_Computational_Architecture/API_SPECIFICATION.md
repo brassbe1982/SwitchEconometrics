@@ -65,7 +65,17 @@ Distribution engine of specification section 5.3. It returns an
   cluster and subset in all three forms, regime coding, finiteness and rank
   checks.
 
-### `switch_fit()`
+### `switch_fit()` (implemented in 0.4.0)
+
+**Implementation notes (0.4.0):**
+- All four covariance types are implemented in 0.4.0, earlier than planned
+  (WP1.5), because weighted and clustered fits need them.
+- For the two-step method, `vcov = "hessian"` means the model-based
+  first-stage-corrected formula, and `"sandwich"`/`"cluster"` mean the
+  stacked M-estimation sandwich. `"opg"` is FIML-only.
+- `esr()` is available from 0.4.0.
+- Basic methods are available (`print`, `coef`, `vcov`, `logLik`, `nobs`).
+  `summary()` and the other methods follow in 0.5.0-0.6.0.
 
 ```r
 switch_fit(selection = NULL, outcomes = NULL, data, model = "esr",

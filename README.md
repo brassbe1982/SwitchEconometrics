@@ -10,9 +10,12 @@ estimators are documented special cases of that model.
 
 ## Status
 
-**Version 0.3.0: Generation 1, work package 1.3.** This version contains no
-estimators yet; the estimators come in 0.4.0.
-- 0.3.0 adds the internal likelihood engine of the classical binary ESR, with
+**Version 0.4.0: Generation 1, work package 1.4.** `switch_fit()` (and
+`esr()`) estimates the classical binary ESR by FIML or two-step.
+- FIML results equal `sampleSelection`'s maximum-likelihood estimates.
+- Summary tables, inference tools, treatment effects and counterfactuals
+  follow in 0.5.0-0.6.0.
+- 0.3.0 added the likelihood engine of the classical binary ESR, with
   analytic score and Hessian. Its log-likelihood equals `sampleSelection`'s
   Tobit-5 value at the same parameters.
 - 0.2.0 added:
@@ -49,7 +52,8 @@ The Generation 1 econometric gate was approved on 22 November 2026. Version
 
 ## Planned interface (Generation 1)
 
-The interface below is planned, not yet available.
+`switch_fit()` works from version 0.4.0. `summary()`, `switch_effects()`
+and `switch_validate()` follow in 0.5.0-0.6.0.
 
 ```r
 library(SwitchEconometrics)

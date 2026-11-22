@@ -71,6 +71,50 @@ estimates; differences then come only from the parameter estimates.
 - explanations for every difference larger than its tolerance;
 - the script `04_Validation/scripts/benchmark_g1.R` that regenerates it.
 
+## 5a. Documented differences found during development
+
+**D-SS-1: `sampleSelection` 1.2-16, Tobit-5 two-step (`heckit5fit`).**
+Found in WP1.4 on 22 November 2026.
+
+What `sampleSelection` does:
+- It recovers $\sigma_j$ as `sqrt(se^2 + (betaL * delta)^2)`, i.e.
+  $\hat\sigma_j^2 = s_j^2 + (\hat\theta_j\bar\delta_j)^2$. The Heckman (1979)
+  and Greene (2012) consistent estimator is
+  $\hat\sigma_j^2 = \overline{\hat\eta_j^2} + \hat\theta_j^2\bar\delta_j$,
+  derived in LIKELIHOOD_DERIVATION.md section 9 and verified in V08 and V13.
+- It uses the degrees-of-freedom-corrected residual standard error.
+- It clips $\hat\rho_j$ to $\pm 0.99$.
+- Its two-step covariance matrix fills only the probit block; outcome
+  coefficients have no standard errors (NA).
+
+Evidence (simulated data of the test suite; truth $\sigma_0 = 0.8$,
+$\rho_0 = 0.4$, $\sigma_1 = 1.2$, $\rho_1 = 0.6$):
+
+| n | SwitchEconometrics $\hat\sigma_0, \hat\rho_0, \hat\sigma_1, \hat\rho_1$ | `sampleSelection` |
+| --- | --- | --- |
+| 200 000 | 0.797, 0.376, 1.200, 0.604 | 0.784, 0.381, 1.144, 0.634 |
+| 400 000 | 0.801, 0.405, 1.201, 0.602 | 0.786, 0.413, 1.145, 0.631 |
+
+The shared parts agree to 4e-10: the probit, the outcome coefficients and
+the correction-term coefficients (with the sign of the regime-0 regressor
+mapped).
+
+Consequences for the two-step benchmark:
+- The probit, outcome and correction coefficients are compared at the
+  two-step tolerance.
+- $\hat\sigma_j$ and $\hat\rho_j$ are compared with the Heckman formula
+  computed independently in the test suite, not with `sampleSelection`.
+- Two-step standard errors are compared with the independent formula (test
+  suite) and by Monte Carlo (WP1.7), because `sampleSelection` does not
+  report them.
+
+The FIML (`method = "ml"`) results of `sampleSelection` are unaffected and
+agree with ours to 3e-10 in the coefficients and 1e-9 in the standard
+errors.
+
+Reporting this upstream would be an external action, so it is left to the
+owner. The finding may also be relevant for the research article.
+
 ## 5. Later generations
 
 | Generation | Benchmarks | Where none exists |

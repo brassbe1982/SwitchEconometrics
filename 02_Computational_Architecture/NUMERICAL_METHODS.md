@@ -33,6 +33,11 @@ formed and then logged.
 
 - **Primary:** `maxLik::maxNR` with the analytic gradient and Hessian on the
   working scale.
+  - Marquardt's correction of non-concave steps (`qac = "marquardt"`).
+  - Stop when the log-likelihood changes by less than 1e-12.
+  - This replaces the default step halving since 0.4.0. With step halving, a
+    Monte Carlo replication stalled near the optimum for 500 iterations
+    (91 s); with Marquardt it took 4 iterations. See progress note WP1.4.
 - **Fallbacks:** `maxLik::maxBFGS`, then `maxLik::maxBHHH` (analytic
   gradient, OPG Hessian), then `stats::optim(method = "BFGS")`. These are
   used when a step fails or a non-finite value appears. The optimiser used is

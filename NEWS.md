@@ -1,3 +1,53 @@
+# SwitchEconometrics 0.4.0
+
+Generation 1, work package 1.4 (22 November 2026). First version that
+estimates.
+
+## New features
+
+* `switch_fit()` estimates the classical binary endogenous switching
+  regression by full-information maximum likelihood (`method = "fiml"`) or
+  by the two-step Heckman-Lee estimator (`method = "two_step"`; `estimator`
+  is a synonym). `model` accepts a model type with formulas, or a
+  `switch_spec`.
+  - **FIML:** Newton-Raphson with the analytic gradient and Hessian
+    (Marquardt correction of non-concave steps), started from the two-step
+    estimate. Further perturbed starts (and a grid in
+    atanh(rho) for 10 or more starts) are seeded, and the global
+    random-number state is restored. BFGS, BHHH and `optim` serve as
+    fallbacks. Convergence is judged by the largest gradient component and
+    a negative definite Hessian.
+  - **Failure reporting:** failed optimisations, boundary solutions
+    (|rho| > 0.995), ill-conditioned Hessians and flat likelihoods each
+    return the fit with a classed warning; none is silent.
+  - **Two-step:** probit, then selection-corrected regressions within the
+    regimes, with sigma and rho from Heckman's variance formula. The
+    covariance accounts for the first stage and is model-based
+    (Heckman/Greene), stacked-sandwich robust or cluster-robust, including
+    the cross-regime and first-stage blocks.
+  - **Covariance types:** `"hessian"`, `"opg"`, `"sandwich"`, `"cluster"`.
+    The default is sandwich with weights and cluster with clusters.
+  - **Reproducibility record** in every fit: package versions, controls,
+    seed, starting values, optimiser path, data dimensions and estimation
+    sample.
+* `switch_control()` collects the numerical controls.
+* `esr()` is the compatibility wrapper for the classical ESR.
+* Methods `print()`, `coef()` (natural or working scale, by part), `vcov()`,
+  `logLik()` and `nobs()`.
+
+## Validation
+
+* FIML equals `sampleSelection`'s Tobit-5 ML estimates: identical
+  log-likelihood, coefficients to 3e-10, standard errors to 1e-9.
+* Weighted fits with frequency weights equal fits on the replicated data.
+* The two-step coefficients equal `sampleSelection`'s. Its sigma and rho
+  differ, because `sampleSelection` 1.2-16 squares the product of the
+  correction coefficient and the mean delta. Ours follows Heckman (1979)
+  and recovers the true values on 400 000 observations; theirs does not.
+  This is documented in BENCHMARK_PROTOCOL.md (D-SS-1).
+* Monte Carlo driver `04_Validation/scripts/mc_g1.R` implementing the
+  pre-registered design, with a smoke mode.
+
 # SwitchEconometrics 0.3.0
 
 Generation 1, work package 1.3 (22 November 2026).
