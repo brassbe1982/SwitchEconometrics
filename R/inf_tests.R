@@ -56,8 +56,12 @@ switch_test <- function(object, type = c("lr_independence",
       if (is.null(hypothesis)) se_abort("type = \"wald\" needs 'hypothesis'",
                                         "argument")
       h <- se_parse_hypothesis(hypothesis, names(object$coefficients))
+      txt <- if (is.list(hypothesis)) {
+        sprintf("R theta = r (%d restriction%s, natural scale)", nrow(h$R),
+                if (nrow(h$R) == 1L) "" else "s")
+      } else sprintf("%s (natural scale)", paste(h$labels, collapse = "; "))
       se_wald(object$coefficients, object$vcov, h$R, h$r, h$labels, "wald",
-              "Wald test of a linear hypothesis (natural scale)")
+              txt, list_labels = FALSE)
     })
 }
 
@@ -125,7 +129,8 @@ se_test_wald_independence <- function(object) {
           note = "Failure to reject does not show that regime assignment is exogenous.")
 }
 
-se_wald <- function(theta, V, R, r, labels, type, hypothesis, note = NULL) {
+se_wald <- function(theta, V, R, r, labels, type, hypothesis, note = NULL,
+                    list_labels = TRUE) {
   R <- matrix(R, ncol = length(theta))
   d <- drop(R %*% theta) - r
   M <- R %*% V %*% t(R)
@@ -137,7 +142,8 @@ se_wald <- function(theta, V, R, r, labels, type, hypothesis, note = NULL) {
   stat <- tryCatch(drop(t(d) %*% solve(M, d)), error = function(e)
     se_abort("the hypothesis covariance matrix is singular", "argument"))
   se_test_object(type, stat, nrow(R),
-                 if (length(labels)) paste(c(hypothesis, labels), collapse = "\n  ")
+                 if (length(labels) && list_labels)
+                   paste(c(hypothesis, labels), collapse = "\n  ")
                  else hypothesis, note,
                  list(estimate = stats::setNames(d + r, labels), R = R, r = r))
 }

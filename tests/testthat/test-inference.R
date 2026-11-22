@@ -63,6 +63,8 @@ test_that("general linear Wald hypotheses are parsed correctly", {
   R[1, match("regime_0:x1", nm)] <- -1
   t2 <- switch_test(f, "wald", hypothesis = list(R = R, r = 0))
   expect_equal(t1$statistic, t2$statistic)
+  expect_output(print(t1), "H0: regime_1:x1 = regime_0:x1 \\(natural scale\\)")
+  expect_output(print(t2), "H0: R theta = r \\(1 restriction")
   d <- coef(f)["regime_1:x1"] - coef(f)["regime_0:x1"]
   v <- drop(R %*% vcov(f) %*% t(R))
   expect_equal(t1$statistic, unname(d^2 / v))

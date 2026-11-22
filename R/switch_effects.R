@@ -182,6 +182,8 @@ print.switch_effects <- function(x, digits = 4L, ...) {
                         "heterogeneity"),
                       c(sprintf("outcome under %s", r1),
                         sprintf("outcome under %s", r0), "effect")))
+    ## the heterogeneity row only when TH, BH1 or BH0 was requested
+    if (all(tab[3L, ] == "")) tab <- tab[1:2, , drop = FALSE]
     print(noquote(tab), right = TRUE)
     cat("\n")
   }

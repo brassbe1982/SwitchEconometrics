@@ -1,0 +1,271 @@
+---
+title: "Classical endogenous switching regression"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Classical endogenous switching regression}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+options(width = 90)
+```
+
+This vignette fits the classical binary endogenous switching regression
+(ESR) model with SwitchEconometrics. It covers specification, the
+identification checks, full-information maximum likelihood (FIML) and
+two-step estimation, inference and diagnostics. Treatment effects and
+counterfactual scenarios are the subject of `vignette("treatment-effects")`,
+and the evidence that the estimators work as intended is summarised in
+`vignette("simulation-validation")`.
+
+```{r}
+library(SwitchEconometrics)
+```
+
+## The model
+
+Each unit is in one of two regimes. A latent index sorts the units:
+
+$$S_i = 1\{z_i'\gamma + u_i > 0\},$$
+
+and the outcome follows a regime-specific equation that is observed only in
+the regime the unit is in:
+
+$$y_i = x_{1i}'\beta_1 + \varepsilon_{1i} \ \text{ if } S_i = 1, \qquad
+  y_i = x_{0i}'\beta_0 + \varepsilon_{0i} \ \text{ if } S_i = 0 .$$
+
+The pair $(u, \varepsilon_j)$ is bivariate normal with
+$\operatorname{Var}(u) = 1$, $\operatorname{sd}(\varepsilon_j) = \sigma_j$ and
+$\operatorname{Corr}(u, \varepsilon_j) = \rho_j$.
+
+- **What $\rho_j \neq 0$ means.** Selection on unobservables: units are in
+  a regime partly for reasons that also move their outcome. Separate
+  regressions within each regime are then biased.
+- **What is never estimated.** The correlation of $\varepsilon_1$ and
+  $\varepsilon_0$ never enters the likelihood, because the two outcomes are
+  never observed for the same unit. It is not identified, and
+  SwitchEconometrics never estimates it.
+
+**Identification.** $\rho_j$ is identified by an *exclusion restriction*:
+a variable that affects the regime but not the outcome. Without one,
+identification rests on the normal distribution alone. The package warns
+when that happens.
+
+## Data
+
+`firms` is a simulated dataset of 2000 firms deciding whether to adopt
+digital technology (`digital_adoption`). The outcome is log labour
+productivity (`productivity`).
+- Internet access, management quality and the owner's education affect
+  adoption but are excluded from the productivity equations.
+- The true parameters are listed in `?firms`. Unobservably more productive
+  adopters are more likely to adopt ($\rho_1 = 0.45$, $\rho_0 = -0.25$).
+
+```{r}
+str(firms)
+```
+
+## 1. Specify the model and check identification before fitting
+
+```{r}
+sel <- digital_adoption ~ internet_access + management_quality + firm_size +
+  owner_education
+out <- list(regime_0 = productivity ~ firm_size + capital + labour,
+            regime_1 = productivity ~ firm_size + capital + labour)
+spec <- switch_model(sel, out)
+spec
+```
+
+`switch_validate()` runs the identification checks on the specification
+and the data, before any estimation:
+
+```{r}
+switch_validate(spec, firms)
+```
+
+| Check | What it tells you here |
+| --- | --- |
+| I4 | Lists the excluded variables. |
+| I5 | Tests their joint strength in the probit. A χ²/df far above 10 means a strong exclusion. |
+| I6 | Measures how far the selection-correction term is collinear with the outcome regressors. It warns above R² = 0.80, a threshold set from the Monte Carlo study. |
+| I10 | The falsification test of Di Falco, Veronesi and Yesuf (2011). It is reported for information only, because under selection on unobservables it rejects valid exclusions. |
+| I11 | States that $\operatorname{Corr}(\varepsilon_1, \varepsilon_0)$ is not identified. |
+
+No data test can prove that an exclusion restriction is valid. That remains
+an economic argument.
+
+## 2. Full-information maximum likelihood
+
+```{r}
+fit <- switch_fit(sel, out, data = firms)
+fit
+```
+
+**How the fit works.**
+
+- FIML maximises the exact log-likelihood by Newton-Raphson with the
+  analytic gradient and Hessian.
+- It starts from the two-step estimate and from two perturbed starts, so
+  that lower local maxima are detected.
+- `switch_control(starts = 1)` runs a single start.
+
+The fit reports whether it converged. It never fails silently: a failed
+optimisation returns the fit with a warning.
+
+```{r}
+summary(fit)
+```
+
+`esr()` is a wrapper with the same interface and the model fixed to the
+binary ESR.
+
+## 3. Two-step estimation
+
+The two-step estimator (Heckman 1979; Lee 1978) fits a probit, then each
+regime's regression with its selection-correction term. Its covariance
+corrects for the estimated first stage.
+
+```{r}
+ts <- switch_fit(sel, out, data = firms, method = "two_step")
+switch_compare(fit, ts)
+```
+
+**Compared with FIML:**
+
+- Both estimators are consistent; the two-step estimator is less
+  efficient.
+- The two-step σⱼ and ρⱼ are recovered from the correction coefficients
+  and have no standard errors of their own.
+- FIML is the default. The two-step estimate is its starting value.
+
+## 4. Inference
+
+Confidence intervals for σ and ρ are formed on the transformed scale (log σ
+and atanh ρ) and mapped back, so they respect the parameter space:
+
+```{r}
+confint(fit)
+```
+
+The likelihood-ratio test of independent equations (ρ₁ = ρ₀ = 0) compares
+the fit with a probit and two separate regressions. Wald tests are also
+available, including linear hypotheses written in terms of the coefficient
+names:
+
+```{r}
+switch_test(fit)
+switch_test(fit, type = "wald",
+            hypothesis = "regime_1:capital = regime_0:capital")
+```
+
+Rejecting independence supports the switching model. Failing to reject
+does not show that regime assignment is exogenous.
+
+**Covariance estimators** (`vcov =`):
+
+| Option | When |
+| --- | --- |
+| `"hessian"` | Inverse observed information; the default without weights |
+| `"opg"` | Outer product of gradients |
+| `"sandwich"` | Robust; the default with sampling weights |
+| `"cluster"` | Cluster-robust; the default with `cluster =` |
+
+Cluster-robust standard errors need many clusters. With 100 clusters, the
+Monte Carlo study found coverage of 0.89-0.91 for the FIML σ and ρ
+(`vignette("simulation-validation")`).
+
+```{r, eval = FALSE}
+switch_fit(sel, out, data = firms, vcov = "sandwich")
+switch_fit(sel, out, data = firms, cluster = ~ cluster_id)   # with a cluster variable
+switch_fit(sel, out, data = firms, weights = ~ sampling_weight)
+```
+
+**Bootstrap.** The nonparametric bootstrap refits the model on resampled
+data. Here R = 99 keeps the vignette fast; use R = 999 or more in
+applications. `cores` runs the replicates in parallel, with results that
+do not depend on the number of cores.
+
+```{r}
+boot <- switch_bootstrap(fit, R = 99, seed = 1)
+boot
+```
+
+## 5. Diagnostics
+
+`switch_diagnostics()` collects the computational and statistical
+diagnostics of a fit:
+
+```{r}
+switch_diagnostics(fit)
+```
+
+**What it reports:**
+
+- **Convergence:** the gradient, the eigenvalues and condition number of
+  the Hessian.
+- **Multistart:** whether lower local maxima exist, and whether different
+  parameter values reach the same maximum (a flat likelihood).
+- **Boundary flags:** |ρ| close to 1 or σ close to 0.
+- **The tests of independence.**
+
+- **Corr(ε₁, ε₀):** the admissible range of the non-identified correlation,
+  given the estimates.
+
+## 6. The estimates against the truth
+
+`firms` was simulated, so the estimates can be compared with the true
+parameters (`?firms`):
+
+```{r}
+truth <- c(-2.1, 0.9, 0.5, 0.25, 0.06,         # selection
+           0.5, 0.05, 0.30, 0.10, 0.45, -0.25,  # regime 0: beta, sigma, rho
+           0.8, 0.08, 0.35, 0.10, 0.50, 0.45)   # regime 1: beta, sigma, rho
+est <- coef(fit)
+se <- sqrt(diag(vcov(fit)))
+z <- (est - truth) / se
+round(cbind(truth, estimate = est, std_error = se, z = z), 3)
+```
+
+Every estimate lies within `r round(max(abs(z)), 1)` standard errors of its
+true value.
+
+## 7. When identification is weak
+
+A weak or missing exclusion restriction is the main practical risk of the
+model. The Monte Carlo study shows what happens:
+
+- With a weak exclusion, FIML's ρ was biased by −0.12 at N = 2000, and its
+  intervals covered 0.84-0.87.
+- With no exclusion, the bias was −0.3 to −0.4.
+
+Signs to watch for:
+
+- I4 or I5 warnings, or an I6 warning (R² above 0.80);
+- lower local maxima or a flat likelihood in the multistart table;
+- estimates of |ρ| near 1.
+
+## 8. Reproducibility
+
+Every fit stores a record of how it was produced: the date, R and package
+versions, the call, the controls, the seed of the perturbed starts, the
+starting values, the optimiser path and the sample used.
+
+```{r}
+str(fit$record[c("date", "R", "packages", "seed", "optimizer_path")])
+```
+
+## References
+
+- Di Falco, S., Veronesi, M. and Yesuf, M. (2011). Does adaptation to
+  climate change provide food security? A micro-perspective from Ethiopia.
+  *American Journal of Agricultural Economics*, 93(3), 829-846.
+- Heckman, J. J. (1979). Sample selection bias as a specification error.
+  *Econometrica*, 47(1), 153-161.
+- Lee, L.-F. (1978). Unionism and wage rates: a simultaneous equations
+  model with qualitative and limited dependent variables. *International
+  Economic Review*, 19(2), 415-433.
+- Lokshin, M. and Sajaia, Z. (2004). Maximum likelihood estimation of
+  endogenous switching regression models. *The Stata Journal*, 4(3),
+  282-289.

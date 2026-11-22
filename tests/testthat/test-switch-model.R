@@ -13,6 +13,8 @@ test_that("a classical ESR specification is built and printed", {
                    list(regime_0 = "z1", regime_1 = "z1"))
   expect_output(print(spec), "Switching model specification")
   expect_output(print(spec), "regime_1: z1")
+  expect_output(print(spec), "Observation: +switching")
+  expect_output(print(spec), "Dependence: +gaussian")
 })
 
 test_that("unnamed outcomes get default labels; names are checked", {

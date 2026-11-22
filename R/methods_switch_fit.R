@@ -79,8 +79,8 @@ print.switch_fit <- function(x, digits = max(3L, getOption("digits") - 3L),
     sprintf("FIML (%s; %d start%s)", x$convergence$optimizer,
             nrow(x$starts), if (nrow(x$starts) == 1L) "" else "s")
   } else "two-step (Heckman-Lee)"
-  cat("Endogenous switching regression (SwitchEconometrics", se_version(),
-      ")\n", sep = " ")
+  cat(sprintf("Endogenous switching regression (SwitchEconometrics %s)\n",
+              se_version()))
   cat(sprintf("Method: %s; covariance: %s\n", meth, x$vcov_type))
   cat(sprintf("Observations: %d (%s)\n", x$nobs,
               paste(x$regimes, x$n_regime, sep = ": ", collapse = ", ")))

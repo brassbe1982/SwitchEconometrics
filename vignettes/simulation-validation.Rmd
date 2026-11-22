@@ -1,0 +1,206 @@
+---
+title: "Simulation evidence and validation"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Simulation evidence and validation}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+options(width = 90)
+```
+
+This vignette summarises the evidence on how the SwitchEconometrics
+estimators of the classical binary endogenous switching regression behave.
+It gives the finite-sample behaviour users should know about, especially
+below N = 1000, and shows how to run a recovery check of your own.
+
+**Where the evidence comes from.**
+
+- The scripts, the full results and their interpretation are in the
+  folder `04_Validation` of the source repository (not part of the
+  installed package).
+- The tables below are precomputed results from those runs. They are not
+  recomputed when this vignette is built.
+
+```{r}
+library(SwitchEconometrics)
+```
+
+## How the evidence was produced
+
+| Study | Content |
+| --- | --- |
+| Monte Carlo study | 38 designs and 28 400 replications. Each replication is fitted by FIML and by the two-step estimator, and the effects are computed. The design and its acceptance thresholds were registered before any estimator code was written (`MONTE_CARLO_DESIGN.md`); results in `results/MC_G1.md` |
+| Cross-software benchmarks | `sampleSelection` 1.2-16 and the archived `endoSwitch` 1.0.0, on 14 datasets including their own examples, weighted and clustered data; results in `results/BENCHMARK_G1.md` |
+| Monte Carlo under clustering | 500 replications with 100 clusters, for the cluster-robust standard errors |
+
+**Measures.**
+
+- *Coverage* is the share of nominal 95% Wald intervals that contain the
+  true value.
+- The *SE ratio* is the mean estimated standard error divided by the
+  standard deviation of the estimates across replications. 1 is ideal.
+
+## Sample size
+
+The core designs vary N with four configurations of
+$(\rho_1, \rho_0)$: (0, 0), (0.6, 0.4), (0.7, −0.5) and (0.85, 0.85).
+1000 replications per design. Moderate exclusion restriction (probit
+coefficient −0.4 on a standard normal instrument). Mean (minimum) over
+parameters and designs:
+
+| N | FIML parameters: coverage | FIML parameters: SE ratio | FIML effects: coverage | FIML effects: SE ratio | two-step parameters: coverage |
+| --- | --- | --- | --- | --- | --- |
+| 250 | 0.928 (0.872) | 0.935 (0.739) | 0.903 (0.847) | 0.881 (0.835) | 0.950 (0.925) |
+| 500 | 0.943 (0.907) | 0.975 (0.866) | 0.931 (0.896) | 0.949 (0.898) | 0.952 (0.940) |
+| 1000 | 0.948 (0.925) | 0.992 (0.934) | 0.944 (0.925) | 0.980 (0.931) | 0.952 (0.940) |
+| 2000 | 0.947 (0.928) | 0.992 (0.926) | 0.944 (0.930) | 0.978 (0.941) | 0.951 (0.935) |
+| 5000 | 0.948 (0.926) | 0.999 (0.965) | 0.949 (0.939) | 1.004 (0.973) | 0.950 (0.935) |
+
+**What this means in practice:**
+
+- **N ≥ 1000.** FIML intervals are close to nominal on average. The worst
+  parameter covers 0.925.
+- **N ≤ 1000.** Intervals are too narrow. At N = 250 parameter intervals
+  cover 0.93 on average and 0.87 at worst, and the correlations ρ are the
+  weakest: 0.88 when the true ρ is 0. Intervals for the effects cover 0.90
+  at N = 250 and 0.93 at N = 500.
+- **The ATU at small N.** It is biased upward in moderate samples: by 27%
+  at N = 250, 12% at N = 500 and 10% at N = 1000 in the design with
+  (ρ₁, ρ₀) = (0.6, 0.4). The bias falls roughly like 1/N.
+- **Why.** At these sample sizes the estimators vary more than asymptotic
+  theory predicts. The Hessian standard errors themselves are correct:
+  they agree with the asymptotic standard errors at the true parameters
+  within 2.3%.
+- **σ when ρ = 0.** With no selection on unobservables, the intervals for
+  σ are conservative (coverage 0.96-0.97), because σ depends on ρ only
+  quadratically there.
+- **Two-step.** Its model-based intervals for the coefficients cover close
+  to 0.95 at every N. It is less efficient than FIML:
+  - the median RMSE of its outcome parameters is 1.0-1.13 times FIML's
+    for the moderate correlations, and 1.3-1.4 times for (0.85, 0.85);
+  - single parameters reach 1.8 and 2.2 times.
+
+With N below about 1000, treat nominal 95% intervals as roughly 90-94%
+intervals, and the ATU with extra caution. Bootstrap standard errors are
+available, but the coverage of bootstrap intervals has not been evaluated
+by simulation.
+
+## Strength of the exclusion restriction
+
+N = 500 and 2000, (ρ₁, ρ₀) = (0.6, 0.4), 500 replications. The table shows
+FIML's estimate of ρ₁ and how often the identification checks flag the
+sample.
+
+| Exclusion (probit coefficient) | N | bias of ρ₁ | coverage of ρ₁ | I6 warns (R² > 0.80) |
+| --- | --- | --- | --- | --- |
+| strong (−1.0) | 500 | 0.001 | 0.946 | 0% |
+| strong (−1.0) | 2000 | 0.004 | 0.940 | 0% |
+| moderate (−0.4) | 500 | −0.023 | 0.938 | 0% |
+| moderate (−0.4) | 2000 | −0.006 | 0.935 | 0% |
+| weak (−0.1) | 500 | −0.262 | 0.778 | 75% |
+| weak (−0.1) | 2000 | −0.123 | 0.870 | 92% |
+| none | 500 | −0.398 | 0.778 | 100% (and I4 warns) |
+| none | 2000 | −0.316 | 0.690 | 100% (and I4 warns) |
+
+**Findings:**
+
+- **A weak or missing exclusion restriction is the main practical risk.**
+  It biases ρ and every quantity that depends on it, including the
+  effects. More data helps only slowly.
+- **The I6 check is calibrated on these designs.** Its R² > 0.80 warning
+  flags most weak-exclusion samples and none of the samples with a strong
+  or moderate exclusion.
+- **Multistart.** With weak or no exclusion, the likelihood often has
+  several local maxima (28% and 57% of samples at N = 500). The default
+  three starts detect them.
+
+## Cluster-robust standard errors
+
+N = 2000 in 100 clusters of 20. Cluster components in two regressors and
+in all disturbances. 500 replications.
+
+| Estimator and covariance | SE ratio | Coverage |
+| --- | --- | --- |
+| FIML, Hessian (ignores clustering) | 0.47-1.03 | 0.65-0.96 |
+| FIML, cluster: coefficients | 0.94-1.03 | 0.92-0.95 |
+| FIML, cluster: σ and ρ | 0.93-0.96 | 0.89-0.91 |
+| two-step, cluster: coefficients and correction terms | 0.94-1.04 | 0.93-0.96 |
+
+**Findings:**
+
+- **Ignoring clustering** understates standard errors by up to half.
+- **The cluster covariances repair this.** With only 100 clusters, the
+  FIML intervals for σ and ρ still cover only about 0.90, the known
+  small-sample bias of cluster-robust variance estimators (only the
+  G/(G − 1) correction is applied).
+- **The formula itself** is the same as `sandwich::vcovCL()` (agreement to
+  7e-10 in the benchmarks).
+
+## Agreement with other software
+
+| Comparison | Agreement |
+| --- | --- |
+| FIML vs `sampleSelection` (Tobit-5 ML), 10 datasets | estimates 3e-6, log-likelihood 3e-11, standard errors 7e-6 |
+| two-step vs `sampleSelection` (2step) | coefficients 9e-10 |
+| FIML vs `endoSwitch`, 6 datasets, with and without weights | estimates 4e-8, log-likelihood 1e-13, treatment effects and conditional expectations 5e-5 |
+| sandwich, OPG and cluster standard errors vs the `sandwich` package | 7e-10 (2e-6 with weights) |
+
+**Explained differences.** Where the packages differ, the cause was
+established:
+
+- `endoSwitch` computes its standard errors from a numerical Hessian
+  (1-4% off).
+- The two-step variance recovery of both `sampleSelection` and
+  `endoSwitch2Stage()` is inconsistent. SwitchEconometrics uses Heckman's
+  (1979) consistent estimator.
+- On one misspecified example from the `sampleSelection` vignette, neither
+  package reaches a maximum. SwitchEconometrics reports this with
+  warnings.
+
+## A recovery check of your own
+
+`switch_simulate()` draws data from the model with chosen parameters, using
+your regressors. Refitting shows how well the parameters are recovered for
+a design like yours. Here we use the regressors of `firms` and its true
+parameters (`?firms`):
+
+```{r}
+sel <- digital_adoption ~ internet_access + management_quality + firm_size +
+  owner_education
+out <- list(regime_0 = productivity ~ firm_size + capital + labour,
+            regime_1 = productivity ~ firm_size + capital + labour)
+spec <- switch_model(sel, out)
+truth <- c(-2.1, 0.9, 0.5, 0.25, 0.06,
+           0.5, 0.05, 0.30, 0.10, 0.45, -0.25,
+           0.8, 0.08, 0.35, 0.10, 0.50, 0.45)
+sim <- switch_simulate(spec, firms, parameters = truth, seed = 42)
+refit <- switch_fit(model = spec, data = sim)
+round(cbind(truth, estimate = coef(refit),
+            z = (coef(refit) - truth) / sqrt(diag(vcov(refit)))), 3)
+```
+
+**A small Monte Carlo of your own design.** Repeating this gives the bias
+and the coverage for your sample size and regressors. Each FIML fit takes
+well under a second at N = 2000, so 200 replications take a few minutes:
+
+```{r, eval = FALSE}
+R <- 200
+res <- t(vapply(seq_len(R), function(r) {
+  d <- switch_simulate(spec, firms, parameters = truth, seed = r)
+  f <- switch_fit(model = spec, data = d, control = switch_control(starts = 1))
+  se <- sqrt(diag(vcov(f)))
+  c(est = coef(f), cover = abs(coef(f) - truth) <= qnorm(0.975) * se)
+}, numeric(2 * length(truth))))
+colMeans(res[, -seq_along(truth)])   # coverage per parameter
+```
+
+## References
+
+- Heckman, J. J. (1979). Sample selection bias as a specification error.
+  *Econometrica*, 47(1), 153-161.
+- Toomet, O. and Henningsen, A. (2008). Sample selection models in R:
+  package sampleSelection. *Journal of Statistical Software*, 27(7), 1-23.

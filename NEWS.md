@@ -1,3 +1,37 @@
+# SwitchEconometrics 0.9.0
+
+Generation 1, work package 1.9 (23 November 2026): documentation and CRAN
+preparation.
+
+## Documentation
+
+* Three vignettes:
+  - `classical-esr`: specification, identification checks, FIML and
+    two-step estimation, inference, bootstrap, diagnostics, and the
+    estimates against the true parameters of `firms`;
+  - `treatment-effects`: the four conditional expectations, ATT, ATU, ATE
+    and heterogeneity, delta-method and bootstrap standard errors, effects
+    by group and per unit, counterfactual and policy scenarios, and the
+    distribution of gains, which depends on the non-identified correlation;
+  - `simulation-validation`: the Monte Carlo and benchmark evidence,
+    including the coverage of the intervals below N = 1000 (owner's decision
+    in WP1.7) and of cluster-robust intervals with 100 clusters (WP1.8), and
+    a recovery check for the user's own design.
+* README rewritten for users. DESCRIPTION describes what this release does.
+  New `cran-comments.md`.
+* `?switch_fit` explains the default three starts and the boundary stop.
+
+## Output
+
+* `print()` of a specification aligns all labels ("Observation:",
+  "Dependence:").
+* `print()` of a fit no longer leaves a space before the closing
+  parenthesis of the version.
+* `print()` of effects omits the heterogeneity row when TH, BH1 and BH0 were
+  not requested.
+* `print()` of a Wald test of linear restrictions states them on the H0
+  line; the matrix form reads "R theta = r".
+
 # SwitchEconometrics 0.8.1
 
 Generation 1, work package 1.8, continued (23 November 2026). This release

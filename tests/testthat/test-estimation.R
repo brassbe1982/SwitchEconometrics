@@ -281,6 +281,7 @@ test_that("accessor methods and the reproducibility record", {
   expect_identical(nobs(f), 400L)
   expect_equal(AIC(f), -2 * f$loglik + 26)
   expect_output(print(f), "Endogenous switching regression")
+  expect_output(print(f), "\\(SwitchEconometrics [0-9.]+\\)")
   expect_output(print(f), "converged")
   rec <- f$record
   expect_true(all(c("date", "R", "packages", "control", "seed", "start",

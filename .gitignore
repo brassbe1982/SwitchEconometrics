@@ -6,6 +6,8 @@
 inst/doc
 /doc/
 /Meta/
+vignettes/*.html
+vignettes/*.R
 *.tar.gz
 *.Rcheck/
 tests/testthat/_problems/

@@ -178,7 +178,8 @@ switch_model <- function(selection, outcomes, regimes = 2L, model = "esr",
 
 #' @export
 format.switch_spec <- function(x, ...) {
-  lab <- c("Selection", x$regimes)
+  lab <- c("Model", "Observation", "Selection", "Dependence", "Excluded",
+           x$regimes)
   w <- max(nchar(lab)) + 2L
   pad <- function(s) formatC(paste0(s, ":"), width = -w)
   ex <- vapply(x$identification$exclusions, function(v)

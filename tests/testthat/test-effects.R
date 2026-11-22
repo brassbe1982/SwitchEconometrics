@@ -126,6 +126,10 @@ test_that("groups, subsets, weights and individual effects", {
   expect_error(switch_effects(f, effects = "LATE"),
                class = "switch_error_argument")
   expect_output(print(g), "group TRUE")
+  ## no empty heterogeneity row when TH, BH1 and BH0 are not requested
+  g2 <- switch_effects(f, effects = c("ATT", "ATU"))
+  expect_false(any(grepl("heterogeneity", capture.output(print(g2)))))
+  expect_output(print(switch_effects(f)), "heterogeneity")
   ## frequency weights equal replicated data
   set.seed(3); d$k <- sample(1:3, nrow(d), replace = TRUE)
   fw <- switch_fit(S ~ x1 + z1, fml, data = d, weights = ~ k)

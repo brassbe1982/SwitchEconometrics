@@ -1,25 +1,25 @@
 Package: SwitchEconometrics
 Type: Package
 Title: Unified Estimation of Endogenous Regime-Dependent Economic Systems
-Version: 0.8.1
+Version: 0.9.0
 Authors@R: c(
     person("Ibrahim", "Niankara", role = c("aut", "cre"),
            email = "Ibrahim.niankara@aau.ac.ae"),
     person("BRASS Digital Lab", role = "fnd",
            comment = "LLC registered in Burkina Faso, RCCM BF-OUA-01-2026-B13-02466; https://brassbe1982-bdlweb.share.connect.posit.cloud/"))
-Description: A unified framework for endogenous switching regression,
-    endogenous treatment, sample selection, multinomial switching,
-    copula-based dependence and longitudinal switching, built on one general
-    statistical model of regime selection and regime-specific outcomes.
-    The development versions build the classical binary endogenous switching
-    regression model (Lokshin and Sajaia (2004)
-    <doi:10.1177/1536867X0400400306>; Heckman (1979) <doi:10.2307/1912352>)
-    layer by layer: model specification, distribution and
-    parameter-transformation engines, the likelihood with analytic score and
-    Hessian, full-information maximum-likelihood and two-step estimators,
-    tests, bootstrap and identification diagnostics, and the treatment
-    effects (ATT, ATU, ATE and heterogeneity), counterfactual and policy
-    scenarios and simulation of the classical model.
+Description: Estimation and inference for the classical binary endogenous
+    switching regression model (Heckman (1979) <doi:10.2307/1912352>;
+    Lokshin and Sajaia (2004) <doi:10.1177/1536867X0400400306>), built on a
+    general model of regime selection and regime-specific outcomes that is
+    designed to extend to endogenous treatment, multinomial switching,
+    copula dependence and panel data. Provides full-information maximum
+    likelihood with an analytic gradient and Hessian, two-step estimation
+    with corrected covariances, Hessian, sandwich and cluster-robust
+    standard errors, bootstrap, likelihood-ratio and Wald tests,
+    identification diagnostics, treatment effects on the treated and
+    untreated with their heterogeneity (Di Falco, Veronesi and Yesuf (2011)
+    <doi:10.1093/ajae/aar006>), counterfactual and policy scenarios, and
+    simulation.
 License: MIT + file LICENSE
 Depends:
     R (>= 4.1.0)
@@ -28,9 +28,12 @@ Imports:
     parallel,
     stats
 Suggests:
+    knitr,
     numDeriv,
+    rmarkdown,
     sampleSelection,
     testthat (>= 3.0.0)
+VignetteBuilder: knitr
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
