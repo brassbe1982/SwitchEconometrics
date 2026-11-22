@@ -9,15 +9,17 @@ se_log_Phi <- function(a, lower.tail = TRUE) {
 }
 
 ## Inverse Mills ratio lambda(a) = phi(a) / Phi(a), computed in log space.
-se_mills <- function(a) {
-  exp(stats::dnorm(a, log = TRUE) - stats::pnorm(a, log.p = TRUE))
+## `log_Phi` may be passed when log Phi(a) is already known (the likelihood
+## kernel), so that pnorm() is evaluated once; the result is identical.
+se_mills <- function(a, log_Phi = stats::pnorm(a, log.p = TRUE)) {
+  exp(stats::dnorm(a, log = TRUE) - log_Phi)
 }
 
 ## a + lambda(a). For a <= -5 direct evaluation cancels, so the tail of the
 ## Laplace continued fraction is used:
 ##   a + lambda(a) = 1 / (x + 2 / (x + 3 / (x + ...))),  x = -a.
-se_a_plus_mills <- function(a) {
-  out <- a + se_mills(a)
+se_a_plus_mills <- function(a, lam = se_mills(a)) {
+  out <- a + lam
   neg <- !is.na(a) & is.finite(a) & a <= -5
   if (any(neg)) {
     x <- -a[neg]
@@ -29,8 +31,8 @@ se_a_plus_mills <- function(a) {
 }
 
 ## delta(a) = lambda(a) (a + lambda(a)) = -d lambda / d a, in (0, 1).
-se_delta <- function(a) {
-  out <- se_mills(a) * se_a_plus_mills(a)
+se_delta <- function(a, lam = se_mills(a)) {
+  out <- lam * se_a_plus_mills(a, lam)
   out[!is.na(a) & a == Inf] <- 0
   out[!is.na(a) & a == -Inf] <- 1
   out

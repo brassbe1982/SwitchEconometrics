@@ -41,7 +41,7 @@
 "E2","D6b","loglik at sampleSelection estimates (our function)",NA,NA,NA,NA,NA,-1665.93627818425,""
 "E2","D6b","loglik reported by sampleSelection",NA,NA,NA,NA,NA,-1665.93627818425,""
 "E2","D6b","max |gradient| at sampleSelection estimates (working scale)",NA,NA,NA,NA,NA,139.107407177996,""
-"E2","D6b","loglik at SwitchEconometrics end point",NA,NA,NA,NA,NA,-1428.77373449126,""
+"E2","D6b","loglik at SwitchEconometrics end point",NA,NA,NA,NA,NA,-1428.77373454042,""
 "E2","D6b","rho0, rho1 at SwitchEconometrics end point",NA,NA,NA,NA,NA,NA,"-1, 1"
 "E2","D6b","SwitchEconometrics convergence code",NA,NA,NA,NA,NA,1,""
 "E3","D6c","probit max |score| at ours",NA,NA,NA,NA,NA,3.1936259192733e-15,""

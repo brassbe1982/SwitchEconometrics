@@ -160,6 +160,21 @@ November 2026.
 - **Fix in SwitchEconometrics.** The benchmarks exposed one weakness in
   SwitchEconometrics: the probit's stopping rule. It was fixed in 0.8.0
   (BENCHMARK_G1.md section 6), and the benchmarks were rerun.
+- **0.8.1, at the owner's request.** Weighted and clustered fits were
+  added, each fixed before its run:
+  - D8, integer weights: compared with `sampleSelection` on replicated rows
+    and the `sandwich` package (`sampleSelection` ignores weights in
+    Tobit-5), and with `endoSwitch`'s `Weight`;
+  - D8b, continuous weights: compared with `endoSwitch` only;
+  - D9, clustered data: compared with `sampleSelection` and the `sandwich`
+    package;
+  - a Monte Carlo under clustering (`scripts/cluster_mc_g1.R`), because no
+    software computes two-step cluster-robust standard errors.
+
+  New documented difference **D-ES-2**: `endoSwitch` weights its
+  likelihood but not its effects. Outcome: 1275 of 1378 checks pass, and
+  all 103 differences are explained. AC3 is met with documented
+  differences (owner, 23 November 2026).
 
 ## 5. Later generations
 

@@ -77,8 +77,13 @@ estimated.
 
 \strong{FIML} maximises the exact log-likelihood with its analytic gradient and
 Hessian, by Newton-Raphson from the two-step estimate and further
-perturbed starts (\code{control}). Fallback optimisers are used if a run fails.
-The fit reports whether it converged (largest gradient component below
+perturbed starts (\code{control}; three starts by default, so that lower local
+maxima are detected; \code{switch_control(starts = 1)} runs one). Fallback
+optimisers are used if a run fails, except when the run ends with a
+correlation within \eqn{10^{-6}} of \eqn{\pm 1}: the log-likelihood then
+rises towards the boundary, the fallbacks would climb to the same
+boundary, and the path in \code{fit$convergence$path} ends with
+\code{"boundary-stop"}. The fit reports whether it converged (largest gradient component below
 \code{gradient_tolerance} and a negative definite Hessian), the multistart
 results and boundary flags. A failed optimisation returns the fit with a
 warning of class \code{switch_warning_convergence}; it never fails silently.

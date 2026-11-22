@@ -1,9 +1,14 @@
 # WP1.8: Cross-software benchmarks
 
-Version 0.8.0. Completed 23 November 2026. Status: **benchmarks run and
-reported. 1048 of 1145 checks pass, and every difference beyond tolerance
-is explained with evidence. AC3 is proposed as met with documented
-differences; the owner decides.**
+Versions 0.8.0 and 0.8.1. Completed 23 November 2026. Status: **benchmarks
+run and reported.**
+- 0.8.0: 1048 of 1145 checks pass, and every difference beyond tolerance
+  is explained with evidence.
+- 0.8.1 closes the three open items the owner named: weighted and
+  clustered fits, FIML speed, and the slow failure on D6b. Now 1275 of 1378
+  checks pass, and all differences are explained.
+- **AC3 is met with documented differences**: the owner approved this on
+  condition that these items were closed first.
 
 ## What was done
 
@@ -69,22 +74,47 @@ The owner's R libraries were not changed. The dependencies (`data.table`,
   environment only).
 - Under check, 631 pass and 4 are skipped on CRAN.
 
+## Version 0.8.1: the three open items (owner's request)
+
+| Item | What was done | Result |
+| --- | --- | --- |
+| Weighted and clustered fits not benchmarked | D8 (integer weights; `sampleSelection` on replicated rows with the `sandwich` package, and `endoSwitch` `Weight`); D8b (continuous weights, `endoSwitch`); D9 (clustered data, `sampleSelection` with `sandwich`); `scripts/cluster_mc_g1.R` (R = 500, 100 clusters) | 177/177 checks against `sampleSelection` with `sandwich`, the covariances to 2e-6. Weighted `endoSwitch` estimates 3.6e-8, but 6 standard errors are off by 1.3-3.4% (numerical Hessian). Monte Carlo: cluster SE ratios 0.93-1.04; two-step cluster coverage 0.93-0.96; FIML σ, ρ coverage 0.89-0.91 with 100 clusters (to the WP1.9 vignette). New documented difference D-ES-2 |
+| FIML 3-4 times slower than `sampleSelection` | Profiled: the default runs 3 starts, and each Newton iteration evaluated value, gradient and Hessian separately. Newton now takes the gradient from the Hessian evaluation, and the kernel reuses `pnorm()` | N = 10 000: default 2.56 → 1.22 s; one start 0.35 s against 0.83 s for `sampleSelection`. Benchmark results outside D6b unchanged |
+| D6b took 51-82 s | Every start ran every fallback optimiser up to ρ = ±1. Fallbacks are now skipped once a run ends within 1e-6 of ±1 (`boundary-stop` in the path) | 3.5 s, same end point and warnings; new test |
+
+The details are in BENCHMARK_G1.md sections 4.4, 4.5, 6.2 and 6.3.
+
+**Monte Carlo smoke test (0.8.1; design s.6), against 0.6.0:**
+- 200/200 FIML fits converge.
+- FIML estimates, standard errors and effects differ from 0.6.0 by at most
+  9e-9, and the log-likelihood by 2e-13. This is the optimiser tolerance:
+  the starting values moved slightly with the probit fix.
+- The two-step differs by at most 1.4e-6, from the probit fix.
+
+**Package check (0.8.1):**
+- Tests on the source: 643 expectations (5 new), 0 failures.
+- `R CMD check --as-cran`: 0 errors, 0 warnings, 1 NOTE (V8 absent,
+  environment only).
+- Under check, 631 pass and 5 are skipped on CRAN, including the new
+  boundary test.
+
 ## Not verified, and limits
 
-- Weighted and clustered fits were not benchmarked. (`endoSwitch` weights
-  its likelihood but not its effects.)
 - `endoSwitch`'s effect standard errors (paired t-tests of the
   predictions) are not comparable with our delta-method ones, so they were
   not compared.
-- On D6b our FIML fit took 51-82 s before reporting non-convergence. This
-  was not investigated further.
-- SwitchEconometrics FIML is about 3-4 times slower than `sampleSelection`
-  per fit.
-- Reporting D-SS-1 and D-ES-1 upstream is left to the owner.
+- **Cluster-robust intervals for FIML σ and ρ** cover 0.89-0.91 with 100
+  clusters. This goes into the WP1.9 vignette `simulation-validation`;
+  small-cluster corrections are a possible later extension.
+- **The default FIML fit** runs three starts, deliberately. It stays
+  1.5-3 times slower than a single-start fit in `sampleSelection`;
+  `switch_control(starts = 1)` matches or beats it at N ≥ 2000.
+- **The boundary stop** skips the fallbacks for a start that reaches
+  |ρ| = 1. An interior maximum reachable only by a fallback from that start
+  would be missed from that start; the other starts remain.
+- **Upstream reports** of D-SS-1, D-ES-1 and D-ES-2 are left to the owner.
 
 ## Next
-
-- The owner confirms AC3 (BENCHMARK_G1.md s.7).
 - WP1.9 (v0.9.0): vignettes `classical-esr`, `treatment-effects` and
   `simulation-validation`, the latter with the finite-sample coverage at
   N ≤ 1000. Also README, CRAN preparation, and GitHub Actions once the

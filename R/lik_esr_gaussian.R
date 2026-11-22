@@ -46,9 +46,10 @@ lik_esr_gaussian <- function(theta_w, sd, map, deriv = 0L,
     w <- w_all[sel]
     e <- drop(sd$y[sel] - X %*% theta_w[ib]) / sig
     a <- q * (w * cc + e * s)
-    ll[sel] <- -tau - 0.5 * log(2 * pi) - 0.5 * e^2 + se_log_Phi(a)
+    lp <- se_log_Phi(a)
+    ll[sel] <- -tau - 0.5 * log(2 * pi) - 0.5 * e^2 + lp
     if (deriv >= 1L) {
-      lam <- se_mills(a)
+      lam <- se_mills(a, lp)
       v <- w * s + e * cc
       G[sel, ig] <- (lam * q * cc) * Z
       G[sel, ib] <- ((e - lam * q * s) / sig) * X
@@ -56,7 +57,7 @@ lik_esr_gaussian <- function(theta_w, sd, map, deriv = 0L,
       G[sel, ia] <- lam * q * v
       if (deriv >= 2L) {
         om <- if (is.null(weights)) rep(1, sum(sel)) else weights[sel]
-        del <- se_delta(a)
+        del <- se_delta(a, lam)
         put(ig, ig, crossprod(Z, (om * -del * cc^2) * Z))
         put(ig, ib, crossprod(Z, (om * del * cc * s / sig) * X))
         put(ig, it, matrix(colSums((om * del * cc * s * e) * Z), ncol = 1L))

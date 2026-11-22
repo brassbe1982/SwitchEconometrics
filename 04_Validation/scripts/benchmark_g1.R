@@ -361,6 +361,139 @@ for (k in names(ds)) {
   }
 }
 
+## ------------------------------------------- weighted and clustered fits
+## (added in 0.8.1 at the owner's request; datasets and comparisons fixed
+## before the run). sampleSelection ignores weights in Tobit-5 models, so:
+##  D8   integer weights: our weighted fit against sampleSelection on the data
+##       with each row replicated w times. Our sampling-weight sandwich equals
+##       sandwich::vcovCL on the replicated data clustered by original row
+##       (HC0, no cluster adjustment); our cluster estimator equals vcovCL
+##       clustered by cluster (HC0, G/(G - 1)). Also endoSwitch's Weight.
+##  D8b  continuous weights: endoSwitch's Weight only.
+##  D9   clustered data (cluster components in x1, z1, u and the outcome
+##       noise), unweighted: our sandwich, OPG and cluster covariances
+##       against the sandwich package applied to sampleSelection's fit.
+suppressPackageStartupMessages(library(sandwich))
+gen_cluster <- function(seed, G = 100L, m = 20L) {
+  set.seed(seed)
+  N <- G * m; cl <- rep(seq_len(G), each = m)
+  cg <- function(share) sqrt(share) * rnorm(G)[cl] + sqrt(1 - share) * rnorm(N)
+  x1 <- cg(0.5); x2 <- rnorm(N); z1 <- cg(0.5); u <- cg(0.3)
+  e1 <- 0.6 * u + sqrt(1 - 0.36) * cg(0.3)
+  e0 <- 0.4 * u + sqrt(1 - 0.16) * cg(0.3)
+  S <- as.integer(0.5 + 0.3 * x1 - 0.4 * z1 + u > 0)
+  y <- ifelse(S == 1, 1.5 + 0.8 * x1 + 0.4 * x2 + e1, 1.0 + 0.5 * x1 + 0.2 * x2 + e0)
+  data.frame(S, y, x1, x2, z1, cl)
+}
+d8 <- gen_base(2000, seed0 + 8)
+set.seed(seed0 + 80); d8$w <- sample(1:3, nrow(d8), TRUE)
+d8$cl <- rep(1:100, each = 20)
+d8b <- gen_base(2000, seed0 + 9)
+set.seed(seed0 + 90); d8b$w <- runif(nrow(d8b), 0.5, 2)
+d9 <- gen_cluster(seed0 + 10)
+ds_wc <- list(
+  D8 = list(desc = "base design, N = 2000, integer weights 1-3 and 100 clusters", data = d8),
+  D8b = list(desc = "base design, N = 2000, continuous weights U(0.5, 2)", data = d8b),
+  D9 = list(desc = "clustered data, N = 2000 in 100 clusters (cluster share 0.5 in x1 and z1, 0.3 in the errors)",
+            data = d9))
+for (k in names(ds_wc)) saveRDS(ds_wc[[k]]$data, file.path(ddir, paste0(k, ".rds")))
+fwc <- function(d, ...) capture(switch_fit(S ~ x1 + z1, list(regime_0 = y ~ x1 + x2,
+                                                             regime_1 = y ~ x1 + x2),
+                                           data = d, ...))$value
+se_of <- function(V) sqrt(diag(V))
+cmp_se <- function(k, lab, what, so, st, nm) {
+  for (i in seq_along(nm)) add(k, lab, paste0("SE (", what, ") ", nm[i]), so[i], st[i], "se")
+}
+endo_X <- list(y = "y", s = "S", x = c("x1", "x2"), z = c("x1", "z1"))
+endo_pick <- function(r, e) {
+  b <- r$MLE.Results$estimate; dp <- r$distPar
+  s <- sqrt(diag(solve(-r$MLE.Results$hessian)))
+  ix <- function(v) c(v[c("Select.Const", paste0("Select.", e$z))],
+                      v[c("Outcome.0.Const", paste0("Outcome.0.", e$x))])
+  ix1 <- function(v) v[c("Outcome.1.Const", paste0("Outcome.1.", e$x))]
+  list(theta = c(ix(b), dp["Outcome.0.Sigma", 1], dp["Outcome.0.Rho", 1], ix1(b),
+                 dp["Outcome.1.Sigma", 1], dp["Outcome.1.Rho", 1]),
+       se = c(ix(s), dp["Outcome.0.Sigma", 2], dp["Outcome.0.Rho", 2], ix1(s),
+              dp["Outcome.1.Sigma", 2], dp["Outcome.1.Rho", 2]))
+}
+
+## D8: integer weights
+k <- "D8"; cat(k, ":", ds_wc[[k]]$desc, "\n")
+fw_h <- fwc(d8, weights = ~w, vcov = "hessian")
+fw_s <- fwc(d8, weights = ~w)
+fw_c <- fwc(d8, weights = ~w, cluster = ~cl)
+nm <- names(coef(fw_h))
+dx <- d8[rep(seq_len(nrow(d8)), d8$w), ]
+dx$id <- rep(seq_len(nrow(d8)), d8$w)
+ssx <- selection(S ~ x1 + z1, list(y ~ x1 + x2, y ~ x1 + x2), data = dx, method = "ml")
+lab <- "sampleSelection ML on replicated rows (+ sandwich package)"
+add(k, lab, "log-likelihood", fw_h$loglik, as.numeric(logLik(ssx)), "ll")
+thx <- as.numeric(coef(ssx))
+for (i in seq_along(nm)) add(k, lab, nm[i], coef(fw_h)[i], thx[i], "est")
+for (i in seq_along(nm)) add(k, lab, nm[i], coef(fw_s)[i], thx[i], "est",
+                             note = "fit with the default (sandwich) covariance")
+cmp_se(k, lab, "Hessian", se_of(vcov(fw_h)), se_of(vcov(ssx)), nm)
+cmp_se(k, lab, "sandwich", se_of(vcov(fw_s)),
+       se_of(vcovCL(ssx, cluster = dx$id, type = "HC0", cadjust = FALSE)), nm)
+cmp_se(k, lab, "cluster", se_of(vcov(fw_c)),
+       se_of(vcovCL(ssx, cluster = dx$cl, type = "HC0", cadjust = TRUE)), nm)
+eff_w <- our_effects(fw_h, coef(fw_h)); eff_wt <- our_effects(fw_h, thx)
+for (q in names(eff_w)) add(k, lab, paste(q, "(weighted)"), eff_w[[q]], eff_wt[[q]], "eff",
+                            note = "ours at both estimates")
+lab <- "endoSwitch FIML, weighted"
+re <- capture(endoSwitch(d8[, c("y", "S", "x1", "x2", "z1", "w")], "y", "S", c("x1", "x2"),
+                         c("x1", "z1"), Weight = "w", treatEffect = TRUE,
+                         control = list(reltol = 1e-14)))$value
+pe <- endo_pick(re, endo_X)
+add(k, lab, "log-likelihood", fw_h$loglik, re$MLE.Results$maximum, "ll")
+for (i in seq_along(nm)) add(k, lab, nm[i], coef(fw_h)[i], pe$theta[i], "est")
+cmp_se(k, lab, "Hessian", se_of(vcov(fw_h)), pe$se, nm)
+te <- re$treatEffect
+tatt <- as.numeric(te["A1", 3]); tatu <- as.numeric(te["A0", 3])
+## endoSwitch averages its effects without the weights: our weighted
+## effects differ by design, our unweighted formula at its estimates agrees
+f_unw <- fwc(d8)
+eff_u <- our_effects(f_unw, pe$theta)
+add(k, lab, "ATT (ours weighted vs theirs)", eff_w[["ATT"]], tatt, "doc",
+    status = "documented", note = "D-ES-2: endoSwitch averages effects without weights")
+add(k, lab, "ATU (ours weighted vs theirs)", eff_w[["ATU"]], tatu, "doc",
+    status = "documented", note = "D-ES-2")
+add(k, lab, "ATT (our unweighted formula at their estimates)", eff_u[["ATT"]], tatt, "eff",
+    note = "theirs rounded to 4 decimals")
+add(k, lab, "ATU (our unweighted formula at their estimates)", eff_u[["ATU"]], tatu, "eff",
+    note = "theirs rounded to 4 decimals")
+
+## D8b: continuous weights (endoSwitch only)
+k <- "D8b"; cat(k, ":", ds_wc[[k]]$desc, "\n")
+fb_h <- fwc(d8b, weights = ~w, vcov = "hessian")
+re <- capture(endoSwitch(d8b[, c("y", "S", "x1", "x2", "z1", "w")], "y", "S", c("x1", "x2"),
+                         c("x1", "z1"), Weight = "w", treatEffect = FALSE,
+                         control = list(reltol = 1e-14)))$value
+pe <- endo_pick(re, endo_X)
+lab <- "endoSwitch FIML, weighted"
+add(k, lab, "log-likelihood", fb_h$loglik, re$MLE.Results$maximum, "ll")
+for (i in seq_along(nm)) add(k, lab, nm[i], coef(fb_h)[i], pe$theta[i], "est")
+cmp_se(k, lab, "Hessian", se_of(vcov(fb_h)), pe$se, nm)
+
+## D9: clustered data, unweighted
+k <- "D9"; cat(k, ":", ds_wc[[k]]$desc, "\n")
+f9 <- list(hessian = fwc(d9, vcov = "hessian"), sandwich = fwc(d9, vcov = "sandwich"),
+           opg = fwc(d9, vcov = "opg"), cluster = fwc(d9, cluster = ~cl))
+ss9 <- selection(S ~ x1 + z1, list(y ~ x1 + x2, y ~ x1 + x2), data = d9, method = "ml")
+th9 <- as.numeric(coef(ss9))
+lab <- "sampleSelection ML + sandwich package"
+add(k, lab, "log-likelihood", f9$hessian$loglik, as.numeric(logLik(ss9)), "ll")
+for (i in seq_along(nm)) add(k, lab, nm[i], coef(f9$hessian)[i], th9[i], "est")
+cmp_se(k, lab, "Hessian", se_of(vcov(f9$hessian)), se_of(vcov(ss9)), nm)
+cmp_se(k, lab, "sandwich", se_of(vcov(f9$sandwich)), se_of(sandwich(ss9)), nm)
+cmp_se(k, lab, "OPG", se_of(vcov(f9$opg)), se_of(vcovOPG(ss9)), nm)
+cmp_se(k, lab, "cluster", se_of(vcov(f9$cluster)),
+       se_of(vcovCL(ss9, cluster = d9$cl, type = "HC0", cadjust = TRUE)), nm)
+for (q in c("sandwich", "opg", "cluster")) {
+  for (i in seq_along(nm)) add(k, lab, paste0(nm[i], " (fit with ", q, ")"),
+                               coef(f9[[q]])[i], th9[i], "est")
+}
+
 ## -------------------------------------------- D-ES-1: large-sample check
 ## Two-step variance recovery at n = 200 000 and 400 000 (truth sigma0 = 0.8,
 ## rho0 = 0.4, sigma1 = 1.2, rho1 = 0.6): SwitchEconometrics (Heckman 1979),
@@ -399,7 +532,7 @@ md <- c("# Benchmarks, Generation 1: generated tables",
         "| Package | Version |", "| --- | --- |",
         sprintf("| R | %s |", getRversion()),
         vapply(c("SwitchEconometrics", "sampleSelection", "endoSwitch", "maxLik",
-                 "mvtnorm", "data.table", "msm"),
+                 "sandwich", "mvtnorm", "data.table", "msm"),
                function(p) sprintf("| %s | %s |", p, packageVersion(p)), character(1)),
         "", "## Summary", "",
         "| Dataset | Benchmark | Checks | Passed | Failed | Documented differences |",
@@ -443,9 +576,10 @@ md <- c(md, "", "## Two-step variance recovery (D-ES-1, D-SS-1)", "",
         sprintf("| %d | %s | %.4f | %.4f | %.4f | %.4f |", consist$n, consist$estimator,
                 consist$sigma0, consist$rho0, consist$sigma1, consist$rho1))
 md <- c(md, "", "## Tables by dataset")
-for (k in names(ds)) {
+all_ds <- c(ds, ds_wc)
+for (k in names(all_ds)) {
   s <- res[res$dataset == k, ]
-  md <- c(md, "", sprintf("### %s: %s", k, ds[[k]]$desc), "",
+  md <- c(md, "", sprintf("### %s: %s", k, all_ds[[k]]$desc), "",
           "| Benchmark | Quantity | SwitchEconometrics | Benchmark value | Difference | Criterion | Status |",
           "| --- | --- | --- | --- | --- | --- | --- |",
           sprintf("| %s | %s | %s | %s | %s | %s | %s |", s$benchmark, s$quantity, fmt(s$ours),

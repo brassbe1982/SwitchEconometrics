@@ -1,3 +1,46 @@
+# SwitchEconometrics 0.8.1
+
+Generation 1, work package 1.8, continued (23 November 2026). This release
+closes the open items of the benchmarks, at the owner's request.
+
+## Improvements
+
+* **Faster FIML.**
+  - Newton-Raphson now obtains the gradient and the Hessian from one
+    likelihood evaluation, instead of separate ones.
+  - The likelihood kernel evaluates `pnorm()` once per regime.
+  - Results are unchanged. A default fit at N = 10 000 takes 1.2 s instead
+    of 2.6 s.
+  - With `switch_control(starts = 1)`, a fit is faster than
+    `sampleSelection`'s at N ≥ 2000. The default runs three starts to
+    detect lower local maxima; `?switch_fit` now says so.
+* **Boundary stop.** When an optimisation ends with a correlation within
+  1e-6 of +-1, the fallback optimisers are skipped for that start, and
+  `fit$convergence$path` ends with `"boundary-stop"`.
+  - Before, a misspecified example of the `sampleSelection` vignette ran
+    every fallback from every start to the same boundary, taking 51-82 s;
+    it now takes 3.5 s, with the same result and warnings.
+  - The fit still reports non-convergence and the boundary.
+
+## Validation
+
+* **Weighted and clustered fits** are now benchmarked
+  (`04_Validation/results/BENCHMARK_G1.md` s.4.4-4.5).
+  - Weighted estimates, log-likelihood, and Hessian, sandwich and cluster
+    standard errors equal `sampleSelection` on replicated rows combined
+    with the `sandwich` package (2e-6).
+  - Sandwich, OPG and cluster standard errors on clustered data equal the
+    `sandwich` package (7e-10).
+  - A Monte Carlo under clustering (100 clusters) supports the
+    cluster-robust standard errors of FIML and two-step: SE ratios
+    0.93-1.04. The FIML intervals for sigma and rho cover 0.89-0.91; the
+    vignettes (0.9.0) will say so.
+* 1275 of 1378 benchmark checks pass, and every difference is explained.
+  New documented difference D-ES-2: `endoSwitch` weights its likelihood but
+  not its effects.
+* **Acceptance criterion AC3 is met** with documented differences (owner,
+  23 November 2026).
+
 # SwitchEconometrics 0.8.0
 
 Generation 1, work package 1.8 (22-23 November 2026): cross-software
@@ -34,8 +77,8 @@ benchmarks against `sampleSelection` 1.2-16 and the archived `endoSwitch`
 * New documented difference D-ES-1: `endoSwitch2Stage()` recovers sigma
   and rho with an inconsistent formula, like `sampleSelection`'s two-step
   (D-SS-1).
-* Acceptance criterion AC3 is proposed as met with these documented
-  differences, for the owner to confirm.
+* Acceptance criterion AC3 was proposed as met with these documented
+  differences (confirmed in 0.8.1).
 
 # SwitchEconometrics 0.7.1
 

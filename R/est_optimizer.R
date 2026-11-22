@@ -15,10 +15,15 @@
 
 ## Objective on the free working parameters, with a one-point cache so that
 ## function, gradient and Hessian at the same point cost one evaluation.
+## Newton-Raphson asks for the gradient and then the Hessian at each accepted
+## point, so its gradient (gr2) evaluates both at once; other optimisers use
+## gr (gradient only).
 se_objective <- function(sd, map) {
   cache <- new.env(parent = emptyenv())
   free <- se_par_free(map)
   om <- sd$weights %||% rep(1, sd$n)
+  alpha_pos <- match(unlist(map$index$rho), free)
+  alpha_pos <- alpha_pos[!is.na(alpha_pos)]
   eval_at <- function(tf, deriv) {
     tf <- unname(tf)
     if (!is.null(cache$tf) && identical(cache$tf, tf) && cache$deriv >= deriv) {
@@ -35,7 +40,12 @@ se_objective <- function(sd, map) {
       if (is.finite(v)) v else NA_real_
     },
     gr = function(tf) unname(eval_at(tf, 1L)$gradient[free]),
+    gr2 = function(tf) unname(eval_at(tf, 2L)$gradient[free]),
     hs = function(tf) unname(eval_at(tf, 2L)$hessian[free, free, drop = FALSE]),
+    ## TRUE when a correlation is within 1e-6 of +-1 (working |alpha| > 7.25)
+    at_boundary = function(tf) {
+      length(alpha_pos) > 0L && any(abs(tanh(tf[alpha_pos])) > 1 - 1e-6)
+    },
     fn_i = function(tf) om * eval_at(tf, 0L)$ll_i,
     gr_i = function(tf) {
       unname((om * eval_at(tf, 1L)$score_i)[, free, drop = FALSE])
@@ -48,7 +58,7 @@ se_run_optimizer <- function(method, obj, start, control) {
   gt <- control$gradient_tolerance / 10
   out <- switch(method,
     NR = {
-      r <- maxLik::maxNR(obj$fn, obj$gr, obj$hs, start = start,
+      r <- maxLik::maxNR(obj$fn, obj$gr2, obj$hs, start = start,
                          finalHessian = FALSE,
                          control = list(tol = 1e-12, reltol = 0, gradtol = gt,
                                         iterlim = control$maxit,
@@ -110,6 +120,14 @@ se_check_optimum <- function(obj, tf, control) {
 ## Optimise from one start: primary optimiser, then fallbacks (each from the
 ## original start, polished by Newton-Raphson) until the convergence check
 ## passes. Returns the best result with its check and the optimiser path.
+##
+## Boundary stop: when a run ends with a correlation within 1e-6 of +-1, the
+## log-likelihood is increasing towards the boundary and the fallbacks climb
+## to the same boundary. They are then skipped for this start (the fit
+## still reports non-convergence and the boundary flag; other starts still
+## run). Without this, a misspecified example of the sampleSelection
+## vignette (WP1.8 benchmark D6b) took 51-82 s, running every fallback from
+## every start to the same boundary value (BENCHMARK_G1.md s.4.2).
 se_optimize <- function(obj, start, control) {
   methods <- unique(c(control$optimizer, "NR", "BFGS", "BHHH", "optim"))
   path <- character()
@@ -137,6 +155,10 @@ se_optimize <- function(obj, start, control) {
          isTRUE(res$check$loglik > best$check$loglik))
     if (better) best <- res
     if (res$check$code == 0L) break
+    if (isTRUE(obj$at_boundary(res$estimate))) {
+      path <- c(path, "boundary-stop")
+      break
+    }
   }
   if (is.null(best)) {
     best <- list(estimate = start, maximum = NA_real_, method = "none",

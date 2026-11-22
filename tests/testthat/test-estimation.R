@@ -76,6 +76,32 @@ test_that("the probit first stage is solved to machine precision", {
   expect_lt(max(abs(score)), 1e-8)
 })
 
+test_that("a likelihood rising to |rho| = 1 skips the fallback optimisers", {
+  ## misspecified errors (squared normals), as in the sampleSelection
+  ## vignette example that took 51-82 s before the boundary stop (WP1.8)
+  skip_on_cran()
+  set.seed(3)
+  n <- 400
+  R <- matrix(c(1, 0.9, 0.5, 0.9, 1, 0.1, 0.5, 0.1, 1), 3)
+  eps <- (matrix(rnorm(3 * n), n) %*% chol(R))^2 - 1
+  d <- data.frame(xs = runif(n, -1, 0), xo1 = runif(n), xo2 = runif(n))
+  d$ys <- d$xs + eps[, 1] > 0
+  d$yo1 <- d$xo1 + eps[, 2]
+  d$yo2 <- d$xo2 + eps[, 3]
+  ws <- character()
+  f <- withCallingHandlers(
+    switch_fit(ys ~ xs, list(regime_0 = yo1 ~ xo1, regime_1 = yo2 ~ xo2), data = d),
+    warning = function(w) {
+      ws <<- c(ws, conditionMessage(w))
+      invokeRestart("muffleWarning")
+    })
+  expect_true(any(grepl("did not converge", ws)))
+  expect_false(f$convergence$code == 0L)
+  expect_true("boundary-stop" %in% f$convergence$path)
+  expect_false(any(c("BFGS", "BHHH", "optim") %in% f$convergence$path))
+  expect_gt(max(abs(coef(f)[unlist(f$map$index$rho)])), 1 - 1e-6)
+})
+
 test_that("two-step model-based covariance equals the Heckman/Greene formula", {
   d <- sim_esr_data(800, seed = 4)
   ts <- switch_fit(S ~ x1 + z1, fml, data = d, method = "two_step")$two_step

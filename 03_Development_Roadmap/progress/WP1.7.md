@@ -90,7 +90,8 @@ The generated tables and CSV files come from this rerun.
   (AC4(b), one dataset each).
 - Sandwich and cluster standard errors were not evaluated under
   misspecification or clustering. The study's design is correctly
-  specified and independent.
+  specified and independent. (Clustering was evaluated later, in WP1.8:
+  BENCHMARK_G1.md s.4.5.)
 - The documentation does not yet tell users about finite-sample coverage at
   N ≤ 1000. This is carried to WP1.9 (vignette `simulation-validation`).
 

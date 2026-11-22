@@ -1,16 +1,17 @@
 # Benchmarks, Generation 1: generated tables
 
-Generated 2026-11-23 00:00 by `benchmark_g1.R`. Protocol and tolerances: BENCHMARK_PROTOCOL.md section 3.
+Generated 2026-11-23 00:47 by `benchmark_g1.R`. Protocol and tolerances: BENCHMARK_PROTOCOL.md section 3.
 
 ## Software
 
 | Package | Version |
 | --- | --- |
 | R | 4.6.2 |
-| SwitchEconometrics | 0.8.0 |
+| SwitchEconometrics | 0.8.1 |
 | sampleSelection | 1.2.16 |
 | endoSwitch | 1.0.0 |
 | maxLik | 1.6.10 |
+| sandwich | 3.1.3 |
 | mvtnorm | 1.4.2 |
 | data.table | 1.18.6.1 |
 | msm | 1.9 |
@@ -61,7 +62,11 @@ Generated 2026-11-23 00:00 by `benchmark_g1.R`. Protocol and tolerances: BENCHMA
 | D7b | endoSwitch FIML | 56 | 56 | 0 | 0 |
 | D7b | endoSwitch FIML (reltol 1e-14) | 56 | 55 | 1 | 0 |
 | D7b | endoSwitch two-stage | 19 | 14 | 5 | 4 |
-| **All** | | 1145 | 1048 | 97 | 68 |
+| D8 | sampleSelection ML on replicated rows (+ sandwich package) | 72 | 72 | 0 | 0 |
+| D8 | endoSwitch FIML, weighted | 29 | 25 | 4 | 2 |
+| D8b | endoSwitch FIML, weighted | 27 | 25 | 2 | 0 |
+| D9 | sampleSelection ML + sandwich package | 105 | 105 | 0 | 0 |
+| **All** | | 1378 | 1275 | 103 | 70 |
 
 ## Failed checks
 
@@ -107,16 +112,16 @@ Generated 2026-11-23 00:00 by `benchmark_g1.R`. Protocol and tolerances: BENCHMA
 | D6b | sampleSelection ML | regime_1:xo2 | 1.00134 | 1.11962 | -1.18e-01 | 1.06e-01 | |d| <= 1e-3 max(1, |theirs|) |
 | D6b | sampleSelection ML | regime_1:sigma | 3.19684 | 2.31432 | 8.83e-01 | 3.81e-01 | |d| <= 1e-3 max(1, |theirs|) |
 | D6b | sampleSelection ML | regime_1:rho |       1 | 0.170386 | 8.30e-01 | 8.30e-01 | |d| <= 1e-3 max(1, |theirs|) |
-| D6b | sampleSelection ML | SE selection:(Intercept) | 0.0351034 | 0.0580821 | -2.30e-02 | 3.96e-01 | |ours/theirs - 1| <= 0.01 |
-| D6b | sampleSelection ML | SE selection:xs | 1.71828e-05 | 0.0939452 | -9.39e-02 | 1.00e+00 | |ours/theirs - 1| <= 0.01 |
+| D6b | sampleSelection ML | SE selection:(Intercept) | 0.0351033 | 0.0580821 | -2.30e-02 | 3.96e-01 | |ours/theirs - 1| <= 0.01 |
+| D6b | sampleSelection ML | SE selection:xs | 1.71806e-05 | 0.0939452 | -9.39e-02 | 1.00e+00 | |ours/theirs - 1| <= 0.01 |
 | D6b | sampleSelection ML | SE regime_0:(Intercept) | 0.022801 | 0.0357325 | -1.29e-02 | 3.62e-01 | |ours/theirs - 1| <= 0.01 |
-| D6b | sampleSelection ML | SE regime_0:xo1 | 8.40312e-06 | 0.0562603 | -5.63e-02 | 1.00e+00 | |ours/theirs - 1| <= 0.01 |
+| D6b | sampleSelection ML | SE regime_0:xo1 | 8.4507e-06 | 0.0562603 | -5.63e-02 | 1.00e+00 | |ours/theirs - 1| <= 0.01 |
 | D6b | sampleSelection ML | SE regime_0:sigma | 0.0184666 | 0.017602 | 8.65e-04 | 4.91e-02 | |ours/theirs - 1| <= 0.01 |
-| D6b | sampleSelection ML | SE regime_0:rho | 3.58609e-16 |  |  |  | |ours/theirs - 1| <= 0.01 |
+| D6b | sampleSelection ML | SE regime_0:rho | 2.67811e-16 |  |  |  | |ours/theirs - 1| <= 0.01 |
 | D6b | sampleSelection ML | SE regime_1:(Intercept) | 0.137797 |  |  |  | |ours/theirs - 1| <= 0.01 |
-| D6b | sampleSelection ML | SE regime_1:xo2 | 6.57486e-06 | 0.501385 | -5.01e-01 | 1.00e+00 | |ours/theirs - 1| <= 0.01 |
+| D6b | sampleSelection ML | SE regime_1:xo2 | 6.52868e-06 | 0.501385 | -5.01e-01 | 1.00e+00 | |ours/theirs - 1| <= 0.01 |
 | D6b | sampleSelection ML | SE regime_1:sigma | 0.15754 | 0.0761466 | 8.14e-02 | 1.07e+00 | |ours/theirs - 1| <= 0.01 |
-| D6b | sampleSelection ML | SE regime_1:rho | 3.59514e-16 |  |  |  | |ours/theirs - 1| <= 0.01 |
+| D6b | sampleSelection ML | SE regime_1:rho | 2.23517e-16 |  |  |  | |ours/theirs - 1| <= 0.01 |
 | D6b | sampleSelection ML | ATT | 2.66576 | 2.33755 | 3.28e-01 | 1.40e-01 | |d| <= 1e-3 max(1, |theirs|) |
 | D6b | sampleSelection ML | ATU | -3.70767 | 0.519653 | -4.23e+00 | 4.23e+00 | |d| <= 1e-3 max(1, |theirs|) |
 | D6b | sampleSelection ML | ATE | -1.46351 | 0.963689 | -2.43e+00 | 2.43e+00 | |d| <= 1e-3 max(1, |theirs|) |
@@ -138,16 +143,16 @@ Generated 2026-11-23 00:00 by `benchmark_g1.R`. Protocol and tolerances: BENCHMA
 | D6b | sampleSelection ML (default iterations) | regime_1:xo2 | 1.00134 | 1.11962 | -1.18e-01 | 1.06e-01 | |d| <= 1e-3 max(1, |theirs|) |
 | D6b | sampleSelection ML (default iterations) | regime_1:sigma | 3.19684 | 2.31432 | 8.83e-01 | 3.81e-01 | |d| <= 1e-3 max(1, |theirs|) |
 | D6b | sampleSelection ML (default iterations) | regime_1:rho |       1 | 0.170386 | 8.30e-01 | 8.30e-01 | |d| <= 1e-3 max(1, |theirs|) |
-| D6b | sampleSelection ML (default iterations) | SE selection:(Intercept) | 0.0351034 | 0.0580821 | -2.30e-02 | 3.96e-01 | |ours/theirs - 1| <= 0.01 |
-| D6b | sampleSelection ML (default iterations) | SE selection:xs | 1.71828e-05 | 0.0939452 | -9.39e-02 | 1.00e+00 | |ours/theirs - 1| <= 0.01 |
+| D6b | sampleSelection ML (default iterations) | SE selection:(Intercept) | 0.0351033 | 0.0580821 | -2.30e-02 | 3.96e-01 | |ours/theirs - 1| <= 0.01 |
+| D6b | sampleSelection ML (default iterations) | SE selection:xs | 1.71806e-05 | 0.0939452 | -9.39e-02 | 1.00e+00 | |ours/theirs - 1| <= 0.01 |
 | D6b | sampleSelection ML (default iterations) | SE regime_0:(Intercept) | 0.022801 | 0.0357325 | -1.29e-02 | 3.62e-01 | |ours/theirs - 1| <= 0.01 |
-| D6b | sampleSelection ML (default iterations) | SE regime_0:xo1 | 8.40312e-06 | 0.0562603 | -5.63e-02 | 1.00e+00 | |ours/theirs - 1| <= 0.01 |
+| D6b | sampleSelection ML (default iterations) | SE regime_0:xo1 | 8.4507e-06 | 0.0562603 | -5.63e-02 | 1.00e+00 | |ours/theirs - 1| <= 0.01 |
 | D6b | sampleSelection ML (default iterations) | SE regime_0:sigma | 0.0184666 | 0.017602 | 8.65e-04 | 4.91e-02 | |ours/theirs - 1| <= 0.01 |
-| D6b | sampleSelection ML (default iterations) | SE regime_0:rho | 3.58609e-16 |  |  |  | |ours/theirs - 1| <= 0.01 |
+| D6b | sampleSelection ML (default iterations) | SE regime_0:rho | 2.67811e-16 |  |  |  | |ours/theirs - 1| <= 0.01 |
 | D6b | sampleSelection ML (default iterations) | SE regime_1:(Intercept) | 0.137797 |  |  |  | |ours/theirs - 1| <= 0.01 |
-| D6b | sampleSelection ML (default iterations) | SE regime_1:xo2 | 6.57486e-06 | 0.501385 | -5.01e-01 | 1.00e+00 | |ours/theirs - 1| <= 0.01 |
+| D6b | sampleSelection ML (default iterations) | SE regime_1:xo2 | 6.52868e-06 | 0.501385 | -5.01e-01 | 1.00e+00 | |ours/theirs - 1| <= 0.01 |
 | D6b | sampleSelection ML (default iterations) | SE regime_1:sigma | 0.15754 | 0.0761466 | 8.14e-02 | 1.07e+00 | |ours/theirs - 1| <= 0.01 |
-| D6b | sampleSelection ML (default iterations) | SE regime_1:rho | 3.59514e-16 |  |  |  | |ours/theirs - 1| <= 0.01 |
+| D6b | sampleSelection ML (default iterations) | SE regime_1:rho | 2.23517e-16 |  |  |  | |ours/theirs - 1| <= 0.01 |
 | D6b | sampleSelection ML (default iterations) | ATT | 2.66576 | 2.33755 | 3.28e-01 | 1.40e-01 | |d| <= 1e-3 max(1, |theirs|) |
 | D6b | sampleSelection ML (default iterations) | ATU | -3.70767 | 0.519653 | -4.23e+00 | 4.23e+00 | |d| <= 1e-3 max(1, |theirs|) |
 | D6b | sampleSelection ML (default iterations) | ATE | -1.46351 | 0.963689 | -2.43e+00 | 2.43e+00 | |d| <= 1e-3 max(1, |theirs|) |
@@ -164,68 +169,74 @@ Generated 2026-11-23 00:00 by `benchmark_g1.R`. Protocol and tolerances: BENCHMA
 | D7b | endoSwitch two-stage | selection:Perception | 2.17597 | 2.17596 | 6.17e-06 | 6.17e-06 | |d| <= 1e-6 |
 | D7b | endoSwitch two-stage | regime_0:Access_to_credit | 0.249967 | 0.249968 | -1.02e-06 | 1.02e-06 | |d| <= 1e-6 |
 | D7b | endoSwitch two-stage | regime_1:(Intercept) | 2.72785 | 2.72785 | -1.03e-06 | 1.03e-06 | |d| <= 1e-6 |
+| D8 | endoSwitch FIML, weighted | SE (Hessian) regime_0:(Intercept) | 0.106529 | 0.110323 | -3.79e-03 | 3.44e-02 | |ours/theirs - 1| <= 0.01 |
+| D8 | endoSwitch FIML, weighted | SE (Hessian) regime_0:x1 | 0.0331757 | 0.0336765 | -5.01e-04 | 1.49e-02 | |ours/theirs - 1| <= 0.01 |
+| D8 | endoSwitch FIML, weighted | SE (Hessian) regime_0:sigma | 0.0222223 | 0.0225179 | -2.96e-04 | 1.31e-02 | |ours/theirs - 1| <= 0.01 |
+| D8 | endoSwitch FIML, weighted | SE (Hessian) regime_0:rho | 0.103439 | 0.107046 | -3.61e-03 | 3.37e-02 | |ours/theirs - 1| <= 0.01 |
+| D8b | endoSwitch FIML, weighted | SE (Hessian) regime_0:(Intercept) | 0.0988983 | 0.100769 | -1.87e-03 | 1.86e-02 | |ours/theirs - 1| <= 0.01 |
+| D8b | endoSwitch FIML, weighted | SE (Hessian) regime_0:rho | 0.0940319 | 0.0957435 | -1.71e-03 | 1.79e-02 | |ours/theirs - 1| <= 0.01 |
 
 ## Fits
 
 | Dataset | N (regime 1) | Package | Time (s) | Convergence | Warnings |
 | --- | --- | --- | --- | --- | --- |
-| D1 | 500 (351) | SwitchEconometrics FIML | 0.33 | code 0 |  |
-| D1 | 500 (351) | sampleSelection ML | 0.08 | code 1, 5 iterations: gradient close to zero (gradtol) |  |
-| D1 | 500 (351) | sampleSelection two-step | 0.03 |  |  |
-| D1 | 500 (351) | endoSwitch FIML | 6.10 | code 0, 67 iterations: successful convergence  |  |
-| D1 | 500 (351) | endoSwitch FIML (reltol 1e-14) | 4.97 | code 0, 68 iterations: successful convergence  |  |
+| D1 | 500 (351) | SwitchEconometrics FIML | 0.28 | code 0 |  |
+| D1 | 500 (351) | sampleSelection ML | 0.10 | code 1, 5 iterations: gradient close to zero (gradtol) |  |
+| D1 | 500 (351) | sampleSelection two-step | 0.04 |  |  |
+| D1 | 500 (351) | endoSwitch FIML | 6.09 | code 0, 67 iterations: successful convergence  |  |
+| D1 | 500 (351) | endoSwitch FIML (reltol 1e-14) | 5.16 | code 0, 68 iterations: successful convergence  |  |
 | D1 | 500 (351) | endoSwitch two-stage | 0.02 |  |  |
-| D2 | 2000 (1355) | SwitchEconometrics FIML | 0.58 | code 0 |  |
-| D2 | 2000 (1355) | sampleSelection ML | 0.17 | code 8, 4 iterations: successive function values within relative tolerance limit (reltol) |  |
-| D2 | 2000 (1355) | sampleSelection two-step | 0.07 |  |  |
-| D2 | 2000 (1355) | endoSwitch FIML | 6.79 | code 0, 80 iterations: successful convergence  |  |
-| D2 | 2000 (1355) | endoSwitch FIML (reltol 1e-14) | 5.81 | code 0, 82 iterations: successful convergence  |  |
-| D2 | 2000 (1355) | endoSwitch two-stage | 0.03 |  |  |
-| D3 | 10000 (6767) | SwitchEconometrics FIML | 2.00 | code 0 |  |
-| D3 | 10000 (6767) | sampleSelection ML | 0.69 | code 8, 4 iterations: successive function values within relative tolerance limit (reltol) |  |
-| D3 | 10000 (6767) | sampleSelection two-step | 0.28 |  |  |
-| D3 | 10000 (6767) | endoSwitch FIML | 12.10 | code 0, 92 iterations: successful convergence  |  |
-| D3 | 10000 (6767) | endoSwitch FIML (reltol 1e-14) | 12.87 | code 0, 93 iterations: successful convergence  |  |
-| D3 | 10000 (6767) | endoSwitch two-stage | 0.06 |  |  |
-| D4 | 2000 (1350) | SwitchEconometrics FIML | 0.56 | code 0 |  |
-| D4 | 2000 (1350) | sampleSelection ML | 0.15 | code 8, 5 iterations: successive function values within relative tolerance limit (reltol) |  |
-| D4 | 2000 (1350) | sampleSelection two-step | 0.07 |  |  |
-| D4 | 2000 (1350) | endoSwitch FIML | 5.59 | code 0, 78 iterations: successful convergence  |  |
-| D4 | 2000 (1350) | endoSwitch FIML (reltol 1e-14) | 5.87 | code 0, 80 iterations: successful convergence  |  |
+| D2 | 2000 (1355) | SwitchEconometrics FIML | 0.40 | code 0 |  |
+| D2 | 2000 (1355) | sampleSelection ML | 0.19 | code 8, 4 iterations: successive function values within relative tolerance limit (reltol) |  |
+| D2 | 2000 (1355) | sampleSelection two-step | 0.08 |  |  |
+| D2 | 2000 (1355) | endoSwitch FIML | 6.25 | code 0, 80 iterations: successful convergence  |  |
+| D2 | 2000 (1355) | endoSwitch FIML (reltol 1e-14) | 6.81 | code 0, 82 iterations: successful convergence  |  |
+| D2 | 2000 (1355) | endoSwitch two-stage | 0.04 |  |  |
+| D3 | 10000 (6767) | SwitchEconometrics FIML | 1.18 | code 0 |  |
+| D3 | 10000 (6767) | sampleSelection ML | 0.80 | code 8, 4 iterations: successive function values within relative tolerance limit (reltol) |  |
+| D3 | 10000 (6767) | sampleSelection two-step | 0.35 |  |  |
+| D3 | 10000 (6767) | endoSwitch FIML | 13.80 | code 0, 92 iterations: successful convergence  |  |
+| D3 | 10000 (6767) | endoSwitch FIML (reltol 1e-14) | 15.31 | code 0, 93 iterations: successful convergence  |  |
+| D3 | 10000 (6767) | endoSwitch two-stage | 0.09 |  |  |
+| D4 | 2000 (1350) | SwitchEconometrics FIML | 0.40 | code 0 |  |
+| D4 | 2000 (1350) | sampleSelection ML | 0.20 | code 8, 5 iterations: successive function values within relative tolerance limit (reltol) |  |
+| D4 | 2000 (1350) | sampleSelection two-step | 0.09 |  |  |
+| D4 | 2000 (1350) | endoSwitch FIML | 6.42 | code 0, 78 iterations: successful convergence  |  |
+| D4 | 2000 (1350) | endoSwitch FIML (reltol 1e-14) | 7.52 | code 0, 80 iterations: successful convergence  |  |
 | D4 | 2000 (1350) | endoSwitch two-stage | 0.03 |  |  |
-| D5 | 3000 (1988) | SwitchEconometrics FIML | 0.53 | code 0 |  |
-| D5 | 3000 (1988) | sampleSelection ML | 0.23 | code 8, 4 iterations: successive function values within relative tolerance limit (reltol) |  |
-| D5 | 3000 (1988) | sampleSelection two-step | 0.11 |  |  |
-| D6a | 500 (328) | SwitchEconometrics FIML | 0.27 | code 0 |  |
-| D6a | 500 (328) | sampleSelection ML | 0.09 | code 1, 11 iterations: gradient close to zero (gradtol) |  |
+| D5 | 3000 (1988) | SwitchEconometrics FIML | 0.41 | code 0 |  |
+| D5 | 3000 (1988) | sampleSelection ML | 0.26 | code 8, 4 iterations: successive function values within relative tolerance limit (reltol) |  |
+| D5 | 3000 (1988) | sampleSelection two-step | 0.12 |  |  |
+| D6a | 500 (328) | SwitchEconometrics FIML | 0.24 | code 0 |  |
+| D6a | 500 (328) | sampleSelection ML | 0.11 | code 1, 11 iterations: gradient close to zero (gradtol) |  |
 | D6a | 500 (328) | sampleSelection two-step | 0.03 |  |  |
-| D6b | 1000 (240) | SwitchEconometrics FIML | 51.45 | code 1 | FIML did not converge: gradient not below tolerance (code 1); results are not reliable; estimated regime_0:rho, regime_1:rho at the boundary (/rho/ > 0.995): inference is unreliable; ill-conditioned Hessian (condition number 1.44e+19) |
-| D6b | 1000 (240) | sampleSelection ML | 0.09 | code 3, 4 iterations: Last step could not find a value above the current.
+| D6b | 1000 (240) | SwitchEconometrics FIML | 3.53 | code 1 | FIML did not converge: gradient not below tolerance (code 1); results are not reliable; estimated regime_0:rho, regime_1:rho at the boundary (/rho/ > 0.995): inference is unreliable; ill-conditioned Hessian (condition number 1.37e+19) |
+| D6b | 1000 (240) | sampleSelection ML | 0.13 | code 3, 4 iterations: Last step could not find a value above the current.
 Boundary of parameter space?  
 Consider switching to a more robust optimisation method temporarily. |  |
-| D6b | 1000 (240) | sampleSelection ML (default iterations) | 0.11 | code 3, 4 iterations: Last step could not find a value above the current.
+| D6b | 1000 (240) | sampleSelection ML (default iterations) | 0.13 | code 3, 4 iterations: Last step could not find a value above the current.
 Boundary of parameter space?  
 Consider switching to a more robust optimisation method temporarily. |  |
-| D6b | 1000 (240) | sampleSelection two-step | 0.05 |  |  |
-| D6c | 1000 (374) | SwitchEconometrics FIML | 0.46 | code 0 | Identification of rho for 'regime_0' depends entirely on the nonlinear functional form of the normal distribution: no variable in the selection equation is excluded from this outcome equation.; Identification of rho for 'regime_1' depends entirely on the nonlinear functional form of the normal distribution: no variable in the selection equation is excluded from this outcome equation.; two-step: estimated rho outside [-1, 1] for regime_0, regime_1; the two-step variance recovery is unreliable in this sample; estimated regime_0:rho, regime_1:rho at the boundary (/rho/ > 0.995): inference is unreliable; Identification of rho for 'regime_0' depends entirely on the nonlinear functional form of the normal distribution: no variable in the selection equation is excluded from this outcome equation.; Identification of rho for 'regime_1' depends entirely on the nonlinear functional form of the normal distribution: no variable in the selection equation is excluded from this outcome equation. |
-| D6c | 1000 (374) | sampleSelection ML | 0.15 | code 8, 16 iterations: successive function values within relative tolerance limit (reltol) |  |
-| D6c | 1000 (374) | sampleSelection ML (default iterations) | 0.17 | code 8, 16 iterations: successive function values within relative tolerance limit (reltol) |  |
+| D6b | 1000 (240) | sampleSelection two-step | 0.06 |  |  |
+| D6c | 1000 (374) | SwitchEconometrics FIML | 0.32 | code 0 | Identification of rho for 'regime_0' depends entirely on the nonlinear functional form of the normal distribution: no variable in the selection equation is excluded from this outcome equation.; Identification of rho for 'regime_1' depends entirely on the nonlinear functional form of the normal distribution: no variable in the selection equation is excluded from this outcome equation.; two-step: estimated rho outside [-1, 1] for regime_0, regime_1; the two-step variance recovery is unreliable in this sample; estimated regime_0:rho, regime_1:rho at the boundary (/rho/ > 0.995): inference is unreliable; Identification of rho for 'regime_0' depends entirely on the nonlinear functional form of the normal distribution: no variable in the selection equation is excluded from this outcome equation.; Identification of rho for 'regime_1' depends entirely on the nonlinear functional form of the normal distribution: no variable in the selection equation is excluded from this outcome equation. |
+| D6c | 1000 (374) | sampleSelection ML | 0.19 | code 8, 16 iterations: successive function values within relative tolerance limit (reltol) |  |
+| D6c | 1000 (374) | sampleSelection ML (default iterations) | 0.19 | code 8, 16 iterations: successive function values within relative tolerance limit (reltol) |  |
 | D6c | 1000 (374) | sampleSelection two-step | 0.05 |  |  |
-| D6d | 500 (334) | SwitchEconometrics FIML | 0.27 | code 0 |  |
-| D6d | 500 (334) | sampleSelection ML | 0.08 | code 8, 7 iterations: successive function values within relative tolerance limit (reltol) |  |
-| D6d | 500 (334) | sampleSelection two-step | 0.03 |  |  |
-| D7a | 408 (225) | SwitchEconometrics FIML | 0.23 | code 0 |  |
+| D6d | 500 (334) | SwitchEconometrics FIML | 0.25 | code 0 |  |
+| D6d | 500 (334) | sampleSelection ML | 0.10 | code 8, 7 iterations: successive function values within relative tolerance limit (reltol) |  |
+| D6d | 500 (334) | sampleSelection two-step | 0.05 |  |  |
+| D7a | 408 (225) | SwitchEconometrics FIML | 0.25 | code 0 |  |
 | D7a | 408 (225) | sampleSelection ML | 0.06 | code 8, 2 iterations: successive function values within relative tolerance limit (reltol) |  |
 | D7a | 408 (225) | sampleSelection two-step | 0.03 |  |  |
-| D7a | 408 (225) | endoSwitch FIML | 2.47 | code 0, 74 iterations: successful convergence  |  |
-| D7a | 408 (225) | endoSwitch FIML (reltol 1e-14) | 2.58 | code 0, 72 iterations: successful convergence  |  |
+| D7a | 408 (225) | endoSwitch FIML | 3.02 | code 0, 74 iterations: successful convergence  |  |
+| D7a | 408 (225) | endoSwitch FIML (reltol 1e-14) | 3.13 | code 0, 72 iterations: successful convergence  |  |
 | D7a | 408 (225) | endoSwitch two-stage | 0.02 |  |  |
-| D7b | 408 (225) | SwitchEconometrics FIML | 0.31 | code 0 |  |
-| D7b | 408 (225) | sampleSelection ML | 0.06 | code 8, 4 iterations: successive function values within relative tolerance limit (reltol) |  |
-| D7b | 408 (225) | sampleSelection two-step | 0.05 |  |  |
-| D7b | 408 (225) | endoSwitch FIML | 10.56 | code 0, 129 iterations: successful convergence  |  |
-| D7b | 408 (225) | endoSwitch FIML (reltol 1e-14) | 10.78 | code 0, 131 iterations: successful convergence  |  |
-| D7b | 408 (225) | endoSwitch two-stage | 0.03 |  |  |
+| D7b | 408 (225) | SwitchEconometrics FIML | 0.26 | code 0 |  |
+| D7b | 408 (225) | sampleSelection ML | 0.10 | code 8, 4 iterations: successive function values within relative tolerance limit (reltol) |  |
+| D7b | 408 (225) | sampleSelection two-step | 0.04 |  |  |
+| D7b | 408 (225) | endoSwitch FIML | 12.36 | code 0, 129 iterations: successful convergence  |  |
+| D7b | 408 (225) | endoSwitch FIML (reltol 1e-14) | 12.89 | code 0, 131 iterations: successful convergence  |  |
+| D7b | 408 (225) | endoSwitch two-stage | 0.01 |  |  |
 
 ## Two-step variance recovery (D-ES-1, D-SS-1)
 
@@ -967,16 +978,16 @@ Consider switching to a more robust optimisation method temporarily. |  |
 | sampleSelection ML | regime_1:xo2 | 1.00134 | 1.11962 | -1.18e-01 | 1.06e-01 | FAIL |
 | sampleSelection ML | regime_1:sigma | 3.19684 | 2.31432 | 8.83e-01 | 3.81e-01 | FAIL |
 | sampleSelection ML | regime_1:rho |       1 | 0.170386 | 8.30e-01 | 8.30e-01 | FAIL |
-| sampleSelection ML | SE selection:(Intercept) | 0.0351034 | 0.0580821 | -2.30e-02 | 3.96e-01 | FAIL |
-| sampleSelection ML | SE selection:xs | 1.71828e-05 | 0.0939452 | -9.39e-02 | 1.00e+00 | FAIL |
+| sampleSelection ML | SE selection:(Intercept) | 0.0351033 | 0.0580821 | -2.30e-02 | 3.96e-01 | FAIL |
+| sampleSelection ML | SE selection:xs | 1.71806e-05 | 0.0939452 | -9.39e-02 | 1.00e+00 | FAIL |
 | sampleSelection ML | SE regime_0:(Intercept) | 0.022801 | 0.0357325 | -1.29e-02 | 3.62e-01 | FAIL |
-| sampleSelection ML | SE regime_0:xo1 | 8.40312e-06 | 0.0562603 | -5.63e-02 | 1.00e+00 | FAIL |
+| sampleSelection ML | SE regime_0:xo1 | 8.4507e-06 | 0.0562603 | -5.63e-02 | 1.00e+00 | FAIL |
 | sampleSelection ML | SE regime_0:sigma | 0.0184666 | 0.017602 | 8.65e-04 | 4.91e-02 | FAIL |
-| sampleSelection ML | SE regime_0:rho | 3.58609e-16 |  |  |  | FAIL |
+| sampleSelection ML | SE regime_0:rho | 2.67811e-16 |  |  |  | FAIL |
 | sampleSelection ML | SE regime_1:(Intercept) | 0.137797 |  |  |  | FAIL |
-| sampleSelection ML | SE regime_1:xo2 | 6.57486e-06 | 0.501385 | -5.01e-01 | 1.00e+00 | FAIL |
+| sampleSelection ML | SE regime_1:xo2 | 6.52868e-06 | 0.501385 | -5.01e-01 | 1.00e+00 | FAIL |
 | sampleSelection ML | SE regime_1:sigma | 0.15754 | 0.0761466 | 8.14e-02 | 1.07e+00 | FAIL |
-| sampleSelection ML | SE regime_1:rho | 3.59514e-16 |  |  |  | FAIL |
+| sampleSelection ML | SE regime_1:rho | 2.23517e-16 |  |  |  | FAIL |
 | sampleSelection ML | ATT | 2.66576 | 2.33755 | 3.28e-01 | 1.40e-01 | FAIL |
 | sampleSelection ML | ATU | -3.70767 | 0.519653 | -4.23e+00 | 4.23e+00 | FAIL |
 | sampleSelection ML | ATE | -1.46351 | 0.963689 | -2.43e+00 | 2.43e+00 | FAIL |
@@ -998,16 +1009,16 @@ Consider switching to a more robust optimisation method temporarily. |  |
 | sampleSelection ML (default iterations) | regime_1:xo2 | 1.00134 | 1.11962 | -1.18e-01 | 1.06e-01 | FAIL |
 | sampleSelection ML (default iterations) | regime_1:sigma | 3.19684 | 2.31432 | 8.83e-01 | 3.81e-01 | FAIL |
 | sampleSelection ML (default iterations) | regime_1:rho |       1 | 0.170386 | 8.30e-01 | 8.30e-01 | FAIL |
-| sampleSelection ML (default iterations) | SE selection:(Intercept) | 0.0351034 | 0.0580821 | -2.30e-02 | 3.96e-01 | FAIL |
-| sampleSelection ML (default iterations) | SE selection:xs | 1.71828e-05 | 0.0939452 | -9.39e-02 | 1.00e+00 | FAIL |
+| sampleSelection ML (default iterations) | SE selection:(Intercept) | 0.0351033 | 0.0580821 | -2.30e-02 | 3.96e-01 | FAIL |
+| sampleSelection ML (default iterations) | SE selection:xs | 1.71806e-05 | 0.0939452 | -9.39e-02 | 1.00e+00 | FAIL |
 | sampleSelection ML (default iterations) | SE regime_0:(Intercept) | 0.022801 | 0.0357325 | -1.29e-02 | 3.62e-01 | FAIL |
-| sampleSelection ML (default iterations) | SE regime_0:xo1 | 8.40312e-06 | 0.0562603 | -5.63e-02 | 1.00e+00 | FAIL |
+| sampleSelection ML (default iterations) | SE regime_0:xo1 | 8.4507e-06 | 0.0562603 | -5.63e-02 | 1.00e+00 | FAIL |
 | sampleSelection ML (default iterations) | SE regime_0:sigma | 0.0184666 | 0.017602 | 8.65e-04 | 4.91e-02 | FAIL |
-| sampleSelection ML (default iterations) | SE regime_0:rho | 3.58609e-16 |  |  |  | FAIL |
+| sampleSelection ML (default iterations) | SE regime_0:rho | 2.67811e-16 |  |  |  | FAIL |
 | sampleSelection ML (default iterations) | SE regime_1:(Intercept) | 0.137797 |  |  |  | FAIL |
-| sampleSelection ML (default iterations) | SE regime_1:xo2 | 6.57486e-06 | 0.501385 | -5.01e-01 | 1.00e+00 | FAIL |
+| sampleSelection ML (default iterations) | SE regime_1:xo2 | 6.52868e-06 | 0.501385 | -5.01e-01 | 1.00e+00 | FAIL |
 | sampleSelection ML (default iterations) | SE regime_1:sigma | 0.15754 | 0.0761466 | 8.14e-02 | 1.07e+00 | FAIL |
-| sampleSelection ML (default iterations) | SE regime_1:rho | 3.59514e-16 |  |  |  | FAIL |
+| sampleSelection ML (default iterations) | SE regime_1:rho | 2.23517e-16 |  |  |  | FAIL |
 | sampleSelection ML (default iterations) | ATT | 2.66576 | 2.33755 | 3.28e-01 | 1.40e-01 | FAIL |
 | sampleSelection ML (default iterations) | ATU | -3.70767 | 0.519653 | -4.23e+00 | 4.23e+00 | FAIL |
 | sampleSelection ML (default iterations) | ATE | -1.46351 | 0.963689 | -2.43e+00 | 2.43e+00 | FAIL |
@@ -1509,3 +1520,253 @@ Consider switching to a more robust optimisation method temporarily. |  |
 | endoSwitch two-stage | regime_0:rho | 0.511074 | 0.518521 | -7.45e-03 |  | documented |
 | endoSwitch two-stage | regime_1:sigma | 0.697436 | 0.693405 | 4.03e-03 |  | documented |
 | endoSwitch two-stage | regime_1:rho | -0.319729 | -0.321589 | 1.86e-03 |  | documented |
+
+### D8: base design, N = 2000, integer weights 1-3 and 100 clusters
+
+| Benchmark | Quantity | SwitchEconometrics | Benchmark value | Difference | Criterion | Status |
+| --- | --- | --- | --- | --- | --- | --- |
+| sampleSelection ML on replicated rows (+ sandwich package) | log-likelihood | -7495.47 | -7495.47 | 2.18e-11 | 2.18e-11 | pass |
+| sampleSelection ML on replicated rows (+ sandwich package) | selection:(Intercept) | 0.511013 | 0.511013 | 5.30e-09 | 5.30e-09 | pass |
+| sampleSelection ML on replicated rows (+ sandwich package) | selection:x1 | 0.291896 | 0.291896 | -4.14e-09 | 4.14e-09 | pass |
+| sampleSelection ML on replicated rows (+ sandwich package) | selection:z1 | -0.438322 | -0.438322 | -1.40e-08 | 1.40e-08 | pass |
+| sampleSelection ML on replicated rows (+ sandwich package) | regime_0:(Intercept) | 0.821753 | 0.821753 | -6.01e-09 | 6.01e-09 | pass |
+| sampleSelection ML on replicated rows (+ sandwich package) | regime_0:x1 | 0.49117 | 0.49117 | -1.68e-09 | 1.68e-09 | pass |
+| sampleSelection ML on replicated rows (+ sandwich package) | regime_0:x2 | 0.147557 | 0.147557 | 2.47e-11 | 2.47e-11 | pass |
+| sampleSelection ML on replicated rows (+ sandwich package) | regime_0:sigma | 0.947257 | 0.947257 | -7.53e-10 | 7.53e-10 | pass |
+| sampleSelection ML on replicated rows (+ sandwich package) | regime_0:rho | 0.191291 | 0.191291 | -6.04e-09 | 6.04e-09 | pass |
+| sampleSelection ML on replicated rows (+ sandwich package) | regime_1:(Intercept) | 1.54296 | 1.54296 | 1.84e-07 | 1.19e-07 | pass |
+| sampleSelection ML on replicated rows (+ sandwich package) | regime_1:x1 | 0.786091 | 0.786091 | -4.34e-08 | 4.34e-08 | pass |
+| sampleSelection ML on replicated rows (+ sandwich package) | regime_1:x2 | 0.410955 | 0.410955 | 3.60e-10 | 3.60e-10 | pass |
+| sampleSelection ML on replicated rows (+ sandwich package) | regime_1:sigma | 0.982031 | 0.982031 | -7.15e-08 | 7.15e-08 | pass |
+| sampleSelection ML on replicated rows (+ sandwich package) | regime_1:rho | 0.538498 | 0.538499 | -3.61e-07 | 3.61e-07 | pass |
+| sampleSelection ML on replicated rows (+ sandwich package) | selection:(Intercept) | 0.511013 | 0.511013 | 5.30e-09 | 5.30e-09 | pass |
+| sampleSelection ML on replicated rows (+ sandwich package) | selection:x1 | 0.291896 | 0.291896 | -4.14e-09 | 4.14e-09 | pass |
+| sampleSelection ML on replicated rows (+ sandwich package) | selection:z1 | -0.438322 | -0.438322 | -1.40e-08 | 1.40e-08 | pass |
+| sampleSelection ML on replicated rows (+ sandwich package) | regime_0:(Intercept) | 0.821753 | 0.821753 | -6.01e-09 | 6.01e-09 | pass |
+| sampleSelection ML on replicated rows (+ sandwich package) | regime_0:x1 | 0.49117 | 0.49117 | -1.68e-09 | 1.68e-09 | pass |
+| sampleSelection ML on replicated rows (+ sandwich package) | regime_0:x2 | 0.147557 | 0.147557 | 2.47e-11 | 2.47e-11 | pass |
+| sampleSelection ML on replicated rows (+ sandwich package) | regime_0:sigma | 0.947257 | 0.947257 | -7.53e-10 | 7.53e-10 | pass |
+| sampleSelection ML on replicated rows (+ sandwich package) | regime_0:rho | 0.191291 | 0.191291 | -6.04e-09 | 6.04e-09 | pass |
+| sampleSelection ML on replicated rows (+ sandwich package) | regime_1:(Intercept) | 1.54296 | 1.54296 | 1.84e-07 | 1.19e-07 | pass |
+| sampleSelection ML on replicated rows (+ sandwich package) | regime_1:x1 | 0.786091 | 0.786091 | -4.34e-08 | 4.34e-08 | pass |
+| sampleSelection ML on replicated rows (+ sandwich package) | regime_1:x2 | 0.410955 | 0.410955 | 3.60e-10 | 3.60e-10 | pass |
+| sampleSelection ML on replicated rows (+ sandwich package) | regime_1:sigma | 0.982031 | 0.982031 | -7.15e-08 | 7.15e-08 | pass |
+| sampleSelection ML on replicated rows (+ sandwich package) | regime_1:rho | 0.538498 | 0.538499 | -3.61e-07 | 3.61e-07 | pass |
+| sampleSelection ML on replicated rows (+ sandwich package) | SE (Hessian) selection:(Intercept) | 0.0221404 | 0.0221404 | -1.32e-11 | 5.96e-10 | pass |
+| sampleSelection ML on replicated rows (+ sandwich package) | SE (Hessian) selection:x1 | 0.0221492 | 0.0221492 | 4.65e-10 | 2.10e-08 | pass |
+| sampleSelection ML on replicated rows (+ sandwich package) | SE (Hessian) selection:z1 | 0.0226111 | 0.0226111 | 7.95e-10 | 3.52e-08 | pass |
+| sampleSelection ML on replicated rows (+ sandwich package) | SE (Hessian) regime_0:(Intercept) | 0.106529 | 0.106529 | -3.36e-09 | 3.16e-08 | pass |
+| sampleSelection ML on replicated rows (+ sandwich package) | SE (Hessian) regime_0:x1 | 0.0331757 | 0.0331757 | -5.40e-10 | 1.63e-08 | pass |
+| sampleSelection ML on replicated rows (+ sandwich package) | SE (Hessian) regime_0:x2 | 0.0262906 | 0.0262906 | -2.59e-12 | 9.85e-11 | pass |
+| sampleSelection ML on replicated rows (+ sandwich package) | SE (Hessian) regime_0:sigma | 0.0222223 | 0.0222223 | -4.71e-10 | 2.12e-08 | pass |
+| sampleSelection ML on replicated rows (+ sandwich package) | SE (Hessian) regime_0:rho | 0.103439 | 0.103439 | -3.24e-09 | 3.14e-08 | pass |
+| sampleSelection ML on replicated rows (+ sandwich package) | SE (Hessian) regime_1:(Intercept) | 0.0383369 | 0.0383368 | 2.81e-08 | 7.34e-07 | pass |
+| sampleSelection ML on replicated rows (+ sandwich package) | SE (Hessian) regime_1:x1 | 0.0201358 | 0.0201358 | 2.46e-09 | 1.22e-07 | pass |
+| sampleSelection ML on replicated rows (+ sandwich package) | SE (Hessian) regime_1:x2 | 0.0173677 | 0.0173677 | 6.82e-10 | 3.93e-08 | pass |
+| sampleSelection ML on replicated rows (+ sandwich package) | SE (Hessian) regime_1:sigma | 0.0214753 | 0.0214753 | 3.06e-09 | 1.42e-07 | pass |
+| sampleSelection ML on replicated rows (+ sandwich package) | SE (Hessian) regime_1:rho | 0.0592823 | 0.0592822 | 7.92e-08 | 1.34e-06 | pass |
+| sampleSelection ML on replicated rows (+ sandwich package) | SE (sandwich) selection:(Intercept) | 0.0333615 | 0.0333615 | -4.51e-11 | 1.35e-09 | pass |
+| sampleSelection ML on replicated rows (+ sandwich package) | SE (sandwich) selection:x1 | 0.0337285 | 0.0337285 | 4.75e-10 | 1.41e-08 | pass |
+| sampleSelection ML on replicated rows (+ sandwich package) | SE (sandwich) selection:z1 | 0.0328215 | 0.0328215 | 6.91e-10 | 2.11e-08 | pass |
+| sampleSelection ML on replicated rows (+ sandwich package) | SE (sandwich) regime_0:(Intercept) | 0.164037 | 0.164037 | -5.55e-09 | 3.38e-08 | pass |
+| sampleSelection ML on replicated rows (+ sandwich package) | SE (sandwich) regime_0:x1 | 0.0503605 | 0.0503605 | -8.48e-10 | 1.68e-08 | pass |
+| sampleSelection ML on replicated rows (+ sandwich package) | SE (sandwich) regime_0:x2 | 0.0416797 | 0.0416797 | -1.16e-11 | 2.77e-10 | pass |
+| sampleSelection ML on replicated rows (+ sandwich package) | SE (sandwich) regime_0:sigma | 0.0321377 | 0.0321377 | -7.07e-10 | 2.20e-08 | pass |
+| sampleSelection ML on replicated rows (+ sandwich package) | SE (sandwich) regime_0:rho | 0.155481 | 0.155481 | -5.39e-09 | 3.46e-08 | pass |
+| sampleSelection ML on replicated rows (+ sandwich package) | SE (sandwich) regime_1:(Intercept) | 0.0550985 | 0.0550984 | 6.25e-08 | 1.13e-06 | pass |
+| sampleSelection ML on replicated rows (+ sandwich package) | SE (sandwich) regime_1:x1 | 0.0303176 | 0.0303176 | 4.76e-09 | 1.57e-07 | pass |
+| sampleSelection ML on replicated rows (+ sandwich package) | SE (sandwich) regime_1:x2 | 0.0258678 | 0.0258678 | 5.13e-11 | 1.98e-09 | pass |
+| sampleSelection ML on replicated rows (+ sandwich package) | SE (sandwich) regime_1:sigma | 0.0319688 | 0.0319688 | 1.77e-08 | 5.53e-07 | pass |
+| sampleSelection ML on replicated rows (+ sandwich package) | SE (sandwich) regime_1:rho | 0.0826463 | 0.0826462 | 1.61e-07 | 1.95e-06 | pass |
+| sampleSelection ML on replicated rows (+ sandwich package) | SE (cluster) selection:(Intercept) | 0.0346698 | 0.0346698 | -3.18e-10 | 9.18e-09 | pass |
+| sampleSelection ML on replicated rows (+ sandwich package) | SE (cluster) selection:x1 | 0.0333037 | 0.0333037 | 7.40e-10 | 2.22e-08 | pass |
+| sampleSelection ML on replicated rows (+ sandwich package) | SE (cluster) selection:z1 | 0.0330308 | 0.0330308 | 2.39e-09 | 7.23e-08 | pass |
+| sampleSelection ML on replicated rows (+ sandwich package) | SE (cluster) regime_0:(Intercept) | 0.176253 | 0.176253 | -5.03e-09 | 2.85e-08 | pass |
+| sampleSelection ML on replicated rows (+ sandwich package) | SE (cluster) regime_0:x1 | 0.0558187 | 0.0558187 | -7.53e-10 | 1.35e-08 | pass |
+| sampleSelection ML on replicated rows (+ sandwich package) | SE (cluster) regime_0:x2 | 0.0420528 | 0.0420528 | -1.60e-11 | 3.80e-10 | pass |
+| sampleSelection ML on replicated rows (+ sandwich package) | SE (cluster) regime_0:sigma | 0.0328597 | 0.0328597 | -9.21e-10 | 2.80e-08 | pass |
+| sampleSelection ML on replicated rows (+ sandwich package) | SE (cluster) regime_0:rho | 0.164604 | 0.164604 | -4.95e-09 | 3.01e-08 | pass |
+| sampleSelection ML on replicated rows (+ sandwich package) | SE (cluster) regime_1:(Intercept) | 0.0569264 | 0.0569264 | 6.79e-08 | 1.19e-06 | pass |
+| sampleSelection ML on replicated rows (+ sandwich package) | SE (cluster) regime_1:x1 | 0.027584 | 0.027584 | 5.42e-09 | 1.97e-07 | pass |
+| sampleSelection ML on replicated rows (+ sandwich package) | SE (cluster) regime_1:x2 | 0.0222999 | 0.0222999 | 1.20e-11 | 5.37e-10 | pass |
+| sampleSelection ML on replicated rows (+ sandwich package) | SE (cluster) regime_1:sigma | 0.0331725 | 0.0331725 | 2.00e-08 | 6.02e-07 | pass |
+| sampleSelection ML on replicated rows (+ sandwich package) | SE (cluster) regime_1:rho | 0.0879854 | 0.0879852 | 1.73e-07 | 1.97e-06 | pass |
+| sampleSelection ML on replicated rows (+ sandwich package) | ATT (weighted) | 0.931281 | 0.931281 | -5.92e-10 | 5.92e-10 | pass |
+| sampleSelection ML on replicated rows (+ sandwich package) | ATU (weighted) | 0.301212 | 0.301211 | 5.79e-07 | 5.79e-07 | pass |
+| sampleSelection ML on replicated rows (+ sandwich package) | ATE (weighted) | 0.72585 | 0.725849 | 1.89e-07 | 1.89e-07 | pass |
+| sampleSelection ML on replicated rows (+ sandwich package) | TH (weighted) | 0.630069 | 0.63007 | -5.80e-07 | 5.80e-07 | pass |
+| sampleSelection ML on replicated rows (+ sandwich package) | BH1 (weighted) | 1.09842 | 1.09842 | -5.89e-07 | 5.36e-07 | pass |
+| sampleSelection ML on replicated rows (+ sandwich package) | BH0 (weighted) | 0.468346 | 0.468346 | -9.45e-09 | 9.45e-09 | pass |
+| endoSwitch FIML, weighted | log-likelihood | -7495.47 | -7495.47 | 0.00e+00 | 0.00e+00 | pass |
+| endoSwitch FIML, weighted | selection:(Intercept) | 0.511013 | 0.511013 | 2.07e-10 | 2.07e-10 | pass |
+| endoSwitch FIML, weighted | selection:x1 | 0.291896 | 0.291896 | 2.32e-10 | 2.32e-10 | pass |
+| endoSwitch FIML, weighted | selection:z1 | -0.438322 | -0.438322 | 3.93e-10 | 3.93e-10 | pass |
+| endoSwitch FIML, weighted | regime_0:(Intercept) | 0.821753 | 0.821753 | 1.30e-08 | 1.30e-08 | pass |
+| endoSwitch FIML, weighted | regime_0:x1 | 0.49117 | 0.49117 | 7.70e-10 | 7.70e-10 | pass |
+| endoSwitch FIML, weighted | regime_0:x2 | 0.147557 | 0.147557 | -4.18e-10 | 4.18e-10 | pass |
+| endoSwitch FIML, weighted | regime_0:sigma | 0.947257 | 0.947257 | -1.87e-09 | 1.87e-09 | pass |
+| endoSwitch FIML, weighted | regime_0:rho | 0.191291 | 0.191291 | 1.03e-08 | 1.03e-08 | pass |
+| endoSwitch FIML, weighted | regime_1:(Intercept) | 1.54296 | 1.54296 | 1.29e-09 | 8.38e-10 | pass |
+| endoSwitch FIML, weighted | regime_1:x1 | 0.786091 | 0.786091 | 3.07e-10 | 3.07e-10 | pass |
+| endoSwitch FIML, weighted | regime_1:x2 | 0.410955 | 0.410955 | 4.56e-10 | 4.56e-10 | pass |
+| endoSwitch FIML, weighted | regime_1:sigma | 0.982031 | 0.982031 | 7.16e-10 | 7.16e-10 | pass |
+| endoSwitch FIML, weighted | regime_1:rho | 0.538498 | 0.538498 | -4.04e-09 | 4.04e-09 | pass |
+| endoSwitch FIML, weighted | SE (Hessian) selection:(Intercept) | 0.0221404 | 0.0221358 | 4.64e-06 | 2.10e-04 | pass |
+| endoSwitch FIML, weighted | SE (Hessian) selection:x1 | 0.0221492 | 0.0221502 | -1.01e-06 | 4.55e-05 | pass |
+| endoSwitch FIML, weighted | SE (Hessian) selection:z1 | 0.0226111 | 0.0226618 | -5.06e-05 | 2.24e-03 | pass |
+| endoSwitch FIML, weighted | SE (Hessian) regime_0:(Intercept) | 0.106529 | 0.110323 | -3.79e-03 | 3.44e-02 | FAIL |
+| endoSwitch FIML, weighted | SE (Hessian) regime_0:x1 | 0.0331757 | 0.0336765 | -5.01e-04 | 1.49e-02 | FAIL |
+| endoSwitch FIML, weighted | SE (Hessian) regime_0:x2 | 0.0262906 | 0.0262927 | -2.07e-06 | 7.89e-05 | pass |
+| endoSwitch FIML, weighted | SE (Hessian) regime_0:sigma | 0.0222223 | 0.0225179 | -2.96e-04 | 1.31e-02 | FAIL |
+| endoSwitch FIML, weighted | SE (Hessian) regime_0:rho | 0.103439 | 0.107046 | -3.61e-03 | 3.37e-02 | FAIL |
+| endoSwitch FIML, weighted | SE (Hessian) regime_1:(Intercept) | 0.0383369 | 0.0383681 | -3.12e-05 | 8.13e-04 | pass |
+| endoSwitch FIML, weighted | SE (Hessian) regime_1:x1 | 0.0201358 | 0.0201393 | -3.49e-06 | 1.73e-04 | pass |
+| endoSwitch FIML, weighted | SE (Hessian) regime_1:x2 | 0.0173677 | 0.0173673 | 3.59e-07 | 2.06e-05 | pass |
+| endoSwitch FIML, weighted | SE (Hessian) regime_1:sigma | 0.0214753 | 0.0214832 | -7.90e-06 | 3.68e-04 | pass |
+| endoSwitch FIML, weighted | SE (Hessian) regime_1:rho | 0.0592823 | 0.0593163 | -3.40e-05 | 5.73e-04 | pass |
+| endoSwitch FIML, weighted | ATT (ours weighted vs theirs) | 0.931281 |  0.9284 | 2.88e-03 |  | documented |
+| endoSwitch FIML, weighted | ATU (ours weighted vs theirs) | 0.301212 |  0.2958 | 5.41e-03 |  | documented |
+| endoSwitch FIML, weighted | ATT (our unweighted formula at their estimates) | 0.928384 |  0.9284 | -1.62e-05 | 1.62e-05 | pass |
+| endoSwitch FIML, weighted | ATU (our unweighted formula at their estimates) | 0.295777 |  0.2958 | -2.33e-05 | 2.33e-05 | pass |
+
+### D8b: base design, N = 2000, continuous weights U(0.5, 2)
+
+| Benchmark | Quantity | SwitchEconometrics | Benchmark value | Difference | Criterion | Status |
+| --- | --- | --- | --- | --- | --- | --- |
+| endoSwitch FIML, weighted | log-likelihood | -4724.98 | -4724.98 | 9.09e-13 | 9.09e-13 | pass |
+| endoSwitch FIML, weighted | selection:(Intercept) | 0.468663 | 0.468663 | 2.38e-09 | 2.38e-09 | pass |
+| endoSwitch FIML, weighted | selection:x1 | 0.280016 | 0.280016 | 5.00e-11 | 5.00e-11 | pass |
+| endoSwitch FIML, weighted | selection:z1 | -0.471992 | -0.471992 | -2.73e-09 | 2.73e-09 | pass |
+| endoSwitch FIML, weighted | regime_0:(Intercept) | 0.813297 | 0.813297 | -3.60e-08 | 3.60e-08 | pass |
+| endoSwitch FIML, weighted | regime_0:x1 | 0.450764 | 0.450764 | -5.47e-09 | 5.47e-09 | pass |
+| endoSwitch FIML, weighted | regime_0:x2 | 0.104655 | 0.104655 | -5.30e-09 | 5.30e-09 | pass |
+| endoSwitch FIML, weighted | regime_0:sigma | 0.941851 | 0.941851 | -2.89e-08 | 2.89e-08 | pass |
+| endoSwitch FIML, weighted | regime_0:rho | 0.301688 | 0.301688 | -2.52e-08 | 2.52e-08 | pass |
+| endoSwitch FIML, weighted | regime_1:(Intercept) | 1.55139 | 1.55139 | 1.99e-08 | 1.29e-08 | pass |
+| endoSwitch FIML, weighted | regime_1:x1 | 0.741154 | 0.741154 | -5.55e-09 | 5.55e-09 | pass |
+| endoSwitch FIML, weighted | regime_1:x2 | 0.38519 | 0.38519 | 5.59e-09 | 5.59e-09 | pass |
+| endoSwitch FIML, weighted | regime_1:sigma | 0.987676 | 0.987676 | -1.18e-08 | 1.18e-08 | pass |
+| endoSwitch FIML, weighted | regime_1:rho | 0.524395 | 0.524395 | -2.26e-08 | 2.26e-08 | pass |
+| endoSwitch FIML, weighted | SE (Hessian) selection:(Intercept) | 0.0278158 | 0.02783 | -1.42e-05 | 5.10e-04 | pass |
+| endoSwitch FIML, weighted | SE (Hessian) selection:x1 | 0.0271364 | 0.0271277 | 8.78e-06 | 3.24e-04 | pass |
+| endoSwitch FIML, weighted | SE (Hessian) selection:z1 | 0.0290581 | 0.0290873 | -2.92e-05 | 1.00e-03 | pass |
+| endoSwitch FIML, weighted | SE (Hessian) regime_0:(Intercept) | 0.0988983 | 0.100769 | -1.87e-03 | 1.86e-02 | FAIL |
+| endoSwitch FIML, weighted | SE (Hessian) regime_0:x1 | 0.034599 | 0.0348243 | -2.25e-04 | 6.47e-03 | pass |
+| endoSwitch FIML, weighted | SE (Hessian) regime_0:x2 | 0.0324326 | 0.0324389 | -6.23e-06 | 1.92e-04 | pass |
+| endoSwitch FIML, weighted | SE (Hessian) regime_0:sigma | 0.0288549 | 0.0290796 | -2.25e-04 | 7.72e-03 | pass |
+| endoSwitch FIML, weighted | SE (Hessian) regime_0:rho | 0.0940319 | 0.0957435 | -1.71e-03 | 1.79e-02 | FAIL |
+| endoSwitch FIML, weighted | SE (Hessian) regime_1:(Intercept) | 0.0503724 | 0.0504477 | -7.54e-05 | 1.49e-03 | pass |
+| endoSwitch FIML, weighted | SE (Hessian) regime_1:x1 | 0.025701 | 0.025737 | -3.60e-05 | 1.40e-03 | pass |
+| endoSwitch FIML, weighted | SE (Hessian) regime_1:x2 | 0.0232146 | 0.0232179 | -3.26e-06 | 1.40e-04 | pass |
+| endoSwitch FIML, weighted | SE (Hessian) regime_1:sigma | 0.0273734 | 0.0274164 | -4.30e-05 | 1.57e-03 | pass |
+| endoSwitch FIML, weighted | SE (Hessian) regime_1:rho | 0.0759182 | 0.0761301 | -2.12e-04 | 2.78e-03 | pass |
+
+### D9: clustered data, N = 2000 in 100 clusters (cluster share 0.5 in x1 and z1, 0.3 in the errors)
+
+| Benchmark | Quantity | SwitchEconometrics | Benchmark value | Difference | Criterion | Status |
+| --- | --- | --- | --- | --- | --- | --- |
+| sampleSelection ML + sandwich package | log-likelihood | -3883.92 | -3883.92 | 0.00e+00 | 0.00e+00 | pass |
+| sampleSelection ML + sandwich package | selection:(Intercept) | 0.484565 | 0.484565 | 7.83e-13 | 7.83e-13 | pass |
+| sampleSelection ML + sandwich package | selection:x1 | 0.268508 | 0.268508 | -4.95e-13 | 4.95e-13 | pass |
+| sampleSelection ML + sandwich package | selection:z1 | -0.397478 | -0.397478 | -6.17e-12 | 6.17e-12 | pass |
+| sampleSelection ML + sandwich package | regime_0:(Intercept) | 0.948236 | 0.948236 | -5.14e-12 | 5.14e-12 | pass |
+| sampleSelection ML + sandwich package | regime_0:x1 | 0.427323 | 0.427323 | -9.87e-13 | 9.87e-13 | pass |
+| sampleSelection ML + sandwich package | regime_0:x2 | 0.233003 | 0.233003 | 1.06e-14 | 1.06e-14 | pass |
+| sampleSelection ML + sandwich package | regime_0:sigma | 1.02041 | 1.02041 | -9.68e-13 | 9.49e-13 | pass |
+| sampleSelection ML + sandwich package | regime_0:rho | 0.300763 | 0.300763 | -4.35e-12 | 4.35e-12 | pass |
+| sampleSelection ML + sandwich package | regime_1:(Intercept) | 1.39636 | 1.39636 | 4.91e-11 | 3.51e-11 | pass |
+| sampleSelection ML + sandwich package | regime_1:x1 | 0.764816 | 0.764816 | -1.17e-11 | 1.17e-11 | pass |
+| sampleSelection ML + sandwich package | regime_1:x2 | 0.37852 | 0.37852 | -9.27e-15 | 9.27e-15 | pass |
+| sampleSelection ML + sandwich package | regime_1:sigma | 1.05726 | 1.05726 | -2.83e-11 | 2.68e-11 | pass |
+| sampleSelection ML + sandwich package | regime_1:rho | 0.685603 | 0.685603 | -7.86e-11 | 7.86e-11 | pass |
+| sampleSelection ML + sandwich package | SE (Hessian) selection:(Intercept) | 0.0305453 | 0.0305453 | -8.94e-15 | 2.93e-13 | pass |
+| sampleSelection ML + sandwich package | SE (Hessian) selection:x1 | 0.0297678 | 0.0297678 | 1.50e-13 | 5.03e-12 | pass |
+| sampleSelection ML + sandwich package | SE (Hessian) selection:z1 | 0.0322728 | 0.0322728 | 1.06e-12 | 3.29e-11 | pass |
+| sampleSelection ML + sandwich package | SE (Hessian) regime_0:(Intercept) | 0.191634 | 0.191634 | -2.83e-12 | 1.48e-11 | pass |
+| sampleSelection ML + sandwich package | SE (Hessian) regime_0:x1 | 0.0485285 | 0.0485285 | -3.65e-13 | 7.51e-12 | pass |
+| sampleSelection ML + sandwich package | SE (Hessian) regime_0:x2 | 0.0391705 | 0.0391705 | 6.11e-16 | 1.55e-14 | pass |
+| sampleSelection ML + sandwich package | SE (Hessian) regime_0:sigma | 0.0447011 | 0.0447011 | -8.59e-13 | 1.92e-11 | pass |
+| sampleSelection ML + sandwich package | SE (Hessian) regime_0:rho | 0.162802 | 0.162802 | -1.98e-12 | 1.22e-11 | pass |
+| sampleSelection ML + sandwich package | SE (Hessian) regime_1:(Intercept) | 0.0529975 | 0.0529975 | 1.31e-11 | 2.48e-10 | pass |
+| sampleSelection ML + sandwich package | SE (Hessian) regime_1:x1 | 0.0296962 | 0.0296962 | 1.02e-12 | 3.44e-11 | pass |
+| sampleSelection ML + sandwich package | SE (Hessian) regime_1:x2 | 0.0251018 | 0.0251018 | 2.37e-13 | 9.43e-12 | pass |
+| sampleSelection ML + sandwich package | SE (Hessian) regime_1:sigma | 0.0361944 | 0.0361944 | 5.02e-12 | 1.39e-10 | pass |
+| sampleSelection ML + sandwich package | SE (Hessian) regime_1:rho | 0.0638728 | 0.0638728 | 3.05e-11 | 4.78e-10 | pass |
+| sampleSelection ML + sandwich package | SE (sandwich) selection:(Intercept) | 0.0307101 | 0.0307101 | -3.72e-14 | 1.21e-12 | pass |
+| sampleSelection ML + sandwich package | SE (sandwich) selection:x1 | 0.0304112 | 0.0304112 | 1.35e-13 | 4.45e-12 | pass |
+| sampleSelection ML + sandwich package | SE (sandwich) selection:z1 | 0.0320514 | 0.0320514 | 9.12e-13 | 2.84e-11 | pass |
+| sampleSelection ML + sandwich package | SE (sandwich) regime_0:(Intercept) | 0.193807 | 0.193807 | -2.96e-12 | 1.53e-11 | pass |
+| sampleSelection ML + sandwich package | SE (sandwich) regime_0:x1 | 0.0495402 | 0.0495402 | -3.85e-13 | 7.77e-12 | pass |
+| sampleSelection ML + sandwich package | SE (sandwich) regime_0:x2 | 0.0380922 | 0.0380922 | -1.10e-15 | 2.90e-14 | pass |
+| sampleSelection ML + sandwich package | SE (sandwich) regime_0:sigma | 0.0439792 | 0.0439792 | -8.81e-13 | 2.00e-11 | pass |
+| sampleSelection ML + sandwich package | SE (sandwich) regime_0:rho | 0.165075 | 0.165075 | -2.11e-12 | 1.28e-11 | pass |
+| sampleSelection ML + sandwich package | SE (sandwich) regime_1:(Intercept) | 0.0538188 | 0.0538188 | 1.96e-11 | 3.65e-10 | pass |
+| sampleSelection ML + sandwich package | SE (sandwich) regime_1:x1 | 0.030081 | 0.030081 | 1.70e-12 | 5.67e-11 | pass |
+| sampleSelection ML + sandwich package | SE (sandwich) regime_1:x2 | 0.0244063 | 0.0244063 | 4.62e-14 | 1.89e-12 | pass |
+| sampleSelection ML + sandwich package | SE (sandwich) regime_1:sigma | 0.0354378 | 0.0354378 | 1.00e-11 | 2.83e-10 | pass |
+| sampleSelection ML + sandwich package | SE (sandwich) regime_1:rho | 0.062113 | 0.062113 | 4.05e-11 | 6.52e-10 | pass |
+| sampleSelection ML + sandwich package | SE (OPG) selection:(Intercept) | 0.0304533 | 0.0304533 | 1.61e-14 | 5.30e-13 | pass |
+| sampleSelection ML + sandwich package | SE (OPG) selection:x1 | 0.029274 | 0.029274 | 1.87e-13 | 6.38e-12 | pass |
+| sampleSelection ML + sandwich package | SE (OPG) selection:z1 | 0.0327795 | 0.0327795 | 1.05e-12 | 3.21e-11 | pass |
+| sampleSelection ML + sandwich package | SE (OPG) regime_0:(Intercept) | 0.190866 | 0.190866 | -2.68e-12 | 1.41e-11 | pass |
+| sampleSelection ML + sandwich package | SE (OPG) regime_0:x1 | 0.0476705 | 0.0476705 | -3.42e-13 | 7.18e-12 | pass |
+| sampleSelection ML + sandwich package | SE (OPG) regime_0:x2 | 0.0407383 | 0.0407383 | 2.84e-15 | 6.99e-14 | pass |
+| sampleSelection ML + sandwich package | SE (OPG) regime_0:sigma | 0.0456439 | 0.0456439 | -8.36e-13 | 1.83e-11 | pass |
+| sampleSelection ML + sandwich package | SE (OPG) regime_0:rho | 0.161907 | 0.161907 | -1.83e-12 | 1.13e-11 | pass |
+| sampleSelection ML + sandwich package | SE (OPG) regime_1:(Intercept) | 0.052506 | 0.052506 | 6.39e-12 | 1.22e-10 | pass |
+| sampleSelection ML + sandwich package | SE (OPG) regime_1:x1 | 0.0294512 | 0.0294512 | 3.89e-13 | 1.32e-11 | pass |
+| sampleSelection ML + sandwich package | SE (OPG) regime_1:x2 | 0.025849 | 0.025849 | 4.38e-13 | 1.70e-11 | pass |
+| sampleSelection ML + sandwich package | SE (OPG) regime_1:sigma | 0.0372553 | 0.0372553 | -2.17e-13 | 5.83e-12 | pass |
+| sampleSelection ML + sandwich package | SE (OPG) regime_1:rho | 0.0661504 | 0.0661504 | 2.02e-11 | 3.05e-10 | pass |
+| sampleSelection ML + sandwich package | SE (cluster) selection:(Intercept) | 0.0621488 | 0.0621488 | -3.13e-14 | 5.03e-13 | pass |
+| sampleSelection ML + sandwich package | SE (cluster) selection:x1 | 0.0517358 | 0.0517358 | 2.05e-13 | 3.97e-12 | pass |
+| sampleSelection ML + sandwich package | SE (cluster) selection:z1 | 0.0429743 | 0.0429743 | 1.30e-12 | 3.02e-11 | pass |
+| sampleSelection ML + sandwich package | SE (cluster) regime_0:(Intercept) | 0.253008 | 0.253008 | -3.47e-12 | 1.37e-11 | pass |
+| sampleSelection ML + sandwich package | SE (cluster) regime_0:x1 | 0.0760304 | 0.0760304 | -5.03e-13 | 6.62e-12 | pass |
+| sampleSelection ML + sandwich package | SE (cluster) regime_0:x2 | 0.0345852 | 0.0345852 | -9.92e-16 | 2.86e-14 | pass |
+| sampleSelection ML + sandwich package | SE (cluster) regime_0:sigma | 0.0514383 | 0.0514383 | -1.04e-12 | 2.03e-11 | pass |
+| sampleSelection ML + sandwich package | SE (cluster) regime_0:rho | 0.200609 | 0.200609 | -2.57e-12 | 1.28e-11 | pass |
+| sampleSelection ML + sandwich package | SE (cluster) regime_1:(Intercept) | 0.0923142 | 0.0923142 | 2.43e-11 | 2.64e-10 | pass |
+| sampleSelection ML + sandwich package | SE (cluster) regime_1:x1 | 0.0622395 | 0.0622395 | 2.81e-12 | 4.52e-11 | pass |
+| sampleSelection ML + sandwich package | SE (cluster) regime_1:x2 | 0.02396 | 0.02396 | 2.03e-14 | 8.46e-13 | pass |
+| sampleSelection ML + sandwich package | SE (cluster) regime_1:sigma | 0.0550999 | 0.0550999 | 1.47e-11 | 2.67e-10 | pass |
+| sampleSelection ML + sandwich package | SE (cluster) regime_1:rho | 0.0850731 | 0.0850731 | 5.78e-11 | 6.79e-10 | pass |
+| sampleSelection ML + sandwich package | selection:(Intercept) (fit with sandwich) | 0.484565 | 0.484565 | 7.83e-13 | 7.83e-13 | pass |
+| sampleSelection ML + sandwich package | selection:x1 (fit with sandwich) | 0.268508 | 0.268508 | -4.95e-13 | 4.95e-13 | pass |
+| sampleSelection ML + sandwich package | selection:z1 (fit with sandwich) | -0.397478 | -0.397478 | -6.17e-12 | 6.17e-12 | pass |
+| sampleSelection ML + sandwich package | regime_0:(Intercept) (fit with sandwich) | 0.948236 | 0.948236 | -5.14e-12 | 5.14e-12 | pass |
+| sampleSelection ML + sandwich package | regime_0:x1 (fit with sandwich) | 0.427323 | 0.427323 | -9.87e-13 | 9.87e-13 | pass |
+| sampleSelection ML + sandwich package | regime_0:x2 (fit with sandwich) | 0.233003 | 0.233003 | 1.06e-14 | 1.06e-14 | pass |
+| sampleSelection ML + sandwich package | regime_0:sigma (fit with sandwich) | 1.02041 | 1.02041 | -9.68e-13 | 9.49e-13 | pass |
+| sampleSelection ML + sandwich package | regime_0:rho (fit with sandwich) | 0.300763 | 0.300763 | -4.35e-12 | 4.35e-12 | pass |
+| sampleSelection ML + sandwich package | regime_1:(Intercept) (fit with sandwich) | 1.39636 | 1.39636 | 4.91e-11 | 3.51e-11 | pass |
+| sampleSelection ML + sandwich package | regime_1:x1 (fit with sandwich) | 0.764816 | 0.764816 | -1.17e-11 | 1.17e-11 | pass |
+| sampleSelection ML + sandwich package | regime_1:x2 (fit with sandwich) | 0.37852 | 0.37852 | -9.27e-15 | 9.27e-15 | pass |
+| sampleSelection ML + sandwich package | regime_1:sigma (fit with sandwich) | 1.05726 | 1.05726 | -2.83e-11 | 2.68e-11 | pass |
+| sampleSelection ML + sandwich package | regime_1:rho (fit with sandwich) | 0.685603 | 0.685603 | -7.86e-11 | 7.86e-11 | pass |
+| sampleSelection ML + sandwich package | selection:(Intercept) (fit with opg) | 0.484565 | 0.484565 | 7.83e-13 | 7.83e-13 | pass |
+| sampleSelection ML + sandwich package | selection:x1 (fit with opg) | 0.268508 | 0.268508 | -4.95e-13 | 4.95e-13 | pass |
+| sampleSelection ML + sandwich package | selection:z1 (fit with opg) | -0.397478 | -0.397478 | -6.17e-12 | 6.17e-12 | pass |
+| sampleSelection ML + sandwich package | regime_0:(Intercept) (fit with opg) | 0.948236 | 0.948236 | -5.14e-12 | 5.14e-12 | pass |
+| sampleSelection ML + sandwich package | regime_0:x1 (fit with opg) | 0.427323 | 0.427323 | -9.87e-13 | 9.87e-13 | pass |
+| sampleSelection ML + sandwich package | regime_0:x2 (fit with opg) | 0.233003 | 0.233003 | 1.06e-14 | 1.06e-14 | pass |
+| sampleSelection ML + sandwich package | regime_0:sigma (fit with opg) | 1.02041 | 1.02041 | -9.68e-13 | 9.49e-13 | pass |
+| sampleSelection ML + sandwich package | regime_0:rho (fit with opg) | 0.300763 | 0.300763 | -4.35e-12 | 4.35e-12 | pass |
+| sampleSelection ML + sandwich package | regime_1:(Intercept) (fit with opg) | 1.39636 | 1.39636 | 4.91e-11 | 3.51e-11 | pass |
+| sampleSelection ML + sandwich package | regime_1:x1 (fit with opg) | 0.764816 | 0.764816 | -1.17e-11 | 1.17e-11 | pass |
+| sampleSelection ML + sandwich package | regime_1:x2 (fit with opg) | 0.37852 | 0.37852 | -9.27e-15 | 9.27e-15 | pass |
+| sampleSelection ML + sandwich package | regime_1:sigma (fit with opg) | 1.05726 | 1.05726 | -2.83e-11 | 2.68e-11 | pass |
+| sampleSelection ML + sandwich package | regime_1:rho (fit with opg) | 0.685603 | 0.685603 | -7.86e-11 | 7.86e-11 | pass |
+| sampleSelection ML + sandwich package | selection:(Intercept) (fit with cluster) | 0.484565 | 0.484565 | 7.83e-13 | 7.83e-13 | pass |
+| sampleSelection ML + sandwich package | selection:x1 (fit with cluster) | 0.268508 | 0.268508 | -4.95e-13 | 4.95e-13 | pass |
+| sampleSelection ML + sandwich package | selection:z1 (fit with cluster) | -0.397478 | -0.397478 | -6.17e-12 | 6.17e-12 | pass |
+| sampleSelection ML + sandwich package | regime_0:(Intercept) (fit with cluster) | 0.948236 | 0.948236 | -5.14e-12 | 5.14e-12 | pass |
+| sampleSelection ML + sandwich package | regime_0:x1 (fit with cluster) | 0.427323 | 0.427323 | -9.87e-13 | 9.87e-13 | pass |
+| sampleSelection ML + sandwich package | regime_0:x2 (fit with cluster) | 0.233003 | 0.233003 | 1.06e-14 | 1.06e-14 | pass |
+| sampleSelection ML + sandwich package | regime_0:sigma (fit with cluster) | 1.02041 | 1.02041 | -9.68e-13 | 9.49e-13 | pass |
+| sampleSelection ML + sandwich package | regime_0:rho (fit with cluster) | 0.300763 | 0.300763 | -4.35e-12 | 4.35e-12 | pass |
+| sampleSelection ML + sandwich package | regime_1:(Intercept) (fit with cluster) | 1.39636 | 1.39636 | 4.91e-11 | 3.51e-11 | pass |
+| sampleSelection ML + sandwich package | regime_1:x1 (fit with cluster) | 0.764816 | 0.764816 | -1.17e-11 | 1.17e-11 | pass |
+| sampleSelection ML + sandwich package | regime_1:x2 (fit with cluster) | 0.37852 | 0.37852 | -9.27e-15 | 9.27e-15 | pass |
+| sampleSelection ML + sandwich package | regime_1:sigma (fit with cluster) | 1.05726 | 1.05726 | -2.83e-11 | 2.68e-11 | pass |
+| sampleSelection ML + sandwich package | regime_1:rho (fit with cluster) | 0.685603 | 0.685603 | -7.86e-11 | 7.86e-11 | pass |
