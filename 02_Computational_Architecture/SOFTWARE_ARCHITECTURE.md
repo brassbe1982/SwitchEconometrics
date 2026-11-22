@@ -112,15 +112,27 @@ their inverses, derivatives, Kendall's tau and validity.
 **Likelihood engine contract** (Layer 3). Every model implements
 
 ```r
-lik_<model>(theta_w, data, map, deriv = 0L)
-# returns list(ll_i = numeric n,                    # always
-#              score_i = n x p matrix,              # if deriv >= 1
-#              hessian = p x p matrix)              # if deriv == 2
+lik_<model>(theta_w, data, map, deriv = 0L, weights = data$weights)
+# returns list(ll_i = numeric n,                    # always, unweighted
+#              score_i = n x p matrix,              # if deriv >= 1, unweighted
+#              hessian = p x p matrix)              # if deriv == 2, WEIGHTED sum
 ```
 
-on the working scale, with weights applied by the caller. Estimators,
-covariance estimators and diagnostics only call this interface. G1 provides
-`lik_esr_gaussian`.
+This is on the working scale. Per-observation Hessians are never stored, so
+the engine applies the weights to the Hessian. `ll_i` and `score_i` stay
+unweighted so that callers can form OPG and sandwich estimators.
+
+The model-independent interface of specification section 5.4 sits on top
+(`R/lik_interface.R`, version 0.3.0):
+- `loglik_switch()`: weighted total, gradient and Hessian; the function the
+  estimators call.
+- `loglik_observation()`: per-observation decomposition into the probability
+  of the regime, the marginal and conditional outcome densities, the
+  conditional selection probability and the dependence correction.
+- `loglik_joint()`, `loglik_selection()`, `loglik_outcome()`.
+
+The engine is chosen from the model stored in the data object
+(`se_lik_engine()`). G1 provides `lik_esr_gaussian`.
 
 **`switch_estimate`** (Layer 4, internal). The common result of every
 estimator:

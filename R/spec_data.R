@@ -284,6 +284,10 @@ se_build_data <- function(spec, data, weights = NULL, cluster = NULL,
   names(excl) <- labels
 
   structure(list(
+    model = spec$model, observation = spec$observation,
+    selection_family = spec$selection$family,
+    outcome_family = spec$outcomes[[1L]]$family,
+    dependence = spec$dependence$family,
     S = S, y = y, Z = Z, X = X, regimes = labels,
     regime_values = coding$values, regime_type = coding$type,
     selection_name = sel_name,

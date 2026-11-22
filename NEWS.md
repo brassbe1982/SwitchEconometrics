@@ -1,3 +1,32 @@
+# SwitchEconometrics 0.3.0
+
+Generation 1, work package 1.3 (22 November 2026).
+
+## Likelihood engine (internal)
+
+* Binary Gaussian ESR likelihood with the analytic score and the analytic
+  Hessian of LIKELIHOOD_DERIVATION.md, on the working scale (log sigma,
+  atanh rho), with sampling weights.
+  - Evaluation is stable for correlations near +/-1 and for outlying
+    outcomes, using log Phi, the Mills ratio and a continued fraction in the
+    far tail.
+  - Speed: about 18 ms per evaluation with the Hessian at n = 5000.
+* Model-independent interface of specification section 5.4:
+  - `loglik_switch()`: the weighted total, gradient and Hessian;
+  - `loglik_observation()`: the per-observation decomposition into the
+    regime probability, marginal and conditional outcome densities,
+    conditional selection probability and dependence correction;
+  - `loglik_joint()`, `loglik_selection()` and `loglik_outcome()`.
+* Acceptance criterion AC2 met at package level:
+  - the engine equals the independent reference implementation of
+    `verify_math.R` (maximum difference 8.9e-16);
+  - contributions equal the integrated bivariate normal density and
+    integrate to the regime probabilities;
+  - the log-likelihood at `sampleSelection`'s Tobit-5 ML estimates equals
+    `sampleSelection`'s value.
+* `sampleSelection` added to Suggests for the benchmark test, which runs
+  only when the package is installed.
+
 # SwitchEconometrics 0.2.0
 
 Generation 1, work package 1.2 (22 November 2026). The Generation 1

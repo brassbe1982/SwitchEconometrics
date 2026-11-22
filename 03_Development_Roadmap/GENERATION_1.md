@@ -22,7 +22,7 @@ plan decision D7); any Stata comparison (owner decision, 22 November 2026).
 | --- | --- | --- | --- | --- |
 | 1.1 | 0.1.0 | Governance, architecture and G1 derivation documents; `verify_math.R`; package skeleton; git | 26/26 numerical checks; clean `R CMD check` of the skeleton | **done**; econometric gate approved 2026-11-22 |
 | 1.2 | 0.2.0 | `switch_model()`, data builder (`se_build_data()`), Gaussian margin and `distribution()`, transformations including the CPC correlation-matrix map, parameter map | 279 test expectations; `--as-cran` 1 environment-only NOTE | **done** 2026-11-22 |
-| 1.3 | 0.3.0 | `lik_esr_gaussian()` (log-likelihood, score, Hessian), stable utilities | equals `verify_math.R` references to 1e-10; derivative tests | |
+| 1.3 | 0.3.0 | `lik_esr_gaussian()` (log-likelihood, score, Hessian, weights); `loglik_switch()`, `loglik_observation()`, `loglik_joint()`, `loglik_selection()`, `loglik_outcome()` | reference difference 8.9e-16; derivatives 2e-10; `sampleSelection` log-likelihood identical (AC2 met); 332 expectations | **done** 2026-11-22 |
 | 1.4 | 0.4.0 | `est_two_step()`, `est_fiml()` with multistart, `switch_fit()`, `switch_control()` | recovery tests; Monte Carlo smoke test | |
 | 1.5 | 0.5.0 | Covariances, bootstrap, tests, diagnostics, `switch_validate()` | unit tests; coverage spot checks | |
 | 1.6 | 0.6.0 | Effects, predictions, counterfactuals, simulation, S3 methods, `esr()`, dataset `firms`, reproducibility record | AC5 tests | |
