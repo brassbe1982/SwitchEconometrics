@@ -1,0 +1,16 @@
+^00_Project_Governance$
+^01_Econometric_Architecture$
+^02_Computational_Architecture$
+^03_Development_Roadmap$
+^04_Validation$
+^05_References$
+^SwitchEconometrics\.Rproj$
+^\.Rproj\.user$
+^\.git$
+^\.gitignore$
+^\.gitattributes$
+^\.github$
+^LICENSE\.md$
+^CONTRIBUTING\.md$
+^cran-comments\.md$
+^tests/testthat/_problems$

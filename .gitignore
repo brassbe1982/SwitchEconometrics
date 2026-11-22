@@ -1,0 +1,12 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+.DS_Store
+inst/doc
+/doc/
+/Meta/
+*.tar.gz
+*.Rcheck/
+tests/testthat/_problems/
+01_Econometric_Architecture/verify_math_results.csv

@@ -1,0 +1,11 @@
+bibentry(
+  bibtype = "Manual",
+  title   = "{SwitchEconometrics}: Unified Estimation of Endogenous Regime-Dependent Economic Systems",
+  author  = person("Ibrahim", "Niankara", email = "Ibrahim.niankara@aau.ac.ae"),
+  year    = "2026",
+  note    = paste("R package version", meta$Version),
+  textVersion = paste0(
+    "Niankara, I. (2026). SwitchEconometrics: Unified Estimation of ",
+    "Endogenous Regime-Dependent Economic Systems. R package version ",
+    meta$Version, ".")
+)
