@@ -111,3 +111,42 @@ and fixed. The threshold is not changed after the fact.
   `04_Validation/results/MC_G1.md`.
 - A small version ($R = 50$, four cells) runs as a smoke test at every
   version from 0.4.0 on.
+
+## 7. Execution record (WP1.7, 22 November 2026)
+
+Sections 1-6 above are unchanged since pre-registration. This section records
+how the study was run and every departure from the plan.
+
+- **Run.** Package 0.6.0 (estimator code identical in 0.7.0), all 38 cells,
+  28 400 replications, 2 worker processes (the machine was shared with
+  another job). Raw output in `runs/mc_g1_0.6.0_full/`. Gate evaluation by
+  `scripts/mc_g1_report.R`, with the thresholds of section 5 written into the
+  script. Results and interpretation: [results/MC_G1.md](results/MC_G1.md).
+- **Departure 1: sandwich standard errors.** Section 3 lists them as
+  per-replication outputs, but the first run did not record them (a driver
+  omission). The whole study was rerun with the same seeds
+  (`runs/mc_g1_0.6.0_full_sandwich/`); the driver now also stores the FIML
+  sandwich and the two-step stacked sandwich. Outcome:
+  - estimates, Hessian standard errors, effects, codes and log-likelihoods
+    are identical to the first run (511 200 comparisons, maximum
+    difference 0);
+  - the gate CSV is byte-identical;
+  - sandwich results are present in all 56 800 fits.
+
+  The reported tables come from the rerun (MC_G1.md section 6).
+- **Departure 2: supplementary analyses (not pre-registered, not gated).**
+  They are reported as diagnostics only:
+  - Monte Carlo standard errors of the failed checks (bootstrap over
+    replications);
+  - "oracle" standard errors from the average information at the true
+    parameters, to separate standard-error formulas from finite-sample
+    behaviour;
+  - the behaviour of the identification diagnostics I5 and I6 in the
+    exclusion-strength cells (`scripts/mc_g1_identification.R`). Econometric
+    gate question 5 asked for this.
+- **AC4(b)** (bootstrap and Hessian standard errors within 10% at
+  N = 2000) is checked by `scripts/ac4b_bootstrap_check.R`. It is defined in
+  ACCEPTANCE_TESTS.md, not in this design.
+- **Thresholds.** Not changed. Ten of the 501 gated checks failed. Under
+  section 5, acceptance criteria AC1 and AC4 stay blocked until the owner
+  decides on the diagnosis in MC_G1.md section 4.

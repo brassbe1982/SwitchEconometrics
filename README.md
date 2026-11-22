@@ -10,7 +10,7 @@ estimators are documented special cases of that model.
 
 ## Status
 
-**Version 0.6.0: Generation 1, work package 1.6.** The classical binary ESR
+**Version 0.7.0: Generation 1, work package 1.7.** The classical binary ESR
 is functionally complete:
 - estimation by FIML or two-step (`switch_fit()`, `esr()`);
 - inference (`summary()`, `confint()`, `switch_test()`,
@@ -23,22 +23,20 @@ is functionally complete:
 - simulation (`switch_simulate()`);
 - model comparison (`switch_compare()`).
 
-FIML results equal `sampleSelection`'s maximum-likelihood estimates. Still
-to come in Generation 1:
-- the pre-registered Monte Carlo study (0.7.0);
-- the full benchmark report (0.8.0);
-- vignettes and CRAN preparation (0.9.0).
-- 0.3.0 added the likelihood engine of the classical binary ESR, with
-  analytic score and Hessian. Its log-likelihood equals `sampleSelection`'s
-  Tobit-5 value at the same parameters.
-- 0.2.0 added:
-  - the model-specification layer (`switch_model()`, and the data builder
-    with its missing-value report);
-  - the distribution engine (`distribution()`, Gaussian family);
-  - the parameter-transformation engine.
+FIML results equal `sampleSelection`'s maximum-likelihood estimates.
 
-The Generation 1 econometric gate was approved on 22 November 2026. Version
-0.1.0 provided:
+The pre-registered Monte Carlo study has been run: 28 400 replications,
+each fitted by FIML and two-step. 491 of the 501 pre-registered checks pass.
+The 10 failures are diagnosed as finite-sample behaviour, not defects, and
+await the owner's decision. See `04_Validation/results/MC_G1.md`.
+
+Still to come in Generation 1:
+- the full benchmark report (0.8.0);
+- vignettes and CRAN preparation (0.9.0);
+- the release (1.0.0).
+
+Earlier versions are described in `NEWS.md`. The Generation 1 econometric
+gate was approved on 22 November 2026. Version 0.1.0 provided:
 
 - the package infrastructure (DESCRIPTION, tests, continuous-integration
   workflow);

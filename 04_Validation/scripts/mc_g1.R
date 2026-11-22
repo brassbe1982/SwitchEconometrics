@@ -95,11 +95,57 @@ one_rep <- function(cl, seed) {
     est <- coef(f)
     se <- sqrt(pmax(diag(vcov(f)), 0))
     se_w <- if (m == "fiml") sqrt(pmax(diag(vcov(f, "working")), 0)) else NA
+    ## sandwich standard errors (design s.3; reported, not gated). FIML: the
+    ## robust sandwich at the same optimum (no refit; deterministic). Two-step:
+    ## the stacked M-estimation sandwich (refit, identical estimates).
+    sand <- NULL
+    if (m == "fiml") {
+      sand <- tryCatch({
+        ns <- asNamespace("SwitchEconometrics")
+        obj <- ns$se_objective(f$data, f$map)
+        thw <- coef(f, "working")
+        fr <- obj$free
+        val <- obj$eval_at(unname(thw[fr]), 2L)
+        Vf <- ns$inf_vcov_fiml("sandwich", val$hessian[fr, fr, drop = FALSE],
+                               val$score_i[, fr, drop = FALSE],
+                               f$data$weights, f$data$cluster)
+        wn <- f$map$elements$working_name
+        Vw <- matrix(0, f$map$p, f$map$p, dimnames = list(wn, wn))
+        Vw[fr, fr] <- Vf
+        Vn <- ns$se_par_vcov_natural(f$map, thw, Vw)
+        list(se = sqrt(pmax(diag(Vn), 0)), se_w = sqrt(pmax(diag(Vw), 0)))
+      }, error = function(e) NULL)
+    } else {
+      fr2 <- tryCatch(suppressWarnings(suppressMessages(
+        switch_fit(sel, list(regime_0 = y ~ x1 + x2, regime_1 = y ~ x1 + x2),
+                   data = d, method = m, vcov = "sandwich"))),
+        error = function(e) NULL)
+      if (!is.null(fr2)) {
+        ts2 <- fr2$two_step
+        li2 <- unlist(lapply(fr2$regimes, function(l)
+          ts2$index_psi[[l]][length(ts2$index_psi[[l]])]))
+        sand <- list(se = sqrt(pmax(diag(vcov(fr2)), 0)),
+                     lambda_se = unname(sqrt(diag(ts2$vcov_psi)[li2])),
+                     same_est = isTRUE(all.equal(coef(fr2), est, tolerance = 1e-12)))
+      }
+    }
     eff <- if ("switch_effects" %in% getNamespaceExports("SwitchEconometrics"))
       tryCatch(switch_effects(f), error = function(e) NULL)
     eff_true <- if (!is.null(eff)) SwitchEconometrics:::se_eff_values(
       stats::setNames(truth_of(cl), names(est)), f$data, f$map)
+    lam <- NULL
+    if (m == "two_step") {
+      ts <- f$two_step
+      li <- unlist(lapply(f$regimes, function(l)
+        ts$index_psi[[l]][length(ts$index_psi[[l]])]))
+      tr <- truth_of(cl)
+      nt <- length(tr)          # ... sigma0, rho0, beta1 (3), sigma1, rho1
+      lam <- list(est = unname(ts$psi[li]),
+                  se = unname(sqrt(diag(ts$vcov_psi)[li])),
+                  truth = c(tr[nt - 6] * tr[nt - 5], tr[nt - 1] * tr[nt]))
+    }
     out[[m]] <- list(
+      lambda = lam, sand = sand,
       eff_est = if (!is.null(eff)) stats::setNames(eff$table$estimate, eff$table$effect),
       eff_se = if (!is.null(eff)) stats::setNames(eff$table$std_error, eff$table$effect),
       eff_true = eff_true,
@@ -131,9 +177,10 @@ run_cell <- function(k) {
   res <- if (cores > 1) {
     cluster <- parallel::makeCluster(cores, rscript_args = "--no-init-file")
     on.exit(parallel::stopCluster(cluster))
-    parallel::clusterExport(cluster, c("lib", "%||%", "one_rep"),
+    parallel::clusterExport(cluster, c("lib", "%||%", "one_rep", "truth_of"),
                             envir = globalenv())
-    parallel::parLapply(cluster, seeds, function(s, cl) one_rep(cl, s), cl = cl)
+    parallel::parLapply(cluster, seeds, function(s, cell) one_rep(cell, s),
+                        cell = cl)
   } else lapply(seeds, function(s) one_rep(cl, s))
   list(cell = cl, truth = truth_of(cl), res = res,
        time = as.numeric(difftime(Sys.time(), t0, units = "secs")))
@@ -168,6 +215,27 @@ summarise_cell <- function(cr) {
         median_time = median(vapply(rr, function(x) x$time, numeric(1))),
         stringsAsFactors = FALSE)
     }
+    ## two-step selection-correction coefficients theta_j = sigma_j rho_j
+    if (m == "two_step") {
+      okL <- ok & vapply(rr, function(x) !is.null(x$lambda), logical(1))
+      if (any(okL)) {
+        LE <- do.call(rbind, lapply(rr[okL], function(x) x$lambda$est))
+        LS <- do.call(rbind, lapply(rr[okL], function(x) x$lambda$se))
+        lt <- rr[okL][[1]]$lambda$truth
+        for (k in 1:2) {
+          e <- LE[, k]; s <- LS[, k]; t <- lt[k]
+          rows[[length(rows) + 1]] <- data.frame(
+            group = cl$group, N = cl$N, rho1 = cl$rho1, rho0 = cl$rho0,
+            method = m, parameter = c("regime_0:lambda", "regime_1:lambda")[k],
+            truth = t, R = length(rr), converged = sum(okL),
+            bias = mean(e) - t,
+            rel_bias = if (abs(t) >= 0.2) (mean(e) - t) / abs(t) else NA,
+            rmse = sqrt(mean((e - t)^2)), emp_sd = sd(e), mean_se = mean(s),
+            se_ratio = mean(s) / sd(e), coverage = mean(abs(e - t) <= 1.96 * s),
+            boundary = NA, median_time = NA, stringsAsFactors = FALSE)
+        }
+      }
+    }
     ## effects: estimand varies by replication (sample-conditional effect)
     okE <- ok & vapply(rr, function(x) !is.null(x$eff_est), logical(1))
     if (any(okE)) {
@@ -194,8 +262,10 @@ summarise_cell <- function(cr) {
 
 all_sum <- list()
 for (k in seq_along(cells)) {
-  cr <- run_cell(k)
-  saveRDS(cr, file.path(outdir, sprintf("cell_%03d.rds", k)))
+  ## resumable: a finished cell (same mode, same index) is not rerun
+  fk <- file.path(outdir, sprintf("cell_%03d.rds", k))
+  cr <- if (file.exists(fk)) readRDS(fk) else run_cell(k)
+  if (!file.exists(fk)) saveRDS(cr, fk)
   s <- summarise_cell(cr)
   all_sum[[k]] <- s
   cat(sprintf("cell %d/%d (%s, N = %d, rho = %g/%g): %.0f s, FIML converged %d/%d\n",

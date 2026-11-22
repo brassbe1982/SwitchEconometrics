@@ -4,7 +4,7 @@
 fml <- list(regime_0 = y ~ x1 + x2, regime_1 = y ~ x1 + x2)
 
 test_that("FIML recovers the true parameters and converges properly", {
-  skip_on_cran()
+  ## acceptance criterion AC1(b): runs on CRAN (one fit, N = 5000, < 1 s)
   d <- sim_esr_data(5000, seed = 21)
   f <- switch_fit(S ~ x1 + z1, fml, data = d)
   expect_s3_class(f, "switch_fit")

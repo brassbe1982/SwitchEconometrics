@@ -1,3 +1,47 @@
+# SwitchEconometrics 0.7.0
+
+Generation 1, work package 1.7 (22 November 2026): the pre-registered Monte
+Carlo study. No change to the estimators or to the user interface.
+
+## Validation
+
+* The full study of `04_Validation/MONTE_CARLO_DESIGN.md` was run: 38 cells
+  and 28 400 replications, each fitted by FIML and two-step, with effects.
+  Results and interpretation are in `04_Validation/results/MC_G1.md`.
+* **Gate: 491 of 501 pre-registered checks pass.**
+  - All checks of bias, root-N, convergence and two-step coverage pass.
+  - 10 checks of standard-error ratio, coverage and effect bias fail. 7 of
+    them are at N = 1000-2000.
+* **Diagnosis:** no defect in the estimators or in the standard-error
+  formulas.
+  - The Hessian standard errors equal the asymptotic standard errors at the
+    true parameters.
+  - The failures come from finite-sample behaviour at N = 1000-2000, from
+    conservative standard errors of sigma when rho = 0 exactly, and from
+    Monte Carlo noise.
+  - At N = 5000, mean coverage is 0.949.
+* Acceptance criteria AC1 and AC4 stay open under the pre-registered rule,
+  pending the owner's decision.
+* **AC4(b)** (bootstrap and Hessian standard errors within 10% at N = 2000)
+  passes on `firms` (15/15) but not on the base-design dataset (12/15).
+  There, comparison with the Monte Carlo truth shows that the Hessian
+  standard errors are accurate and the bootstrap overstates them.
+* **Supplementary study of the identification diagnostics.**
+  - I5 and I6 raise no false alarms in the base and strong-exclusion
+    designs.
+  - With a weak exclusion at N = 2000, the current thresholds flag only
+    15-44% of samples, although FIML's rho is biased.
+  - A lower I6 threshold (R2 > 0.80) is proposed to the owner. Defaults are
+    unchanged.
+* **Sandwich standard errors** (FIML sandwich, two-step stacked sandwich)
+  are now recorded in the study. The first full run had omitted them.
+  - A full rerun with the same seeds reproduced every estimate, standard
+    error and effect exactly, and gave the same gate result.
+  - Under the study's correctly specified design, sandwich and Hessian
+    standard errors agree on average.
+  - At N = 250 the Hessian intervals cover better (0.928 against 0.922).
+* The recovery test of acceptance criterion AC1(b) now also runs on CRAN.
+
 # SwitchEconometrics 0.6.0
 
 Generation 1, work package 1.6 (22 November 2026): economic interpretation.
