@@ -42,6 +42,48 @@ macOS-builder uploads.**
 - Under check, 638 tests pass and 5 are skipped on CRAN. Re-building the
   vignettes takes 26 s.
 
+## Version 0.9.1: public repository and outside checks (23 November 2026)
+
+The owner asked for a repository like TriCopula's and approved the uploads.
+
+**Repository.**
+- https://github.com/brassbe1982/SwitchEconometrics was created in the
+  built-in browser with the owner's GitHub session: public, described like
+  TriCopula's, no README, licence or `.gitignore` from GitHub.
+- An audit before the push found the 139 tracked files clean: no personal
+  e-mail, passwords, keys, tokens or local paths, and nothing over 1 MB.
+- Unlike TriCopula's, the repository also holds the project folders
+  `00_`-`05_`, as the delivery plan's layout provides. They stay out of the
+  tarball.
+- `main` was pushed with Git Credential Manager (the stored sign-in).
+
+**Package changes (0.9.1):**
+- `URL` and `BugReports` in DESCRIPTION;
+- installation from GitHub in the README;
+- the version in `cran-comments.md`.
+
+**Release tooling** (workspace, outside the repository), adapted from
+TriCopula:
+- `tools/CRAN_prepare.R`, with stages preflight, tests (complete, CRAN
+  mode, without Suggests), verify, build, check, manual, regression (Monte
+  Carlo smoke against a reference), benchmarks, install, gha, winbuilder,
+  macbuilder and submit;
+- `tools/compare_mc_runs.R`;
+- `tools/CRAN_RELEASE_GUIDE.md` (access, release schedule for all six
+  generations, procedure, pitfalls);
+- the skill `.claude/skills/switch-cran-release/SKILL.md`.
+
+**Results:**
+
+| Check | Result |
+| --- | --- |
+| `CRAN_prepare.R local` (first run of the script) | Tests 650 / 643 (CRAN mode) / 603 (without Suggests) expectations, 0 failures. `verify_math.R` 26/26. Tarball 182 KB. `--as-cran` 1 NOTE (V8). Manual PDF built |
+| GitHub Actions run 1 | 8 of 9 jobs pass: Windows, Ubuntu (release, devel, oldrel-1) and macOS (release, oldrel-1). macOS R-devel failed while installing dependencies: Matrix 1.7-6, needed by a suggested package, does not compile from source on that runner. The package check did not start there |
+| win-builder R-release (R 4.6.2) | 0 errors, 0 warnings, 1 NOTE: "New submission" and the cited authors' surnames in DESCRIPTION. Incoming checks, the HTML manual (math rendering, which needs V8) and the PDF manual are OK |
+| win-builder R-devel | uploaded; result e-mail not yet received |
+| GitHub Actions run 2 | the workflow now runs the macOS R-devel job without the suggested packages (`dependencies: "hard"`, `_R_CHECK_FORCE_SUGGESTS_=false`), so the package check runs there too; result below |
+| macOS builder | upload refused by the service: HTTP 502 |
+
 ## Acceptance criterion AC6
 
 | Part | Status |
