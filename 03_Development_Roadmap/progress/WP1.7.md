@@ -3,8 +3,8 @@
 Version 0.7.0. Completed 22 November 2026. Status: **study done and
 reported. The gate is not passed as pre-registered (491 of 501 checks).
 The owner accepted the diagnosis on 22 November 2026, so AC1 and AC4 are
-met with documented exceptions (MC_G1.md s.9). The I6 threshold proposal
-is still pending.**
+met with documented exceptions (MC_G1.md s.9). The owner also adopted
+the I6 threshold R² > 0.80, applied in 0.7.1.**
 
 ## What was done
 
@@ -103,8 +103,26 @@ The generated tables and CSV files come from this rerun.
   - AC1 and AC4 are met with these documented exceptions, and the
     computational gate requirement (AC1, AC2, AC4, AC5) is met.
   - Thresholds unchanged.
-- **Still pending:** the I6 threshold proposal (R² > 0.80; MC_G1.md s.7).
-  The defaults are unchanged until the owner decides.
+- **The I6 threshold is lowered to R² > 0.80** ("Yes, lower to 0.80";
+  MC_G1.md s.7; IDENTIFICATION.md s.7).
+
+## Version 0.7.1: the I6 threshold
+
+| File | Change |
+| --- | --- |
+| `R/inf_identification.R` | I6 warns when R² > 0.80 (was 0.95). The message now says that ρ is weakly identified and its estimate may be biased |
+| `tests/testthat/test-inference.R` | New test:<br>• base design (R² ≈ 0.26): `ok`;<br>• weak exclusion with R² 0.886/0.887, between the new and the old threshold: `warning`;<br>• the status follows the threshold |
+| `01_Econometric_Architecture/IDENTIFICATION.md` | Diagnostics table and amendment section 7 |
+
+I6 sets only the status in the validation table and the count shown by
+`switch_diagnostics()`. It raises no R warning at fit time, so fitted
+results are unchanged.
+
+**Package check (0.7.1):**
+- Tests on the source: 637 expectations (6 new), 0 failures.
+- `R CMD check --as-cran`: 0 errors, 0 warnings, 1 NOTE (V8 absent,
+  environment only).
+- Under check, 630 pass and 4 are skipped on CRAN.
 
 ## Next
 

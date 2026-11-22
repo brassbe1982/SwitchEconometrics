@@ -14,7 +14,7 @@
 #' | I3 | separation in the selection equation |
 #' | I4 | variables excluded from each outcome equation (none: identification by functional form only) |
 #' | I5 | joint significance and strength of the excluded variables in the probit (Wald; heuristic flag for chi2/df < 10) |
-#' | I6 | collinearity of the selection-correction term with the outcome regressors (R-squared, condition number) |
+#' | I6 | collinearity of the selection-correction term with the outcome regressors (R-squared, condition number; warning if R-squared > 0.80) |
 #' | I7 | range of the selection index |
 #' | I8 | boundary and conditioning flags (fitted models) |
 #' | I9 | multistart agreement (fitted models) |
@@ -185,7 +185,10 @@ se_validate_core <- function(spec, sd, fit = NULL) {
                ""))
   }
 
-  ## I6 collinearity of the correction term with x_j; I7 index range
+  ## I6 collinearity of the correction term with x_j; I7 index range.
+  ## Threshold R2 > 0.80 (owner's decision of 22 November 2026, from the
+  ## WP1.7 Monte Carlo evidence in 04_Validation/results/MC_G1.md s.7; the
+  ## pre-study heuristic was 0.95).
   if (!is.null(pr)) {
     for (r in 1:2) {
       lab <- labs[r]
@@ -195,10 +198,13 @@ se_validate_core <- function(spec, sd, fit = NULL) {
       f <- stats::lm.fit(X, m)
       r2 <- 1 - sum(f$residuals^2) / sum((m - mean(m))^2)
       kap <- kappa(cbind(X, m), exact = FALSE)
-      st <- if (r2 > 0.95) "warning" else "ok"
+      st <- if (r2 > 0.80) "warning" else "ok"
       add("I6", sprintf("collinearity of the correction term for '%s'", lab), st,
           sprintf("R2 = %.3f, condition number %.3g", r2, kap),
-          if (st == "warning") "selection-correction term nearly collinear with the outcome regressors" else "")
+          if (st == "warning") paste(
+            "selection-correction term highly collinear with the outcome",
+            "regressors (R2 > 0.80): rho is weakly identified and its",
+            "estimate may be biased") else "")
     }
     add("I7", "range of the selection index", "note",
         sprintf("sd(z'gamma) = %.2f; %.1f%% with |z'gamma| > 3", stats::sd(pr$w),

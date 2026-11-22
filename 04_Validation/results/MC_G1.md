@@ -472,16 +472,19 @@ replication. Output: `results/ident_G1_summary.csv`.
 | I6 R² > 0.70 | 0.2% / 0% | 91% / 100% |
 | I5 χ²/df < 30 | 22% / 0% | 100% / 99% |
 
-**Proposal for the owner (not applied).** Lower the I6 warning threshold
-from R² > 0.95 to R² > 0.80, and keep the I5 rule as a note.
+**Proposal for the owner.** Lower the I6 warning threshold from R² > 0.95
+to R² > 0.80, and keep the I5 rule as a note.
+
+**Decision (22 November 2026).** The owner accepted the proposal. It is
+applied in version 0.7.1 (IDENTIFICATION.md section 7); the I5 rule is
+unchanged.
 
 **Caveat:** this rests on one family of designs:
 - normal regressors;
 - one excluded variable;
 - selection rate 0.67.
 
-The other selection rates and multiple exclusions were not examined. The
-defaults are unchanged until the owner decides.
+The other selection rates and multiple exclusions were not examined.
 
 ## 8. AC4(b): bootstrap versus Hessian standard errors at N = 2000
 
@@ -572,7 +575,8 @@ there for: no part of the estimation or inference code is wrong.
 
 The failures measure how far N = 1000–2000 is from asymptotics in this
 model. That is information for users, not a defect to fix. Separately, the
-I6 threshold (section 7) is a decision for the owner; it is still pending.
+I6 threshold (section 7) was a decision for the owner: R² > 0.80 was
+adopted in 0.7.1.
 
 ## 10. Files
 

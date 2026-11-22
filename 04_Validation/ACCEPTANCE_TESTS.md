@@ -20,7 +20,7 @@ date).
 
 | Gate | Requirement | Date | Signed |
 | --- | --- | --- | --- |
-| Econometric | Owner approves BINARY_ESR, LIKELIHOOD_DERIVATION, IDENTIFICATION, PARAMETERIZATION, TREATMENT_EFFECTS and GENERAL_MODEL, including decisions D8 and D9 | 2026-11-22 | Ibrahim Niankara (approved in session: "Approve, start WP1.2"; all six questions of GENERATION_1.md s.3 accepted as proposed). Amendment I10 (IDENTIFICATION.md s.6) confirmed on 2026-11-22 |
+| Econometric | Owner approves BINARY_ESR, LIKELIHOOD_DERIVATION, IDENTIFICATION, PARAMETERIZATION, TREATMENT_EFFECTS and GENERAL_MODEL, including decisions D8 and D9 | 2026-11-22 | Ibrahim Niankara (approved in session: "Approve, start WP1.2"; all six questions of GENERATION_1.md s.3 accepted as proposed). Amendment I10 (IDENTIFICATION.md s.6) confirmed on 2026-11-22. I6 threshold lowered to R² > 0.80 by the owner on 2026-11-22 after the Monte Carlo study (gate question 5; IDENTIFICATION.md s.7; v0.7.1) |
 | Computational | AC1, AC2, AC4, AC5 met | 2026-11-22 | Requirement met: AC2 (v0.3.0) and AC5 (v0.6.0) met; AC1 and AC4 met with documented exceptions after Ibrahim Niankara accepted the WP1.7 Monte Carlo diagnosis in session ("Accept the diagnosis"; MC_G1.md s.9). Pre-registered thresholds unchanged |
 | Software | AC3, AC6 met; documentation complete | | |
 

@@ -44,7 +44,7 @@ or on a fitted model.
    I3 \tab separation in the selection equation \cr
    I4 \tab variables excluded from each outcome equation (none: identification by functional form only) \cr
    I5 \tab joint significance and strength of the excluded variables in the probit (Wald; heuristic flag for chi2/df < 10) \cr
-   I6 \tab collinearity of the selection-correction term with the outcome regressors (R-squared, condition number) \cr
+   I6 \tab collinearity of the selection-correction term with the outcome regressors (R-squared, condition number; warning if R-squared > 0.80) \cr
    I7 \tab range of the selection index \cr
    I8 \tab boundary and conditioning flags (fitted models) \cr
    I9 \tab multistart agreement (fitted models) \cr

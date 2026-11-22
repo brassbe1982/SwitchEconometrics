@@ -28,7 +28,7 @@ plan decision D7); any Stata comparison (owner decision, 22 November 2026).
 | 1.4 | 0.4.0 | `est_two_step()` (model, robust and cluster covariances), `est_fiml()` with multistart and optimiser fallbacks, all four FIML covariance types (moved forward from WP1.5), `switch_fit()`, `switch_control()`, `esr()`, basic methods; Monte Carlo driver | FIML equals `sampleSelection` ML (3e-10); recovery; frequency weights equal replicated data; 434 expectations; Monte Carlo smoke test 200/200 converged (Marquardt NR fix) | **done** 2026-11-22 |
 | 1.5 | 0.5.0 | `switch_test()` (LR, Wald, linear hypotheses), `confint()`, `summary()`, `switch_bootstrap()` (nonparametric, parametric, cluster; parallel equals serial), `switch_validate()` (I1-I11), `switch_diagnostics()`; covariances were delivered in 0.4.0 | 528 expectations; LR equals closed form; bootstrap SEs within 0.75-1.33 of the Hessian SEs; smoke Monte Carlo identical to 0.4.0; I10 amendment (IDENTIFICATION.md s.6) | **done** 2026-11-22 |
 | 1.6 | 0.6.0 | `switch_effects()`, `switch_predict()` with `predict`/`fitted`/`residuals`, `switch_counterfactual()`, `switch_simulate()` with `simulate`, `switch_compare()`/`anova`, `update`, model methods, bootstrap of effects, dataset `firms` (`esr()` and the record were delivered in 0.4.0) | **AC5 met**; 631 expectations; smoke Monte Carlo with effects | **done** 2026-11-22 |
-| 1.7 | 0.7.0 | Monte Carlo study ([MONTE_CARLO_DESIGN.md](../04_Validation/MONTE_CARLO_DESIGN.md)): 38 cells, 28 400 replications; gate evaluation script; sandwich rerun; supplementary I5/I6 study; AC4(b) bootstrap check | `MC_G1.md`:<br>• gate 491/501 (10 failures diagnosed: no defect; finite sample, σ at ρ = 0, noise);<br>• AC4(b) 27/30;<br>• diagnosis accepted by the owner: **AC1 and AC4 met** with documented exceptions | **done** 2026-11-22 |
+| 1.7 | 0.7.0, 0.7.1 | Monte Carlo study ([MONTE_CARLO_DESIGN.md](../04_Validation/MONTE_CARLO_DESIGN.md)): 38 cells, 28 400 replications; gate evaluation script; sandwich rerun; supplementary I5/I6 study; AC4(b) bootstrap check | `MC_G1.md`:<br>• gate 491/501 (10 failures diagnosed: no defect; finite sample, σ at ρ = 0, noise);<br>• AC4(b) 27/30;<br>• diagnosis accepted by the owner: **AC1 and AC4 met** with documented exceptions;<br>• 0.7.1: I6 threshold lowered to R² > 0.80 (owner's decision) | **done** 2026-11-22 |
 | 1.8 | 0.8.0 | Benchmarks ([BENCHMARK_PROTOCOL.md](../04_Validation/BENCHMARK_PROTOCOL.md)) | `BENCHMARK_G1.md` (AC2, AC3) | |
 | 1.9 | 0.9.0 | Vignettes `classical-esr`, `treatment-effects`, `simulation-validation` (must state the finite-sample coverage at N ≤ 1000 found in WP1.7, as part of the owner's decision); README; CRAN preparation; GitHub Actions (owner creates the repository) | `--as-cran` clean (AC6) | |
 | 1.10 | 1.0.0 | Release: evidence table, gates, CRAN submission (owner) | gate record | |
@@ -52,9 +52,11 @@ plan decision D7); any Stata comparison (owner decision, 22 November 2026).
 5. Identification diagnostics and their heuristic thresholds (I5:
    $\chi^2/\text{df} < 10$; I6: $R^2 > 0.95$), to be revisited after the
    Monte Carlo study. Revisited in WP1.7
-   ([MC_G1.md](../04_Validation/results/MC_G1.md) section 7). The proposal
-   to lower the I6 warning threshold to $R^2 > 0.80$ awaits the owner's
-   decision; the defaults are unchanged.
+   ([MC_G1.md](../04_Validation/results/MC_G1.md) section 7). **The owner
+   decided on 22 November 2026 to lower the I6 warning threshold to
+   $R^2 > 0.80$**, applied in 0.7.1
+   ([IDENTIFICATION.md](../01_Econometric_Architecture/IDENTIFICATION.md)
+   section 7). The I5 rule is unchanged.
 6. Monte Carlo design and pre-registered thresholds
    ([MONTE_CARLO_DESIGN.md](../04_Validation/MONTE_CARLO_DESIGN.md)).
 

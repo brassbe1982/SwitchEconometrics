@@ -1,3 +1,22 @@
+# SwitchEconometrics 0.7.1
+
+Owner's decision of 22 November 2026 on the identification diagnostics,
+based on the Monte Carlo evidence of 0.7.0.
+
+## Changes
+
+* `switch_validate()`: check I6 now warns when the R2 of the
+  selection-correction term on the outcome regressors exceeds 0.80. The
+  previous threshold was 0.95.
+  - In the Monte Carlo study, the 0.95 rule flagged only 15-27% of samples
+    with a weak exclusion restriction, where FIML's rho is biased. The 0.80
+    rule flags 75-92% of them, and still none in the base and
+    strong-exclusion designs.
+  - The message now says that rho is weakly identified and its estimate may
+    be biased.
+  - I6 still raises no R warning at fit time; estimates are unchanged.
+  - Details are in IDENTIFICATION.md section 7.
+
 # SwitchEconometrics 0.7.0
 
 Generation 1, work package 1.7 (22 November 2026): the pre-registered Monte

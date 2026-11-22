@@ -78,7 +78,7 @@ diagnostic and a status (`ok`, `note`, `warning`, `error`).
 | I3 | Separation in the selection equation | probit fitted probabilities not within $10^{-10}$ of 0 or 1 for any observation; finite coefficients | warning |
 | I4 | Excluded variables per regime | list of $E_1$ and $E_0$; empty set triggers the section 2 warning | warning |
 | I5 | Strength of excluded variables | Wald $\chi^2$ of $E_j$ in the probit, its p-value and $\chi^2/\text{df}$. Heuristic flag if $\chi^2/\text{df} < 10$ (by analogy with the first-stage F rule of thumb; labelled as a heuristic) | note / warning |
-| I6 | Collinearity of the generated regressor | $R^2$ of $m_j(\hat w)$ on $x_j$ within regime $j$; warning if $R^2 > 0.95$; condition number of $(x_j, m_j)$ | warning |
+| I6 | Collinearity of the generated regressor | $R^2$ of $m_j(\hat w)$ on $x_j$ within regime $j$; warning if $R^2 > 0.80$ (0.95 until 0.7.0; see the amendment in section 7); condition number of $(x_j, m_j)$ | warning |
 | I7 | Range of the selection index | share of $\hat w_i$ with $\lvert\hat w_i\rvert > 3$; a narrow range weakens functional-form identification | note |
 | I8 | Boundary and conditioning (fitted models) | flags of [PARAMETERIZATION.md](PARAMETERIZATION.md) section 5 | warning |
 | I9 | Multistart agreement (fitted models) | converged starts within $10^{-6}$ in log-likelihood must agree within $10^{-3}$ in parameters | warning |
@@ -93,7 +93,9 @@ are added in Generations 5 and 6.
 The WP1.7 study ([04_Validation/MONTE_CARLO_DESIGN.md](../04_Validation/MONTE_CARLO_DESIGN.md))
 includes strong, moderate, weak and no-exclusion cells. They show how these
 diagnostics relate to bias, coverage and convergence, so the thresholds above
-can be revisited on evidence before v1.0.0.
+can be revisited on evidence before v1.0.0. The evidence is in
+[MC_G1.md](../04_Validation/results/MC_G1.md) section 7. It led to the I6
+amendment of section 7 below; the I5 rule is unchanged.
 
 ## 6. Amendment (22 November 2026, WP1.5): the falsification test I10
 
@@ -127,3 +129,36 @@ with the data.
 always a `note`, never a warning. The underlying point belongs in the
 research article's discussion of identification: applied ESR studies often
 cite the falsification test as support for their instruments.
+
+## 7. Amendment (22 November 2026, after WP1.7): the I6 threshold
+
+**Status: decided by the owner on 22 November 2026** ("Yes, lower to
+0.80"). Applied in version 0.7.1.
+
+The econometric gate approved the I6 threshold $R^2 > 0.95$ as a heuristic,
+to be revisited after the Monte Carlo study. The supplementary study
+(`04_Validation/scripts/mc_g1_identification.R`; MC_G1.md section 7) ran
+`switch_validate()` on every replication of eight cells and linked the flags
+to the FIML results of the same replications.
+
+**Findings that led to the change:**
+- **Weak exclusion is missed at 0.95.** With a weak exclusion
+  ($\gamma_z = -0.1$), FIML's $\rho$ is biased (−0.25 at N = 500, −0.12 at
+  N = 2000; coverage 0.77-0.85). The 0.95 rule flags only 27% and 15% of
+  these samples.
+- **R² separates the designs well.** Its 95th percentile is 0.56 in the
+  base design, while its 5th percentile is 0.64 (N = 500) and 0.78
+  (N = 2000) under the weak exclusion.
+
+| I6 threshold | base design, N = 500 / 2000 | weak exclusion, N = 500 / 2000 |
+| --- | --- | --- |
+| $R^2 > 0.95$ (until 0.7.0) | 0% / 0% | 27% / 15% |
+| $R^2 > 0.80$ (from 0.7.1) | 0% / 0% | 75% / 92% |
+
+**Change:** I6 warns when $R^2 > 0.80$. The message states that $\rho$ is
+weakly identified and its estimate may be biased. As before, I6 sets the
+status in the validation table and the count in `switch_diagnostics()`; it
+does not raise an R warning when a model is fitted.
+
+**Limit:** the evidence comes from one family of designs: normal
+regressors, one excluded variable, selection rate 0.67.

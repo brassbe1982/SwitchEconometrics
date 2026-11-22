@@ -10,7 +10,7 @@ estimators are documented special cases of that model.
 
 ## Status
 
-**Version 0.7.0: Generation 1, work package 1.7.** The classical binary ESR
+**Version 0.7.1: Generation 1, work package 1.7.** The classical binary ESR
 is functionally complete:
 - estimation by FIML or two-step (`switch_fit()`, `esr()`);
 - inference (`summary()`, `confint()`, `switch_test()`,

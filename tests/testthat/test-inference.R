@@ -227,6 +227,28 @@ test_that("identification checks on a specification with data", {
                class = "switch_error_argument")
 })
 
+test_that("I6 warns when the correction term has R2 above 0.80", {
+  ## threshold of the owner's decision of 22 November 2026 (MC_G1.md s.7)
+  i6 <- function(d) {
+    t <- switch_validate(switch_model(S ~ x1 + z1, fml), d)$table
+    t <- t[t$code == "I6", ]
+    list(r2 = as.numeric(sub("R2 = ([0-9.]+),.*", "\\1", t$value)),
+         status = t$status, message = t$message)
+  }
+  ## base design: far below the threshold
+  b <- i6(sim_esr_data(800, seed = 4))
+  expect_true(all(b$r2 < 0.5))
+  expect_identical(b$status, c("ok", "ok"))
+  ## weak exclusion: R2 between 0.80 and the former 0.95 now warns
+  w <- i6(sim_esr_data(800, seed = 3, gz = -0.1))
+  expect_true(all(w$r2 > 0.80 & w$r2 < 0.95))
+  expect_identical(w$status, c("warning", "warning"))
+  expect_match(w$message, "weakly identified")
+  ## the status follows the threshold
+  w4 <- i6(sim_esr_data(800, seed = 4, gz = -0.1))
+  expect_identical(w4$status, ifelse(w4$r2 > 0.80, "warning", "ok"))
+})
+
 test_that("identification checks on fitted models; functional-form warning", {
   f <- get_fit()
   v <- switch_validate(f)
