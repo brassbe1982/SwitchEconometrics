@@ -1,7 +1,7 @@
 Package: SwitchEconometrics
 Type: Package
 Title: Unified Estimation of Endogenous Regime-Dependent Economic Systems
-Version: 0.9.1
+Version: 1.0.0
 Authors@R: c(
     person("Ibrahim", "Niankara", role = c("aut", "cre"),
            email = "Ibrahim.niankara@aau.ac.ae"),

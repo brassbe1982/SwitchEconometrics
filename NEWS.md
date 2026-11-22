@@ -1,3 +1,50 @@
+# SwitchEconometrics 1.0.0
+
+First release for CRAN: Generation 1, the classical binary endogenous
+switching regression. The code is that of 0.9.1.
+
+## Features
+
+* **Estimation:** full-information maximum likelihood with an analytic
+  gradient and Hessian, multistart and fallback optimisers; two-step
+  (Heckman-Lee) estimation with corrected covariances (`switch_fit()`,
+  `esr()`).
+* **Inference:**
+  - Hessian, OPG, sandwich and cluster-robust covariances, and sampling
+    weights;
+  - confidence intervals on the transformed scale for sigma and rho;
+  - likelihood-ratio and Wald tests, including linear hypotheses;
+  - nonparametric and parametric bootstrap.
+* **Identification checks** I1-I11 before and after fitting
+  (`switch_validate()`) and computational diagnostics
+  (`switch_diagnostics()`).
+* **Treatment effects:**
+  - the four conditional expectations, ATT, ATU, ATE, TH, BH1 and BH0;
+  - by group or per unit;
+  - delta-method or bootstrap standard errors (`switch_effects()`,
+    `switch_predict()`).
+* **Counterfactual and policy scenarios** (`switch_counterfactual()`),
+  **simulation** (`switch_simulate()`), **model comparison**
+  (`switch_compare()`), and the simulated dataset `firms`.
+* **Three vignettes:** `classical-esr`, `treatment-effects` and
+  `simulation-validation`.
+
+## Validation
+
+All six acceptance criteria of Generation 1 are met
+(`04_Validation/results/EVIDENCE_G1.md` in the source repository).
+
+* **Formulas.** Every formula is checked numerically (26 checks).
+* **Monte Carlo study.** Pre-registered: 38 designs, 28 400 replications.
+  - Bias, root-N and convergence checks pass.
+  - Coverage reaches the nominal level as N grows. It is lower below
+    N = 1000, as the vignette `simulation-validation` explains.
+* **Benchmarks.** FIML equals the maximum-likelihood estimates of
+  `sampleSelection` and of the archived `endoSwitch`. The robust and
+  cluster standard errors equal those of the `sandwich` package.
+* **Platforms.** `R CMD check` passes on Windows, macOS and Ubuntu (R
+  release, devel and oldrel-1) and on win-builder.
+
 # SwitchEconometrics 0.9.1
 
 Generation 1, work package 1.9, continued (23 November 2026): the public

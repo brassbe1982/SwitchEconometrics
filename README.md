@@ -91,13 +91,12 @@ results are in the folder `04_Validation/` of the source repository:
 
 ## Status
 
-**Version 0.9.1: Generation 1, work package 1.9** (documentation and CRAN
-preparation).
-- Acceptance criteria 1-5 of Generation 1 are met.
-- Criterion 6 (clean checks on Windows, macOS and Linux) awaits the public
-  repository and its continuous integration.
+**Version 1.0.0: Generation 1 complete.**
+- All six acceptance criteria of Generation 1 are met. The evidence is in
+  `04_Validation/results/EVIDENCE_G1.md`.
+- Version 1.0.0 is prepared for submission to CRAN.
 
-The release 1.0.0 is planned for CRAN. Changes are described in `NEWS.md`.
+Changes are described in `NEWS.md`.
 
 ## Roadmap
 
