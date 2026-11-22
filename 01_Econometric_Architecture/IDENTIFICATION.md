@@ -82,7 +82,7 @@ diagnostic and a status (`ok`, `note`, `warning`, `error`).
 | I7 | Range of the selection index | share of $\hat w_i$ with $\lvert\hat w_i\rvert > 3$; a narrow range weakens functional-form identification | note |
 | I8 | Boundary and conditioning (fitted models) | flags of [PARAMETERIZATION.md](PARAMETERIZATION.md) section 5 | warning |
 | I9 | Multistart agreement (fitted models) | converged starts within $10^{-6}$ in log-likelihood must agree within $10^{-3}$ in parameters | warning |
-| I10 | Falsification test of the exclusion restriction (Di Falco, Veronesi and Yesuf 2011) | among regime-0 units, the excluded variables should not be jointly significant in the outcome regression. Reported as an informal check; it cannot validate the restriction. | note |
+| I10 | Falsification test of the exclusion restriction (Di Falco, Veronesi and Yesuf 2011) | Among regime-0 units: the literal test (excluded variables in the outcome regression), and the same test conditional on the selection-correction term. **Informational only**; see the amendment in section 6. | note (never a warning) |
 | I11 | Non-identified parameters | always lists $\operatorname{Corr}(\varepsilon_1, \varepsilon_0)$ with its explanation | note |
 
 Panel and spatial identification (specification section 3.5, items 5 and 6)
@@ -94,3 +94,35 @@ The WP1.7 study ([04_Validation/MONTE_CARLO_DESIGN.md](../04_Validation/MONTE_CA
 includes strong, moderate, weak and no-exclusion cells. They show how these
 diagnostics relate to bias, coverage and convergence, so the thresholds above
 can be revisited on evidence before v1.0.0.
+
+## 6. Amendment (22 November 2026, WP1.5): the falsification test I10
+
+**Status:** to be confirmed by the owner at the next econometric gate.
+
+The approved text let I10 raise a warning when the excluded variables are
+significant in the regime-0 outcome regression. Under the model itself this
+is wrong. For regime-0 units,
+
+$$E[y \mid S = 0, x, z] = x_0'\beta_0 + \sigma_0\rho_0\, m_0(z'\gamma),$$
+
+which depends on the excluded variables whenever $\rho_0 \neq 0$, even
+though they have no direct effect.
+
+**Simulation** (`04_Validation/scripts/falsification_test_sim.R`;
+data-generating process of the test suite; n = 1000; 5% level):
+
+| Version | Valid exclusion ($\rho_0 = 0.4$), R = 400 | Invalid exclusion (direct effect 0.15), R = 200 |
+| --- | --- | --- |
+| Literal: $y$ on $x_0$ and $z_{excl}$, regime-0 units | rejects **51.0%** | 100% |
+| Conditional: $y$ on $x_0$, $m_0(\hat w)$ and $z_{excl}$ | 5.0% | **5.0%** (no power) |
+
+The literal test confuses selection on unobservables with a direct effect.
+The conditional version has the correct size, but no power, because
+$m_0(z'\gamma)$ absorbs a direct effect of $z$. This is consistent with the
+general fact that a just-identifying exclusion restriction cannot be tested
+with the data.
+
+**Change:** I10 now reports both p-values with this explanation and is
+always a `note`, never a warning. The underlying point belongs in the
+research article's discussion of identification: applied ESR studies often
+cite the falsification test as support for their instruments.

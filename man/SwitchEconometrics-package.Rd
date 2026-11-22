@@ -15,11 +15,12 @@ model, the Generalized Endogenous Switching System.
 \section{Development status}{
 
 Generation 1 (classical binary endogenous switching regression) is under
-development. Version 0.4.0 provides the model specification
+development. Version 0.5.0 provides the model specification
 (\code{\link[=switch_model]{switch_model()}}), the distribution engine (\code{\link[=distribution]{distribution()}}), the
-likelihood engine and the FIML and two-step estimators (\code{\link[=switch_fit]{switch_fit()}});
-inference tools, treatment effects and counterfactuals follow in versions
-0.5.0 to 1.0.0.
+likelihood engine, the FIML and two-step estimators (\code{\link[=switch_fit]{switch_fit()}}), and
+inference and diagnostics (\code{\link[=switch_test]{switch_test()}}, \code{\link[=switch_bootstrap]{switch_bootstrap()}},
+\code{\link[=switch_validate]{switch_validate()}}, \code{\link[=switch_diagnostics]{switch_diagnostics()}}); treatment effects and
+counterfactuals follow in version 0.6.0.
 The authoritative econometric specification, the derivations and the
 delivery plan are kept in the source repository (folders
 \verb{00_Project_Governance} to \verb{05_References}).

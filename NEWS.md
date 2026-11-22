@@ -1,3 +1,52 @@
+# SwitchEconometrics 0.5.0
+
+Generation 1, work package 1.5 (22 November 2026): inference and
+diagnostics.
+
+## New features
+
+* `switch_test()`:
+  - likelihood-ratio test of independent equations (rho_1 = rho_0 = 0),
+    using a restricted FIML refit that equals the probit-plus-regressions
+    closed form;
+  - Wald test of independence (on the selection-correction coefficients for
+    two-step fits);
+  - Wald tests of general linear hypotheses written in parameter names
+    (e.g. `"regime_1:x1 = regime_0:x1"`) or as `list(R = , r = )`.
+* `confint()`. The default intervals for sigma and rho are formed on the
+  log / atanh scale and lie inside the parameter space.
+* `summary()`:
+  - coefficient tables by equation;
+  - disturbance parameters with intervals;
+  - LR and Wald tests of independence;
+  - convergence, multistart and identification information;
+  - for two-step fits, the selection-correction coefficients with standard
+    errors.
+* `switch_bootstrap()`:
+  - nonparametric (observations or clusters) and parametric bootstrap;
+  - one L'Ecuyer stream per replicate, so results do not depend on `cores`
+    (parallel equals serial, tested);
+  - the caller's random-number state and kind are restored;
+  - failed replicates are counted with reasons, and a warning is given above
+    10%;
+  - gives two-step standard errors for sigma and rho.
+* `switch_validate()`: identification checks I1-I11 on a specification with
+  data or on a fit. Data errors and rank problems are reported, not thrown.
+  Every fit stores the checks. `switch_fit()` warns (class
+  `switch_warning_identification`) when identification rests on the normal
+  functional form alone (specification section 3.5).
+* `switch_diagnostics()`: computational and statistical diagnostics, kept
+  separate (specification section 15).
+
+## Methodological note
+
+* The falsification test of exclusion restrictions (I10, Di Falco et al.
+  2011) is reported for information only. In a simulation with valid
+  exclusions and rho_0 = 0.4, the literal test rejects 51% of the time at
+  the 5% level. Its version conditional on the selection-correction term has
+  the right size but no power. See IDENTIFICATION.md section 6, pending the
+  owner's confirmation.
+
 # SwitchEconometrics 0.4.0
 
 Generation 1, work package 1.4 (22 November 2026). First version that

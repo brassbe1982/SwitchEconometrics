@@ -123,11 +123,20 @@ Equivalent to `switch_fit(selection, outcomes, data, model = "esr",
 method = method, ...)`. This is the compatibility representation of the
 classical ESR (specification section 10.1).
 
-### `switch_validate()`
+### `switch_validate()` (implemented in 0.5.0)
 
 ```r
-switch_validate(model, data = NULL, ...)
+switch_validate(model, data = NULL, weights = NULL, cluster = NULL,
+                subset = NULL, ...)
 ```
+
+Implemented in 0.5.0 with these details:
+- Data or specification errors give a single `I0` error row instead of an
+  exception.
+- I10 is always a note (IDENTIFICATION.md section 6).
+- `switch_test()`, `switch_bootstrap()` (statistics `"coef"`; `"effects"`
+  in 0.6.0), `switch_diagnostics()`, `confint()` and `summary()` are also
+  implemented in 0.5.0.
 
 `model` is a `switch_spec` (then `data` is required) or a `switch_fit`.
 Returns a `switch_validation`: the table of diagnostics I1-I11

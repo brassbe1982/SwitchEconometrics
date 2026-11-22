@@ -207,6 +207,9 @@ switch_fit <- function(selection = NULL, outcomes = NULL, data, model = "esr",
 
   fit <- new_switch_fit(est, spec, sd, map, ts, control, method, vcov, cl,
                         start_info)
+  fit$identification <- tryCatch(se_validate_core(spec, sd, fit),
+                                 error = function(e) NULL)
+  if (!control$keep_data) fit$data <- NULL
   se_fit_warnings(fit)
   fit
 }
@@ -267,9 +270,9 @@ new_switch_fit <- function(est, spec, sd, map, ts, control, method, vcov, cl,
                        hessian_condition = est$hessian_condition,
                        flags = flags, multistart_flat = est$multistart_flat,
                        local_maxima = est$local_maxima),
-    identification = list(exclusions = sd$exclusions),
+    identification = NULL,
     map = map,
-    data = if (control$keep_data) sd,
+    data = sd,
     terms = sd$terms, xlevels = sd$xlevels, contrasts = sd$contrasts,
     na_report = sd$na_report, weights = sd$weights, cluster = sd$cluster,
     record = record), class = "switch_fit")
@@ -295,6 +298,11 @@ se_fit_warnings <- function(fit) {
   if (isTRUE(f$ill_conditioned)) {
     se_warn(sprintf("ill-conditioned Hessian (condition number %.3g)",
                     fit$diagnostics$hessian_condition), "conditioning")
+  }
+  idn <- fit$identification
+  if (inherits(idn, "switch_validation")) {
+    i4 <- idn$table[idn$table$code == "I4" & idn$table$status == "warning", ]
+    for (m in i4$message) se_warn(m, "identification")
   }
   if (isTRUE(fit$diagnostics$multistart_flat)) {
     se_warn(paste0("different parameter values reach the same maximum ",
