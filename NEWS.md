@@ -1,3 +1,14 @@
+# SwitchEconometrics 0.9.1
+
+Generation 1, work package 1.9, continued (23 November 2026): the public
+repository.
+
+* The source is on GitHub: https://github.com/brassbe1982/SwitchEconometrics.
+  `URL` and `BugReports` in DESCRIPTION point to it, and the README shows
+  how to install from it.
+* GitHub Actions runs `R CMD check` on Windows, macOS and Ubuntu (R
+  release, devel and oldrel-1) on every push.
+
 # SwitchEconometrics 0.9.0
 
 Generation 1, work package 1.9 (23 November 2026): documentation and CRAN

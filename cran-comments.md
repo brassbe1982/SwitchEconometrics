@@ -1,5 +1,8 @@
 ## Submission
 
+Version 0.9.1, pre-release checks. The first CRAN submission is planned as
+version 1.0.0.
+
 This is a new submission. SwitchEconometrics estimates endogenous switching
 regression models (the classical binary model in this release): FIML and
 two-step estimation, identification checks, treatment effects and

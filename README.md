@@ -91,7 +91,7 @@ results are in the folder `04_Validation/` of the source repository:
 
 ## Status
 
-**Version 0.9.0: Generation 1, work package 1.9** (documentation and CRAN
+**Version 0.9.1: Generation 1, work package 1.9** (documentation and CRAN
 preparation).
 - Acceptance criteria 1-5 of Generation 1 are met.
 - Criterion 6 (clean checks on Windows, macOS and Linux) awaits the public
@@ -112,12 +112,16 @@ The release 1.0.0 is planned for CRAN. Changes are described in `NEWS.md`.
 
 ## Installation
 
-The package is not yet on CRAN. To install it from a source tarball built
-with `R CMD build`:
+The package is not yet on CRAN. Install the development version from
+GitHub:
 
 ```r
-install.packages("SwitchEconometrics_0.9.0.tar.gz", repos = NULL, type = "source")
+# install.packages("remotes")
+remotes::install_github("brassbe1982/SwitchEconometrics", build_vignettes = TRUE)
 ```
+
+Bug reports and questions:
+https://github.com/brassbe1982/SwitchEconometrics/issues.
 
 ## Citation
 
