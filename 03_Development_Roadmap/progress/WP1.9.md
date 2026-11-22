@@ -6,9 +6,11 @@ Versions 0.9.0 and 0.9.1. Completed 23 November 2026. Status:
 - win-builder R-release and R-devel give 1 NOTE each (new submission; the
   cited authors' surnames).
 - The macOS builder was unavailable (HTTP 502).
-- AC6 is proposed as met, with two documented exceptions: the macOS builder
-  was unavailable, and the macOS R-devel CI job runs without the suggested
-  packages. The owner decides.
+- **AC6 is met (owner, 23 November 2026: "Yes, mark AC6 met")**, with two
+  documented exceptions: the macOS builder was unavailable, and the macOS
+  R-devel CI job runs without the suggested packages.
+- With AC3 and AC6 met and the documentation complete, the software gate's
+  requirement is met. All six Generation 1 criteria are met.
 
 ## What was done
 
