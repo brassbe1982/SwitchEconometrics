@@ -97,7 +97,8 @@ can be revisited on evidence before v1.0.0.
 
 ## 6. Amendment (22 November 2026, WP1.5): the falsification test I10
 
-**Status:** to be confirmed by the owner at the next econometric gate.
+**Status: confirmed by the owner on 22 November 2026** ("Confirm, start
+WP1.6").
 
 The approved text let I10 raise a warning when the excluded variables are
 significant in the regime-0 outcome regression. Under the model itself this

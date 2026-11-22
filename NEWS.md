@@ -1,3 +1,53 @@
+# SwitchEconometrics 0.6.0
+
+Generation 1, work package 1.6 (22 November 2026): economic interpretation.
+
+## New features
+
+* `switch_effects()`:
+  - computes the four conditional expectations of the potential outcomes
+    and ATT, ATU, ATE, TH, BH1 and BH0, with the 2 x 2 table of
+    Lokshin-Sajaia / Di Falco layout and the share-weighted ATE;
+  - standard errors by the delta method (analytic gradients) or by the
+    bootstrap;
+  - groups (`by`) and subsets for heterogeneity analysis;
+  - weighted means with sampling weights;
+  - optional per-observation output.
+* `switch_predict()` / `predict()`: types probability, selection_index,
+  linear, conditional, observed and unconditional. They work for new data
+  (using the fit's factor levels and contrasts; missing rows give NA) and
+  give delta-method standard errors. `fitted()`; `residuals()` (response,
+  pearson).
+* `switch_counterfactual()`:
+  - scenarios: everyone in regime 1, everyone in regime 0, or a policy
+    change of covariates;
+  - mean changes in expected outcomes and in the regime-1 share, with
+    delta-method standard errors, by observed regime and by group;
+  - for the `all_` scenarios, the change conditional on the observed regime
+    (its mean is the ATU, or minus the ATT).
+* `switch_simulate()` and `simulate()`: simulate from a specification or a
+  fit. Potential outcomes are simulated under an explicit, admissibility
+  checked assumption on Corr(eps1, eps0) (default rho1*rho0).
+* `switch_compare()`, `anova()`: comparison tables and likelihood-ratio
+  tests of nested FIML fits on the same sample.
+* `update()` works for `switch_fit()` and `esr()` fits. Also
+  `model.frame()`, `model.matrix()` and `terms()` by equation.
+* `switch_bootstrap(statistics = "effects")`: bootstrap of the effects,
+  recomputed on each bootstrap sample (including groups).
+* New simulated dataset `firms` (2000 firms; digital adoption and
+  productivity) with documented true parameters.
+
+## Validation (acceptance criterion AC5 met)
+
+* The conditional expectations equal two-dimensional numerical integrals to
+  1e-7.
+* The effects equal the reference implementation to 1e-10.
+* BH1 - BH0 = TH, and the share-weighted ATE equals ATE at the probit
+  estimate.
+* Analytic effect gradients equal numerical derivatives.
+* On 200 000 simulated observations, the counterfactual means, ATT and ATU
+  match the simulated potential outcomes within 4 Monte Carlo SEs.
+
 # SwitchEconometrics 0.5.0
 
 Generation 1, work package 1.5 (22 November 2026): inference and

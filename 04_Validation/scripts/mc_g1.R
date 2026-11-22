@@ -11,8 +11,10 @@
 ##
 ## Random numbers: L'Ecuyer-CMRG, master seed 20261122, one stream per cell,
 ## replication r uses substream r of its cell (results do not depend on the
-## number of cores). Effects (ATT, ATU, ATE, TH, BH) are added when
-## switch_effects() exists (version 0.6.0).
+## number of cores). Effects (ATT, ATU, ATE, TH, BH1, BH0; from version
+## 0.6.0): the estimand of each replication is the same effect evaluated at
+## the true parameters on that replication's sample (MONTE_CARLO_DESIGN.md
+## s.3); delta-method standard errors.
 
 args <- commandArgs(trailingOnly = TRUE)
 mode <- if (length(args) >= 1) args[1] else "smoke"
@@ -93,7 +95,14 @@ one_rep <- function(cl, seed) {
     est <- coef(f)
     se <- sqrt(pmax(diag(vcov(f)), 0))
     se_w <- if (m == "fiml") sqrt(pmax(diag(vcov(f, "working")), 0)) else NA
+    eff <- if ("switch_effects" %in% getNamespaceExports("SwitchEconometrics"))
+      tryCatch(switch_effects(f), error = function(e) NULL)
+    eff_true <- if (!is.null(eff)) SwitchEconometrics:::se_eff_values(
+      stats::setNames(truth_of(cl), names(est)), f$data, f$map)
     out[[m]] <- list(
+      eff_est = if (!is.null(eff)) stats::setNames(eff$table$estimate, eff$table$effect),
+      eff_se = if (!is.null(eff)) stats::setNames(eff$table$std_error, eff$table$effect),
+      eff_true = eff_true,
       ok = TRUE, est = est, se = se, se_w = se_w,
       est_w = if (m == "fiml") coef(f, "working") else NA,
       code = f$convergence$code, loglik = f$loglik,
@@ -158,6 +167,26 @@ summarise_cell <- function(cr) {
         boundary = mean(vapply(rr[ok], function(x) isTRUE(x$boundary), logical(1))),
         median_time = median(vapply(rr, function(x) x$time, numeric(1))),
         stringsAsFactors = FALSE)
+    }
+    ## effects: estimand varies by replication (sample-conditional effect)
+    okE <- ok & vapply(rr, function(x) !is.null(x$eff_est), logical(1))
+    if (any(okE)) {
+      EE <- do.call(rbind, lapply(rr[okE], `[[`, "eff_est"))
+      ES <- do.call(rbind, lapply(rr[okE], `[[`, "eff_se"))
+      ET <- do.call(rbind, lapply(rr[okE], `[[`, "eff_true"))
+      for (k in colnames(EE)) {
+        dev <- EE[, k] - ET[, k]
+        t <- mean(ET[, k])
+        rows[[length(rows) + 1]] <- data.frame(
+          group = cl$group, N = cl$N, rho1 = cl$rho1, rho0 = cl$rho0,
+          method = m, parameter = paste0("effect:", k), truth = t,
+          R = length(rr), converged = sum(okE), bias = mean(dev),
+          rel_bias = if (abs(t) >= 0.2) mean(dev) / abs(t) else NA,
+          rmse = sqrt(mean(dev^2)), emp_sd = sd(dev), mean_se = mean(ES[, k]),
+          se_ratio = mean(ES[, k]) / sd(dev),
+          coverage = mean(abs(dev) <= 1.96 * ES[, k]), boundary = NA,
+          median_time = NA, stringsAsFactors = FALSE)
+      }
     }
   }
   do.call(rbind, rows)

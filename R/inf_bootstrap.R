@@ -33,7 +33,9 @@
 #'   observations), or a vector of cluster identifiers for the estimation
 #'   sample (length `nobs(object)`).
 #' @param statistics Statistics to bootstrap: `"coef"` (natural-scale
-#'   parameters). Treatment effects are added in version 0.6.0.
+#'   parameters) or `"effects"` (ATT, ATU, ATE, TH, BH1, BH0 of
+#'   [switch_effects()], recomputed on each bootstrap sample, so that their
+#'   intervals reflect the sampling variation of the covariates).
 #' @param cores Number of worker processes. Examples and tests use at most 2.
 #' @param seed Seed of the bootstrap streams.
 #' @param level Confidence level of the intervals.
@@ -58,8 +60,10 @@
 #' @export
 switch_bootstrap <- function(object, R = 999L,
                              type = c("nonparametric", "parametric"),
-                             cluster = NULL, statistics = "coef", cores = 1L,
-                             seed = NULL, level = 0.95, ...) {
+                             cluster = NULL, statistics = c("coef", "effects"),
+                             cores = 1L, seed = NULL, level = 0.95, ...) {
+  dots <- list(...)
+  eff_args <- dots$.effects
   if (!inherits(object, "switch_fit")) {
     se_abort("'object' must be a switch_fit", "argument")
   }
@@ -69,9 +73,18 @@ switch_bootstrap <- function(object, R = 999L,
              "argument")
   }
   type <- match.arg(type)
-  if (!identical(statistics, "coef")) {
-    se_abort("statistics other than \"coef\" (treatment effects) are added in version 0.6.0",
-             "argument")
+  statistics <- match.arg(statistics)
+  ## effects: groups and subset carried by original row index so that they
+  ## follow the units through resampling
+  eff <- NULL
+  if (statistics == "effects") {
+    lk <- function(v) {
+      if (is.null(v)) return(NULL)
+      out <- v[rep(NA_integer_, max(sd$index))]
+      out[sd$index] <- v
+      out
+    }
+    eff <- list(by = lk(eff_args$by), subset = lk(eff_args$subset))
   }
   if (!is.numeric(R) || length(R) != 1L || R < 2 || R != round(R)) {
     se_abort("'R' must be a whole number of at least 2", "argument")
@@ -124,14 +137,17 @@ switch_bootstrap <- function(object, R = 999L,
     parallel::clusterEvalQ(pcl, suppressPackageStartupMessages(
       requireNamespace("SwitchEconometrics", quietly = TRUE)))
     parallel::parLapply(pcl, seeds, se_boot_worker,
-                        obj = object, dat = sd, ty = type, ids = cl_ids)
+                        obj = object, dat = sd, ty = type, ids = cl_ids,
+                        stat = statistics, eff = eff)
   } else {
-    lapply(seeds, function(sd_r) se_boot_one(object, sd, type, cl_ids, sd_r))
+    lapply(seeds, function(sd_r) se_boot_one(object, sd, type, cl_ids, sd_r,
+                                             statistics, eff))
   }
   elapsed <- proc.time()[["elapsed"]] - t0
 
   ok <- vapply(res, function(x) isTRUE(x$ok), logical(1))
-  est <- object$coefficients
+  est <- if (statistics == "coef") object$coefficients
+         else se_boot_stat(object$coefficients, sd, object$map, eff)
   B <- if (any(ok)) do.call(rbind, lapply(res[ok], `[[`, "coef"))
        else matrix(NA_real_, 0, length(est), dimnames = list(NULL, names(est)))
   reasons <- table(vapply(res[!ok], function(x) x$reason %||% "unknown",
@@ -165,12 +181,25 @@ switch_bootstrap <- function(object, R = 999L,
 
 ## Worker function: defined at top level so that it is sent to parallel
 ## workers by namespace reference.
-se_boot_worker <- function(sd_r, obj, dat, ty, ids) {
-  se_boot_one(obj, dat, ty, ids, sd_r)
+se_boot_worker <- function(sd_r, obj, dat, ty, ids, stat = "coef", eff = NULL) {
+  se_boot_one(obj, dat, ty, ids, sd_r, stat, eff)
+}
+
+## Effects on a (bootstrap) sample; groups and subset looked up by original
+## row index.
+se_boot_stat <- function(coef, sd, map, eff) {
+  g <- if (!is.null(eff$by)) eff$by[sd$index]
+  s <- if (!is.null(eff$subset)) {
+    v <- eff$subset[sd$index]
+    !is.na(v) & v
+  }
+  if (!is.null(g)) g <- factor(g, levels = levels(eff$by))
+  se_eff_values(coef, sd, map, groups = g, set = s)
 }
 
 ## One bootstrap replicate (also run on parallel workers).
-se_boot_one <- function(object, sd, type, cl_ids, seed) {
+se_boot_one <- function(object, sd, type, cl_ids, seed, stat = "coef",
+                        eff = NULL) {
   assign(".Random.seed", seed, envir = globalenv())
   sdb <- tryCatch(
     if (type == "nonparametric") se_resample_data(sd, cl_ids)
@@ -182,6 +211,12 @@ se_boot_one <- function(object, sd, type, cl_ids, seed) {
   fit <- tryCatch(se_refit(object, sdb), error = function(e) e)
   if (inherits(fit, "error")) return(list(ok = FALSE, reason = se_reason(fit)))
   if (fit$code != 0L) return(list(ok = FALSE, reason = "not converged"))
+  if (stat == "effects") {
+    v <- tryCatch(se_boot_stat(fit$coef, sdb, object$map, eff),
+                  error = function(e) e)
+    if (inherits(v, "error")) return(list(ok = FALSE, reason = se_reason(v)))
+    return(list(ok = TRUE, coef = v))
+  }
   list(ok = TRUE, coef = fit$coef)
 }
 

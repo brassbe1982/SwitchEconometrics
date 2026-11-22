@@ -233,9 +233,11 @@ se_build_data <- function(spec, data, weights = NULL, cluster = NULL,
   Z <- stats::model.matrix(tt_sel, mf_sel_k)
   S <- S_all[keep]
   X <- list(); terms_out <- list(); xlev <- list(); contr <- list()
+  frames <- list(selection = mf_sel_k)
   for (l in labels) {
     f <- stats::delete.response(stats::terms(fout[[l]]))
     mf <- se_eval_frame(f, data, sprintf("'%s' outcome", l), subset = keep)
+    frames[[l]] <- mf
     tt <- attr(mf, "terms")
     X[[l]] <- stats::model.matrix(tt, mf)
     terms_out[[l]] <- tt
@@ -299,7 +301,7 @@ se_build_data <- function(spec, data, weights = NULL, cluster = NULL,
                  outcomes = terms_out),
     xlevels = c(list(selection = stats::.getXlevels(tt_sel, mf_sel_k)), xlev),
     contrasts = c(list(selection = attr(Z, "contrasts")), contr),
-    exclusions = excl,
+    exclusions = excl, frames = frames,
     na_report = na_report), class = "switch_data")
 }
 

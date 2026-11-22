@@ -85,6 +85,23 @@ ref_hessian <- function(th, d, ix) {
   H
 }
 
+## Reference treatment effects (copy of effects_fun in verify_math.R),
+## reference parameter order, unweighted.
+ref_effects <- function(th, d, ix) {
+  s1 <- exp(th[ix$t1]); s0 <- exp(th[ix$t0])
+  r1 <- tanh(th[ix$a1]); r0 <- tanh(th[ix$a0])
+  w <- drop(d$Z %*% th[ix$g])
+  m1 <- ref_mills(w); m0 <- -ref_mills(-w)
+  xb1 <- drop(d$X1 %*% th[ix$b1]); xb0 <- drop(d$X0 %*% th[ix$b0])
+  EY1S1 <- xb1 + s1 * r1 * m1; EY1S0 <- xb1 + s1 * r1 * m0
+  EY0S1 <- xb0 + s0 * r0 * m1; EY0S0 <- xb0 + s0 * r0 * m0
+  T1 <- d$S == 1; T0 <- !T1
+  ATT <- mean(EY1S1[T1] - EY0S1[T1]); ATU <- mean(EY1S0[T0] - EY0S0[T0])
+  c(ATT = ATT, ATU = ATU, ATE = mean(xb1 - xb0), TH = ATT - ATU,
+    BH1 = mean(EY1S1[T1]) - mean(EY1S0[T0]),
+    BH0 = mean(EY0S1[T1]) - mean(EY0S0[T0]))
+}
+
 ## Bridge between the package (parameter map order) and the reference order.
 ref_setup <- function(sd, map) {
   d <- list(n = sd$n, S = sd$S, y = sd$y, Z = sd$Z,

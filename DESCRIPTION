@@ -1,7 +1,7 @@
 Package: SwitchEconometrics
 Type: Package
 Title: Unified Estimation of Endogenous Regime-Dependent Economic Systems
-Version: 0.5.0
+Version: 0.6.0
 Authors@R: c(
     person("Ibrahim", "Niankara", role = c("aut", "cre"),
            email = "Ibrahim.niankara@aau.ac.ae"),
@@ -17,8 +17,9 @@ Description: A unified framework for endogenous switching regression,
     layer by layer: model specification, distribution and
     parameter-transformation engines, the likelihood with analytic score and
     Hessian, full-information maximum-likelihood and two-step estimators,
-    tests, bootstrap and identification diagnostics (this version), then
-    treatment effects and counterfactuals.
+    tests, bootstrap and identification diagnostics, and the treatment
+    effects (ATT, ATU, ATE and heterogeneity), counterfactual and policy
+    scenarios and simulation of the classical model.
 License: MIT + file LICENSE
 Depends:
     R (>= 4.1.0)
@@ -31,6 +32,7 @@ Suggests:
     sampleSelection,
     testthat (>= 3.0.0)
 Encoding: UTF-8
+LazyData: true
 Roxygen: list(markdown = TRUE)
 Config/testthat/edition: 3
 Config/roxygen2/version: 8.1.1

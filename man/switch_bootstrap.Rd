@@ -12,7 +12,7 @@ switch_bootstrap(
   R = 999L,
   type = c("nonparametric", "parametric"),
   cluster = NULL,
-  statistics = "coef",
+  statistics = c("coef", "effects"),
   cores = 1L,
   seed = NULL,
   level = 0.95,
@@ -37,7 +37,9 @@ observations), or a vector of cluster identifiers for the estimation
 sample (length \code{nobs(object)}).}
 
 \item{statistics}{Statistics to bootstrap: \code{"coef"} (natural-scale
-parameters). Treatment effects are added in version 0.6.0.}
+parameters) or \code{"effects"} (ATT, ATU, ATE, TH, BH1, BH0 of
+\code{\link[=switch_effects]{switch_effects()}}, recomputed on each bootstrap sample, so that their
+intervals reflect the sampling variation of the covariates).}
 
 \item{cores}{Number of worker processes. Examples and tests use at most 2.}
 

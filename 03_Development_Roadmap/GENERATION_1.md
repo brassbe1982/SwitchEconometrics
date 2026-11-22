@@ -25,7 +25,7 @@ plan decision D7); any Stata comparison (owner decision, 22 November 2026).
 | 1.3 | 0.3.0 | `lik_esr_gaussian()` (log-likelihood, score, Hessian, weights); `loglik_switch()`, `loglik_observation()`, `loglik_joint()`, `loglik_selection()`, `loglik_outcome()` | reference difference 8.9e-16; derivatives 2e-10; `sampleSelection` log-likelihood identical (AC2 met); 332 expectations | **done** 2026-11-22 |
 | 1.4 | 0.4.0 | `est_two_step()` (model, robust and cluster covariances), `est_fiml()` with multistart and optimiser fallbacks, all four FIML covariance types (moved forward from WP1.5), `switch_fit()`, `switch_control()`, `esr()`, basic methods; Monte Carlo driver | FIML equals `sampleSelection` ML (3e-10); recovery; frequency weights equal replicated data; 434 expectations; Monte Carlo smoke test 200/200 converged (Marquardt NR fix) | **done** 2026-11-22 |
 | 1.5 | 0.5.0 | `switch_test()` (LR, Wald, linear hypotheses), `confint()`, `summary()`, `switch_bootstrap()` (nonparametric, parametric, cluster; parallel equals serial), `switch_validate()` (I1-I11), `switch_diagnostics()`; covariances were delivered in 0.4.0 | 528 expectations; LR equals closed form; bootstrap SEs within 0.75-1.33 of the Hessian SEs; smoke Monte Carlo identical to 0.4.0; I10 amendment (IDENTIFICATION.md s.6) | **done** 2026-11-22 |
-| 1.6 | 0.6.0 | Effects, predictions, counterfactuals, simulation, S3 methods, `esr()`, dataset `firms`, reproducibility record | AC5 tests | |
+| 1.6 | 0.6.0 | `switch_effects()`, `switch_predict()` with `predict`/`fitted`/`residuals`, `switch_counterfactual()`, `switch_simulate()` with `simulate`, `switch_compare()`/`anova`, `update`, model methods, bootstrap of effects, dataset `firms` (`esr()` and the record were delivered in 0.4.0) | **AC5 met**; 631 expectations; smoke Monte Carlo with effects | **done** 2026-11-22 |
 | 1.7 | 0.7.0 | Monte Carlo study ([MONTE_CARLO_DESIGN.md](../04_Validation/MONTE_CARLO_DESIGN.md)) | `MC_G1.md` (AC1, AC4) | |
 | 1.8 | 0.8.0 | Benchmarks ([BENCHMARK_PROTOCOL.md](../04_Validation/BENCHMARK_PROTOCOL.md)) | `BENCHMARK_G1.md` (AC2, AC3) | |
 | 1.9 | 0.9.0 | Vignettes `classical-esr`, `treatment-effects`, `simulation-validation`; README; CRAN preparation; GitHub Actions (owner creates the repository) | `--as-cran` clean (AC6) | |
@@ -53,8 +53,9 @@ plan decision D7); any Stata comparison (owner decision, 22 November 2026).
 6. Monte Carlo design and pre-registered thresholds
    ([MONTE_CARLO_DESIGN.md](../04_Validation/MONTE_CARLO_DESIGN.md)).
 
-**Open for the owner (raised after the gate, WP1.5):** the falsification
-test I10 is reported for information only and never raises a warning. The
-reason is simulation evidence that it rejects valid exclusions under
-selection on unobservables ([IDENTIFICATION.md](../01_Econometric_Architecture/IDENTIFICATION.md)
+**Amendment confirmed by the owner on 22 November 2026 (raised in
+WP1.5):** the falsification test I10 is reported for information only and
+never raises a warning. The reason is simulation evidence that it rejects
+valid exclusions under selection on unobservables
+([IDENTIFICATION.md](../01_Econometric_Architecture/IDENTIFICATION.md)
 section 6).

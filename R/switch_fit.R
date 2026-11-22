@@ -264,7 +264,7 @@ new_switch_fit <- function(est, spec, sd, map, ts, control, method, vcov, cl,
     vcov = est$vcov, vcov_working = est$vcov_working,
     vcov_type = vcov, loglik = est$loglik,
     npar = sum(!map$fixed), nobs = sd$n, n_regime = sd$n_regime,
-    regimes = sd$regimes,
+    regimes = sd$regimes, regime_values = sd$regime_values,
     two_step = ts, convergence = est$convergence, starts = est$starts,
     diagnostics = list(hessian_eigen = est$hessian_eigen,
                        hessian_condition = est$hessian_condition,
@@ -315,6 +315,9 @@ se_fit_warnings <- function(fit) {
 #' @rdname switch_fit
 #' @export
 esr <- function(selection, outcomes, data, method = "fiml", ...) {
-  switch_fit(selection = selection, outcomes = outcomes, data = data,
-             model = "esr", method = method, ...)
+  fit <- switch_fit(selection = selection, outcomes = outcomes, data = data,
+                    model = "esr", method = method, ...)
+  fit$call <- match.call()
+  fit$record$call <- fit$call
+  fit
 }

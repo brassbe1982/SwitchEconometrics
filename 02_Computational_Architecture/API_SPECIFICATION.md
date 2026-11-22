@@ -144,7 +144,17 @@ Returns a `switch_validation`: the table of diagnostics I1-I11
 section 4), a classification of each parameter group, and the warnings.
 `switch_fit()` runs it and stores the result in `fit$identification`.
 
-### `switch_effects()`
+### `switch_effects()` (implemented in 0.6.0)
+
+**Implementation notes (0.6.0):**
+- **`switch_effects()`:** also takes `data =`, so that `by` and `subset`
+  can be given as formulas or column names.
+- **`switch_counterfactual()`:** also takes `data =` and `level =`.
+- **`switch_bootstrap()`:** `statistics = "effects"` is available.
+- **`switch_simulate()`:** with a `switch_spec`, the first outcome equation
+  is regime 0. Responses must be plain variable names. Potential outcomes
+  are named `.potential_<regime>`.
+- **`simulate.switch_fit()`:** returns columns `S_k` and `y_k`.
 
 ```r
 switch_effects(object, effects = c("ATT", "ATU", "ATE", "TH", "BH"),

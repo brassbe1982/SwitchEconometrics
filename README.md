@@ -10,16 +10,24 @@ estimators are documented special cases of that model.
 
 ## Status
 
-**Version 0.5.0: Generation 1, work package 1.5.** `switch_fit()` (and
-`esr()`) estimates the classical binary ESR by FIML or two-step.
-- FIML results equal `sampleSelection`'s maximum-likelihood estimates.
-- 0.5.0 adds:
-  - `summary()` and `confint()`;
-  - LR and Wald tests (`switch_test()`);
-  - the bootstrap (`switch_bootstrap()`);
-  - identification checks (`switch_validate()`);
-  - diagnostics (`switch_diagnostics()`).
-- Treatment effects and counterfactuals follow in 0.6.0.
+**Version 0.6.0: Generation 1, work package 1.6.** The classical binary ESR
+is functionally complete:
+- estimation by FIML or two-step (`switch_fit()`, `esr()`);
+- inference (`summary()`, `confint()`, `switch_test()`,
+  `switch_bootstrap()`);
+- identification checks and diagnostics (`switch_validate()`,
+  `switch_diagnostics()`);
+- treatment effects (`switch_effects()`);
+- predictions (`switch_predict()`);
+- counterfactual and policy scenarios (`switch_counterfactual()`);
+- simulation (`switch_simulate()`);
+- model comparison (`switch_compare()`).
+
+FIML results equal `sampleSelection`'s maximum-likelihood estimates. Still
+to come in Generation 1:
+- the pre-registered Monte Carlo study (0.7.0);
+- the full benchmark report (0.8.0);
+- vignettes and CRAN preparation (0.9.0).
 - 0.3.0 added the likelihood engine of the classical binary ESR, with
   analytic score and Hessian. Its log-likelihood equals `sampleSelection`'s
   Tobit-5 value at the same parameters.
@@ -57,8 +65,8 @@ The Generation 1 econometric gate was approved on 22 November 2026. Version
 
 ## Planned interface (Generation 1)
 
-`switch_fit()`, `summary()` and `switch_validate()` work from version 0.5.0.
-`switch_effects()` follows in 0.6.0.
+All functions below work from version 0.6.0. `firms` is the simulated
+example dataset shipped with the package.
 
 ```r
 library(SwitchEconometrics)

@@ -15,12 +15,15 @@ model, the Generalized Endogenous Switching System.
 \section{Development status}{
 
 Generation 1 (classical binary endogenous switching regression) is under
-development. Version 0.5.0 provides the model specification
-(\code{\link[=switch_model]{switch_model()}}), the distribution engine (\code{\link[=distribution]{distribution()}}), the
-likelihood engine, the FIML and two-step estimators (\code{\link[=switch_fit]{switch_fit()}}), and
+development. Version 0.6.0 provides the model specification
+(\code{\link[=switch_model]{switch_model()}}), the FIML and two-step estimators (\code{\link[=switch_fit]{switch_fit()}}),
 inference and diagnostics (\code{\link[=switch_test]{switch_test()}}, \code{\link[=switch_bootstrap]{switch_bootstrap()}},
-\code{\link[=switch_validate]{switch_validate()}}, \code{\link[=switch_diagnostics]{switch_diagnostics()}}); treatment effects and
-counterfactuals follow in version 0.6.0.
+\code{\link[=switch_validate]{switch_validate()}}, \code{\link[=switch_diagnostics]{switch_diagnostics()}}), treatment effects
+(\code{\link[=switch_effects]{switch_effects()}}), predictions (\code{\link[=switch_predict]{switch_predict()}}), counterfactual and
+policy scenarios (\code{\link[=switch_counterfactual]{switch_counterfactual()}}), simulation
+(\code{\link[=switch_simulate]{switch_simulate()}}), model comparison (\code{\link[=switch_compare]{switch_compare()}}) and the
+distribution engine (\code{\link[=distribution]{distribution()}}). The example data \link{firms} are
+simulated.
 The authoritative econometric specification, the derivations and the
 delivery plan are kept in the source repository (folders
 \verb{00_Project_Governance} to \verb{05_References}).

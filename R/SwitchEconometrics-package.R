@@ -8,12 +8,15 @@
 #'
 #' @section Development status:
 #' Generation 1 (classical binary endogenous switching regression) is under
-#' development. Version 0.5.0 provides the model specification
-#' ([switch_model()]), the distribution engine ([distribution()]), the
-#' likelihood engine, the FIML and two-step estimators ([switch_fit()]), and
+#' development. Version 0.6.0 provides the model specification
+#' ([switch_model()]), the FIML and two-step estimators ([switch_fit()]),
 #' inference and diagnostics ([switch_test()], [switch_bootstrap()],
-#' [switch_validate()], [switch_diagnostics()]); treatment effects and
-#' counterfactuals follow in version 0.6.0.
+#' [switch_validate()], [switch_diagnostics()]), treatment effects
+#' ([switch_effects()]), predictions ([switch_predict()]), counterfactual and
+#' policy scenarios ([switch_counterfactual()]), simulation
+#' ([switch_simulate()]), model comparison ([switch_compare()]) and the
+#' distribution engine ([distribution()]). The example data [firms] are
+#' simulated.
 #' The authoritative econometric specification, the derivations and the
 #' delivery plan are kept in the source repository (folders
 #' `00_Project_Governance` to `05_References`).
@@ -28,5 +31,7 @@
 #'
 #' @keywords internal
 #' @importFrom stats dnorm pnorm qnorm rnorm coef vcov logLik nobs confint
+#' @importFrom stats predict fitted residuals simulate anova model.frame
+#' @importFrom stats model.matrix terms
 #' @importFrom maxLik maxNR
 "_PACKAGE"

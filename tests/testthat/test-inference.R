@@ -149,8 +149,7 @@ test_that("the bootstrap is reproducible and restores the RNG", {
   expect_error(confint(b1, level = 0.9), class = "switch_error_argument")
   expect_output(print(b1), "Bootstrap of a FIML fit")
   expect_error(switch_bootstrap(f, R = 1), class = "switch_error_argument")
-  expect_error(switch_bootstrap(f, statistics = "effects"),
-               class = "switch_error_argument")
+  expect_error(switch_bootstrap(f, statistics = "nope"))
 })
 
 test_that("parametric and cluster bootstraps; two-step sigma and rho get SEs", {
