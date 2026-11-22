@@ -43,7 +43,7 @@ test_that("two-step coefficients equal sampleSelection's; sigma uses Heckman's f
   expect_equal(unname(psi[8:11]), unname(cs[10:13]), tolerance = 1e-6)
   ## sigma_j^2 = mean(residual^2) + theta_j^2 mean(delta_j) (Heckman 1979);
   ## sampleSelection 1.2-16 uses (theta_j * mean(delta_j))^2 instead
-  ## (BENCHMARK_PROTOCOL.md s.6), so sigma and rho are checked against the
+  ## (D-SS-1, BENCHMARK_PROTOCOL.md s.5a), so sigma and rho are checked against the
   ## formula, not against sampleSelection
   w <- drop(ts$data$Z %*% psi[1:3])
   for (r in 1:2) {
@@ -60,6 +60,20 @@ test_that("two-step coefficients equal sampleSelection's; sigma uses Heckman's f
     expect_equal(unname(coef(ts)[paste0(lab, ":rho")]), th / sqrt(s2),
                  tolerance = 1e-8)
   }
+})
+
+test_that("the probit first stage is solved to machine precision", {
+  ## regressors on a large scale: glm.fit's deviance rule alone left score
+  ## components of order 1e-4 (found in the WP1.8 benchmarks)
+  d <- sim_esr_data(800, seed = 5)
+  d$x1 <- 40 + 10 * d$x1
+  ts <- switch_fit(S ~ x1 + z1, fml, data = d, method = "two_step")
+  g <- ts$two_step$probit$gamma
+  Z <- cbind(1, d$x1, d$z1)
+  q <- 2 * d$S - 1
+  w <- drop(Z %*% g)
+  score <- colSums(q * dnorm(w) / pnorm(q * w) * Z)
+  expect_lt(max(abs(score)), 1e-8)
 })
 
 test_that("two-step model-based covariance equals the Heckman/Greene formula", {

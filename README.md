@@ -10,7 +10,7 @@ estimators are documented special cases of that model.
 
 ## Status
 
-**Version 0.7.1: Generation 1, work package 1.7.** The classical binary ESR
+**Version 0.8.0: Generation 1, work package 1.8.** The classical binary ESR
 is functionally complete:
 - estimation by FIML or two-step (`switch_fit()`, `esr()`);
 - inference (`summary()`, `confint()`, `switch_test()`,
@@ -23,7 +23,10 @@ is functionally complete:
 - simulation (`switch_simulate()`);
 - model comparison (`switch_compare()`).
 
-FIML results equal `sampleSelection`'s maximum-likelihood estimates.
+Cross-software benchmarks: FIML results equal the maximum-likelihood
+estimates of `sampleSelection` and of the archived `endoSwitch`, including
+the treatment effects of `endoSwitch`. See
+`04_Validation/results/BENCHMARK_G1.md`.
 
 The pre-registered Monte Carlo study has been run: 28 400 replications,
 each fitted by FIML and two-step. 491 of the 501 pre-registered checks pass.
@@ -33,7 +36,6 @@ AC4) are met with documented exceptions. See
 `04_Validation/results/MC_G1.md`.
 
 Still to come in Generation 1:
-- the full benchmark report (0.8.0);
 - vignettes and CRAN preparation (0.9.0);
 - the release (1.0.0).
 

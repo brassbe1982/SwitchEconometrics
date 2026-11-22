@@ -1,6 +1,6 @@
 # Generation 1: Classical core (v0.1.0 → v1.0.0)
 
-Status: in progress; WP1.1-WP1.7 done (22 November 2026), WP1.8 next.
+Status: in progress; WP1.1-WP1.8 done (22-23 November 2026), WP1.9 next.
 - **Econometric gate approved by the owner on 22 November 2026**: the six
   questions of section 3 were accepted as proposed.
 - **Computational gate requirement met on 22 November 2026** (AC1, AC2,
@@ -29,7 +29,7 @@ plan decision D7); any Stata comparison (owner decision, 22 November 2026).
 | 1.5 | 0.5.0 | `switch_test()` (LR, Wald, linear hypotheses), `confint()`, `summary()`, `switch_bootstrap()` (nonparametric, parametric, cluster; parallel equals serial), `switch_validate()` (I1-I11), `switch_diagnostics()`; covariances were delivered in 0.4.0 | 528 expectations; LR equals closed form; bootstrap SEs within 0.75-1.33 of the Hessian SEs; smoke Monte Carlo identical to 0.4.0; I10 amendment (IDENTIFICATION.md s.6) | **done** 2026-11-22 |
 | 1.6 | 0.6.0 | `switch_effects()`, `switch_predict()` with `predict`/`fitted`/`residuals`, `switch_counterfactual()`, `switch_simulate()` with `simulate`, `switch_compare()`/`anova`, `update`, model methods, bootstrap of effects, dataset `firms` (`esr()` and the record were delivered in 0.4.0) | **AC5 met**; 631 expectations; smoke Monte Carlo with effects | **done** 2026-11-22 |
 | 1.7 | 0.7.0, 0.7.1 | Monte Carlo study ([MONTE_CARLO_DESIGN.md](../04_Validation/MONTE_CARLO_DESIGN.md)): 38 cells, 28 400 replications; gate evaluation script; sandwich rerun; supplementary I5/I6 study; AC4(b) bootstrap check | `MC_G1.md`:<br>• gate 491/501 (10 failures diagnosed: no defect; finite sample, σ at ρ = 0, noise);<br>• AC4(b) 27/30;<br>• diagnosis accepted by the owner: **AC1 and AC4 met** with documented exceptions;<br>• 0.7.1: I6 threshold lowered to R² > 0.80 (owner's decision) | **done** 2026-11-22 |
-| 1.8 | 0.8.0 | Benchmarks ([BENCHMARK_PROTOCOL.md](../04_Validation/BENCHMARK_PROTOCOL.md)) | `BENCHMARK_G1.md` (AC2, AC3) | |
+| 1.8 | 0.8.0 | Benchmarks ([BENCHMARK_PROTOCOL.md](../04_Validation/BENCHMARK_PROTOCOL.md)) against `sampleSelection` 1.2-16 and the archived `endoSwitch` 1.0.0: 11 datasets; benchmark and diagnostics scripts; probit accuracy fix | `BENCHMARK_G1.md`:<br>• 1048/1145 checks pass; all 97 differences explained (numerical Hessian of `endoSwitch`, its `glm()` tolerance, non-convergence on a misspecified example);<br>• new documented difference D-ES-1;<br>• AC3 proposed as met, owner to confirm | **done** 2026-11-23 (owner decision on AC3 pending) |
 | 1.9 | 0.9.0 | Vignettes `classical-esr`, `treatment-effects`, `simulation-validation` (must state the finite-sample coverage at N ≤ 1000 found in WP1.7, as part of the owner's decision); README; CRAN preparation; GitHub Actions (owner creates the repository) | `--as-cran` clean (AC6) | |
 | 1.10 | 1.0.0 | Release: evidence table, gates, CRAN submission (owner) | gate record | |
 

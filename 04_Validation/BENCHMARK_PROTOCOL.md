@@ -2,7 +2,9 @@
 
 Status: WP1.1, 22 November 2026. Specification section 9.3; plan decision
 D11 as amended by the owner (22 November 2026): R implementations only, no
-Stata. To be executed for G1 in WP1.8.
+Stata. **Executed for G1 in WP1.8 (22-23 November 2026)**: results in
+[results/BENCHMARK_G1.md](results/BENCHMARK_G1.md); execution record in
+section 5b.
 
 ## 1. Principles
 
@@ -22,7 +24,7 @@ Stata. To be executed for G1 in WP1.8.
 | Package | Version | Status | Role |
 | --- | --- | --- | --- |
 | `sampleSelection` | 1.2-16 | installed 22 Nov 2026 | G1 Tobit-5 ML and two-step; G2 Tobit-2 and `treatReg` |
-| `endoSwitch` | 1.0.0 | archived on CRAN (2025); source download approved, done in WP1.8 | G1 FIML and treatment effects (historical reference) |
+| `endoSwitch` | 1.0.0 | archived on CRAN (2020); source downloaded from the CRAN archive and installed into the private library `runs/lib_bench` in WP1.8 (approved) | G1 FIML and treatment effects (historical reference) |
 | `switchSelection` | 2.1.0 | installed | G2 multinomial and multivariate selection (`msel`) |
 | `GJRM` | 0.2-6.9 | installed | G3 copula selection models where they coincide; G4 discrete outcomes |
 | `ssmrob` | 1.0 | installed | G4 robust two-step |
@@ -114,6 +116,50 @@ errors.
 
 Reporting this upstream would be an external action, so it is left to the
 owner. The finding may also be relevant for the research article.
+
+**D-ES-1: `endoSwitch` 1.0.0, `endoSwitch2Stage()`.** Found in WP1.8 on 22
+November 2026.
+- It recovers the variances as σ̂ⱼ² = mean(e² + θ̂ⱼ² λⱼ wᵢ), with λ₁ = φ/Φ,
+  λ₀ = φ/(1 − Φ) and w the probit index.
+- The Heckman (1979) estimator adds θ̂ⱼ² mean δⱼ, with δ₁ = λ₁(λ₁ + w) and
+  δ₀ = λ₀(λ₀ − w). The λⱼ² term is missing, and for regime 0 the sign of
+  the w term is wrong.
+- At n = 200 000 and 400 000 its σ̂₁ is 1.139 against a truth of 1.2. The
+  error does not shrink with n
+  ([results/BENCHMARK_G1.md](results/BENCHMARK_G1.md) section 5).
+- `endoSwitch` uses these values only as FIML starting values, but the
+  exported function returns them to users.
+- As for D-SS-1, the two-stage coefficients are compared at the two-step
+  tolerance, and σⱼ and ρⱼ are listed as documented differences.
+
+## 5b. Execution record for G1 (WP1.8)
+
+- **Run.** Scripts `scripts/benchmark_g1.R` and
+  `scripts/benchmark_g1_diagnostics.R`, with SwitchEconometrics 0.8.0.
+  Every tolerance of section 3 was applied unchanged.
+- **Datasets D6.**
+  - The `sampleSelection` vignette's three Tobit-5 examples were
+    regenerated with its own code and seeds.
+  - The `?selection` Tobit-5 example sets no seed, so seed 0 was added.
+  - The estimation calls pass the generated variables in a data frame
+    instead of the global environment; the values are identical.
+  - Where the vignette limits the iterations (`iterlim = 20`),
+    `sampleSelection` was also run with its default, as a supplementary
+    run.
+- **Dataset D7.** Two specifications on `ImpactData`, both fixed before
+  the run:
+  - the documented example of `endoSwitch`;
+  - a larger specification.
+- **`endoSwitch` FIML.** Run with its default and with
+  `reltol = 1e-14`, both decided before the run.
+- **Where `endoSwitch` does not apply.** Its interface needs the same
+  outcome regressors in both regimes, and selection regressors different
+  from them, so it is not applied to D5 and D6.
+- **Outcome.** 1048 of 1145 checks pass. Each of the 97 differences beyond
+  tolerance is explained with evidence (BENCHMARK_G1.md section 4).
+- **Fix in SwitchEconometrics.** The benchmarks exposed one weakness in
+  SwitchEconometrics: the probit's stopping rule. It was fixed in 0.8.0
+  (BENCHMARK_G1.md section 6), and the benchmarks were rerun.
 
 ## 5. Later generations
 

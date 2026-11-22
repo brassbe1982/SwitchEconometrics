@@ -32,6 +32,8 @@ est_probit <- function(Z, S, weights = NULL) {
     se_abort(sprintf("probit coefficient(s) not estimable: %s",
                      paste(colnames(Z)[is.na(g)], collapse = ", ")), "rank")
   }
+  separated <- any(grepl("fitted probabilities numerically 0 or 1", warn))
+  if (isTRUE(fit$converged) && !separated) g <- se_probit_polish(Z, S, om, g)
   w <- drop(Z %*% g)
   l1 <- se_mills(w); l0 <- se_mills(-w)
   info <- crossprod(Z * sqrt(om * l1 * l0))          # Fisher information
@@ -41,9 +43,35 @@ est_probit <- function(Z, S, weights = NULL) {
        score_i = score_i,
        loglik = sum(om * (S * se_log_Phi(w) + (1 - S) * se_log_Phi(-w))),
        converged = isTRUE(fit$converged), iterations = fit$iter,
-       separation = any(p < 1e-10 | p > 1 - 1e-10) ||
-         any(grepl("fitted probabilities numerically 0 or 1", warn)),
+       separation = any(p < 1e-10 | p > 1 - 1e-10) || separated,
        warnings = warn)
+}
+
+## Newton steps on the exact probit Hessian after glm.fit. glm.fit stops on
+## the relative change of the deviance, which can leave score components of
+## order 1e-4 when regressors are on large scales (found in the WP1.8
+## benchmarks, BENCHMARK_G1.md s.4). A step is kept only if it reduces the
+## largest score component, so the polish cannot move away from the optimum.
+se_probit_polish <- function(Z, S, om, g, maxit = 20L) {
+  q <- 2 * S - 1
+  pieces <- function(g) {
+    qw <- q * drop(Z %*% g)
+    lam <- se_mills(qw)
+    list(score = colSums(om * q * lam * Z), d = lam * (lam + qw))
+  }
+  cur <- pieces(g)
+  for (it in seq_len(maxit)) {
+    H <- crossprod(Z * sqrt(om * cur$d))           # minus the Hessian
+    step <- tryCatch(solve(H, cur$score), error = function(e) NULL)
+    if (is.null(step) || !all(is.finite(step))) break
+    new <- pieces(g + step)
+    if (!all(is.finite(new$score)) ||
+        max(abs(new$score)) >= max(abs(cur$score))) break
+    g <- g + step
+    cur <- new
+    if (max(abs(step)) <= 1e-13 * (1 + max(abs(g)))) break
+  }
+  g
 }
 
 est_two_step <- function(sd, map, vcov_type = c("model", "robust", "cluster")) {

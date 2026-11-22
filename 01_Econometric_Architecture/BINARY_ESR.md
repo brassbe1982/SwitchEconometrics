@@ -115,8 +115,28 @@ The mapping is:
 | two-step `invMillsRatio1` (regressor $\phi/(1-\Phi)$) | $-\sigma_0\rho_0$ (our regressor $m_0 = -\phi/(1-\Phi)$) |
 | two-step `invMillsRatio2` (regressor $\phi/\Phi$) | $\sigma_1\rho_1$ |
 
-**`endoSwitch` 1.0.0 (archived from CRAN).** The mapping will be established
-by the same simulation procedure in WP1.8.
+**`endoSwitch` 1.0.0 (archived from CRAN).** The mapping was established
+in WP1.8 (22 November 2026): on six datasets, the log-likelihoods at the
+common optimum agree to 1.1e-13 and the estimates to 4.4e-8
+([BENCHMARK_G1.md](../04_Validation/results/BENCHMARK_G1.md)). Its
+log-likelihood is the Lokshin-Sajaia form with the same signs as ours.
+
+| `endoSwitch(data, OutcomeDep, SelectDep, OutcomeCov, SelectCov)` | SwitchEconometrics |
+| --- | --- |
+| `Select.<var>`, then `Select.Const` (constant last) | $\gamma$ (intercept first) |
+| `Outcome.0.<var>`, `Outcome.0.Const` | regime 0 ($S = 0$): $\beta_0$ |
+| `Outcome.1.<var>`, `Outcome.1.Const` | regime 1 ($S = 1$): $\beta_1$ |
+| `Outcome.0.SigmaX`, `Outcome.1.SigmaX` | $\log\sigma_0$, $\log\sigma_1$ (our working scale) |
+| `Outcome.0.RhoX`, `Outcome.1.RhoX` | $\operatorname{atanh}\rho_0$, $\operatorname{atanh}\rho_1$ (same sign) |
+| `distPar` | $\sigma_0, \sigma_1, \rho_0, \rho_1$ with delta-method standard errors |
+| `treatEffect`: ATT, ATU, "Heterogeneity" row | ATT, ATU; BH1, BH0 and TH (same definitions; rounded to 4 decimals) |
+| `endoSwitch2Stage`: coefficient of `MillsRatioAdt1` ($\phi/\Phi$) | $\sigma_1\rho_1$ |
+| `endoSwitch2Stage`: coefficient of `MillsRatioAdt0` ($\phi/(1-\Phi)$) | $-\sigma_0\rho_0$ |
+
+**Restrictions of its interface:**
+- The same outcome regressors (`OutcomeCov`) in both regimes.
+- Selection regressors that differ from them.
+- Numeric columns only.
 
 **Lokshin and Sajaia (2004).** Their log-likelihood (their eq. 4) has the same
 form: $\ln\Phi(\eta_{1i})$ for regime 1 and $\ln\{1 - \Phi(\eta_{2i})\}$ for

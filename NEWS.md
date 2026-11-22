@@ -1,3 +1,42 @@
+# SwitchEconometrics 0.8.0
+
+Generation 1, work package 1.8 (22-23 November 2026): cross-software
+benchmarks against `sampleSelection` 1.2-16 and the archived `endoSwitch`
+1.0.0.
+
+## Bug fix
+
+* The probit first stage of the two-step estimator (also used for FIML
+  starting values and the identification checks) is now solved to machine
+  precision.
+  - Before, it stopped on `glm.fit()`'s deviance rule. With regressors on
+    large scales, such as age or farm size, that could leave score
+    components of order 1e-4 and move the two-step results by about 1e-6.
+  - Newton steps on the exact probit Hessian now follow `glm.fit()`. A
+    step is kept only if it lowers the largest score component, and the
+    steps are skipped after non-convergence or separation.
+  - FIML estimates are unchanged beyond the optimiser tolerance.
+
+## Validation
+
+* Benchmarks (`04_Validation/results/BENCHMARK_G1.md`): 11 datasets,
+  including the Tobit-5 examples of `sampleSelection` and the `ImpactData`
+  of `endoSwitch`. 1048 of 1145 checks pass.
+  - FIML equals `sampleSelection`'s ML estimates (3.3e-6), log-likelihood
+    (2.7e-11) and standard errors (7.2e-6), and `endoSwitch`'s estimates
+    (4.4e-8), log-likelihood (1.1e-13), treatment effects and conditional
+    expectations.
+  - The two-step coefficients equal `sampleSelection`'s to 9.3e-10.
+  - Every one of the 97 differences beyond tolerance is explained with
+    evidence: `endoSwitch` takes its standard errors from a numerical
+    Hessian (1-4% off), its first-stage `glm()` stops early, and neither
+    package converges on the vignette's misspecified example.
+* New documented difference D-ES-1: `endoSwitch2Stage()` recovers sigma
+  and rho with an inconsistent formula, like `sampleSelection`'s two-step
+  (D-SS-1).
+* Acceptance criterion AC3 is proposed as met with these documented
+  differences, for the owner to confirm.
+
 # SwitchEconometrics 0.7.1
 
 Owner's decision of 22 November 2026 on the identification diagnostics,
