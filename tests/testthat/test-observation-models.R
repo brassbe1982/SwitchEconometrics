@@ -384,3 +384,32 @@ test_that("argument errors of the new models are classed", {
                switch_predict(h, newdata = d[1:3, ], type = "linear"),
                tolerance = 1e-10)
 })
+
+test_that("a near-boundary maximum with a lower local maximum gives a warning", {
+  ## the Mroz (1987) example has two local maxima (BENCHMARK_PROTOCOL.md
+  ## s.6.4, D-SS-2); owner's decision of 24 November 2026
+  skip_if_not_installed("sampleSelection")
+  skip_on_cran()
+  data("Mroz87", package = "sampleSelection", envir = environment())
+  Mroz87$kids <- (Mroz87$kids5 + Mroz87$kids618 > 0)
+  Mroz87$faminc <- Mroz87$faminc / 1000
+  sel <- lfp ~ age + I(age^2) + faminc + kids + educ
+  out <- wage ~ exper + I(exper^2) + educ + city
+  seen <- character()
+  m3 <- withCallingHandlers(heckman(sel, out, data = Mroz87),
+    warning = function(w) {
+      seen <<- c(seen, class(w)[1L])
+      invokeRestart("muffleWarning")
+    })
+  expect_true("switch_warning_local_maximum" %in% seen)
+  expect_gt(abs(coef(m3)[["outcome:rho"]]), 0.95)
+  expect_gt(m3$diagnostics$local_maxima, 0)
+  expect_no_warning(m1 <- heckman(sel, out, data = Mroz87,
+                                  control = switch_control(starts = 1)),
+                    class = "switch_warning_local_maximum")
+  ss <- sampleSelection::selection(sel, out, data = Mroz87, method = "ml")
+  expect_equal(m1$loglik, as.numeric(logLik(ss)), tolerance = 1e-8)
+  expect_gt(m3$loglik, m1$loglik + 50)
+  expect_null(se_near_boundary_maximum(m1))
+  expect_null(se_near_boundary_maximum(h))
+})

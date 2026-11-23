@@ -58,14 +58,14 @@ observed outcomes), FIML:
   ($p = 0.28$) but it is below 0.95 ($p = 0.0004$): the under-coverage at
   this sample size is real and small.
 
-**Consequence.** The threshold is not changed (handoff section 3). G2
-acceptance criterion 4 is **not fully met** for design H at $N = 1000$.
-Following MONTE_CARLO_DESIGN.md section 8.4, the diagnosis goes to the
-owner, who decides whether to record an exception (as in WP1.7) or to ask
-for a remedy (for example a profile-likelihood interval for $\rho$). The
-documentation of `heckman()` should say that intervals for $\rho$ and
-$\sigma$ are slightly too short when fewer than about 1000 outcomes are
-observed and the exclusion is of moderate strength.
+**Consequence.** The threshold is not changed (handoff section 3).
+Following MONTE_CARLO_DESIGN.md section 8.4 the diagnosis went to the
+owner, who on 24 November 2026 accepted the two checks as a documented
+exception (EX-G2-1, ACCEPTANCE_TESTS.md section 7). They stay recorded as
+failed in `gate_checks_G2.csv`. From version 1.1.1 the help page of
+`heckman()` says that intervals for $\rho$ and $\sigma$ are somewhat too
+short with fewer than about 1000 observed outcomes and an exclusion of
+moderate strength.
 
 ### Reported, not gated
 

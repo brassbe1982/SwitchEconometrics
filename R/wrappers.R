@@ -50,6 +50,26 @@
 #' model, the shift) is identified only through the normality assumption;
 #' [switch_validate()] reports this.
 #'
+#' **Cautions.**
+#' * *Small samples.* In the simulation study of the package, the 95%
+#'   intervals of \eqn{\sigma} and \eqn{\rho} of the sample selection model
+#'   covered the true values in about 92.5% of the samples when 1000 units
+#'   were sampled (about 670 observed outcomes), \eqn{\rho = 0.6} and the
+#'   excluded variable was of moderate strength; coverage was 93% to 94.5%
+#'   with 2000 units and 95% with 5000. With fewer than about 1000 observed
+#'   outcomes these intervals are somewhat too short;
+#'   [switch_bootstrap()] is an alternative.
+#' * *Local maxima.* The likelihood of the sample selection model can have
+#'   more than one local maximum, one of them close to \eqn{\rho = \pm 1}.
+#'   The default fit uses several starting values and reports the highest
+#'   maximum; when that maximum has \eqn{|\rho| > 0.95} and another start
+#'   converged to a lower one, a warning of class
+#'   `switch_warning_local_maximum` is given and both are listed in
+#'   `fit$starts`. `switch_control(starts = 1)` starts from the two-step
+#'   estimates only, which reproduces published results such as those for
+#'   the Mroz (1987) data. A maximum near the boundary is a reason to
+#'   question the specification, not evidence for either solution.
+#'
 #' These functions are new in version 1.1.0.
 #'
 #' @param selection Two-sided formula of the selection equation, as in

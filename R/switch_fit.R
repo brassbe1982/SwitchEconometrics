@@ -321,12 +321,42 @@ se_fit_warnings <- function(fit) {
     i4 <- idn$table[idn$table$code == "I4" & idn$table$status == "warning", ]
     for (m in i4$message) se_warn(m, "identification")
   }
+  ## the best maximum lies close to rho = +-1 and another start converged to
+  ## a lower local maximum (owner's decision of 24 November 2026, after the
+  ## Mroz example of BENCHMARK_PROTOCOL.md s.6.4, D-SS-2)
+  near <- se_near_boundary_maximum(fit)
+  if (!is.null(near)) {
+    se_warn(sprintf(paste0(
+      "the highest of the maxima found has %s = %.3f, close to the boundary, ",
+      "and %d other start%s converged to a lower local maximum (best of them: ",
+      "log-likelihood %.3f against %.3f). Compare the solutions (fit$starts); ",
+      "switch_control(starts = 1) starts from the two-step estimates only"),
+      near$name, near$rho, near$n, if (near$n == 1L) "" else "s",
+      near$loglik_other, fit$loglik), "local_maximum")
+  }
   if (isTRUE(fit$diagnostics$multistart_flat)) {
     se_warn(paste0("different parameter values reach the same maximum ",
                    "log-likelihood: the likelihood is flat (weak identification)"),
             "multistart")
   }
   invisible(fit)
+}
+
+## NULL, or the description of a best maximum close to the boundary of rho
+## (|rho| > 0.95) when at least one other start converged to a lower local
+## maximum.
+se_near_boundary_maximum <- function(fit, limit = 0.95) {
+  if (fit$method != "fiml" || is.null(fit$starts) ||
+      !isTRUE(fit$diagnostics$local_maxima > 0)) return(NULL)
+  rho <- fit$coefficients[unlist(fit$map$index$rho)]
+  rho <- rho[is.finite(rho) & abs(rho) > limit]
+  if (!length(rho)) return(NULL)
+  st <- fit$starts
+  lower <- st$code == 0L & is.finite(st$loglik) & st$loglik < fit$loglik - 1e-6
+  if (!any(lower)) return(NULL)
+  k <- which.max(abs(rho))
+  list(name = names(rho)[k], rho = rho[[k]], n = sum(lower),
+       loglik_other = max(st$loglik[lower]))
 }
 
 #' @rdname switch_fit

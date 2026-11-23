@@ -128,3 +128,45 @@ WP2.2 (1.2.0): multinomial logit selection: Lee FIML (default), the
 normal-score model (option), the Dubin-McFadden and BFG two-step
 corrections, any number of regimes (tested to 8 and 10); designs L, D, Lw,
 G and L8 of the Monte Carlo plan.
+
+## Addendum: version 1.1.1 (24 November 2026)
+
+The owner validated the three recommendations above ("proceed accordingly
+with all recommended actions validated on my side"; recorded in
+GENERATION_2.md section 5). Package version 1.1.0 → **1.1.1**.
+
+**Done**
+1. **Exception EX-G2-1** recorded for the two failed coverage checks
+   (ACCEPTANCE_TESTS.md section 7, MC_G2.md). Threshold unchanged; the
+   checks remain recorded as failed.
+2. **New warning** `switch_warning_local_maximum` (`R/switch_fit.R`,
+   `se_near_boundary_maximum()`): given when the highest maximum has
+   $\lvert\hat\rho\rvert > 0.95$ and at least one other start converged to
+   a lower local maximum. Estimates and the multistart default are
+   unchanged. It applies to every FIML model, including `esr()`.
+3. **Help page** of `heckman()`, `treatment()`, `tobit5()`: cautions on
+   small-sample intervals and on local maxima.
+4. **`endogMNP` dropped for G2** (BENCHMARK_PROTOCOL.md section 6.3).
+
+**Evidence**
+
+| Check | Result |
+| --- | --- |
+| Test suite (source) | 14 files, **810 expectations, 0 failed**, 1 skipped (as before). New test on the Mroz (1987) data: the default fit gives the warning and a log-likelihood more than 50 above the one-start fit; the one-start fit gives no such warning and equals `sampleSelection` (1e-8) |
+| Frozen 1.0.0 results | reproduced at 1e-8 |
+| `R CMD check --as-cran` (tarball `runs/build/1.1.1`) | 0 errors, 0 warnings, 1 note (`V8` absent locally) |
+| Benchmarks rerun with 1.1.1 | 48 of 48 toleranced comparisons within tolerance, as with 1.1.0 |
+| G1 Monte Carlo smoke run with 1.1.1 | identical to `runs/mc_g1_0.8.1_smoke` (1e-6) |
+| G2 Monte Carlo smoke run with 1.1.1 | identical to the 1.1.0 smoke run (largest difference 0) |
+
+**Not verified**
+- The full G2 Monte Carlo was **not** rerun with 1.1.1. The change adds a
+  warning and documentation and does not touch estimation; the smoke run
+  is identical. The generated Monte Carlo tables are those of 1.1.0.
+- How often the new warning appears in ordinary use is unknown. In the
+  17 000 replications of the 1.1.0 study every fit used one start, so the
+  warning could not have appeared there.
+- The limit 0.95 for "close to the boundary" is a judgment, not a
+  calibrated value.
+- The test of the warning is skipped on CRAN (it needs `sampleSelection`
+  and takes several fits).

@@ -1,3 +1,15 @@
+# SwitchEconometrics 1.1.1
+
+* New warning (class `switch_warning_local_maximum`) when the highest
+  maximum found by the multistart has a correlation close to the boundary
+  (`|rho| > 0.95`) and another start converged to a lower local maximum.
+  The estimates are unchanged; both solutions are listed in `fit$starts`.
+  The Mroz (1987) sample selection example is such a case.
+* The help page of `heckman()`, `treatment()` and `tobit5()` gains two
+  cautions: intervals for sigma and rho of the sample selection model are
+  somewhat too short with fewer than about 1000 observed outcomes, and the
+  likelihood can have more than one local maximum.
+
 # SwitchEconometrics 1.1.0
 
 First step of Generation 2 (generalised selection): three models that use

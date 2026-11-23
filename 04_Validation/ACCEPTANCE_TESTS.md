@@ -81,3 +81,14 @@ Sections 1-3 are the Generation 1 record and are unchanged.
 | G2-AC5 (effects) | treatment effects equal the averages of $d'\delta$ and their delta-method standard errors to 1e-8; Monte Carlo bias of ATE and ATT within 5% (12 of 12) | package tests; `results/MC_G2.md` |
 | G2-AC6 (three systems) | open: `R CMD check --as-cran` on Windows only (0 errors, 0 warnings, 1 note: `V8` absent). Nothing was pushed, so no GitHub Actions run exists for 1.1.0 | check log in `runs/build/1.1.0` |
 | G2-EN-1 | **met** | `results/BENCHMARK_G2.md` |
+
+### Exception EX-G2-1 (owner, 24 November 2026)
+
+G2-AC4, design H, $N = 1000$, $\rho = 0.6$, FIML: coverage of
+`outcome:sigma` 0.925 and of `outcome:rho` 0.926 against the limit 0.93.
+**Accepted by the owner as a documented exception** (words recorded in
+GENERATION_2.md section 5). Basis: the diagnosis of `results/MC_G2.md`
+(small-sample effect that disappears by $N = 5000$; no defect). The
+threshold is not changed; the two checks remain recorded as failed. With
+this exception G2-AC4 is met for the models of WP2.1. The caution is in
+the help page of `heckman()` (version 1.1.1).

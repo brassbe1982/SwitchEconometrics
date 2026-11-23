@@ -1,11 +1,12 @@
 # Generation 2: Generalized selection (v1.1.0 → v1.5.0)
 
-Status: **WP2.1 done (version 1.1.0, 23 November 2026):** `heckman()`,
-`treatment()` and `tobit5()`. One point awaits the owner: two of 428
-pre-registered Monte Carlo checks failed (coverage in one Heckman cell;
-progress note [progress/WP2.1.md](progress/WP2.1.md)). The G2 econometric
-gate was closed by the owner on 23 November 2026 (section 5). Next: WP2.2.
-Earlier note: [progress/WP2.0.md](progress/WP2.0.md).
+Status: **WP2.1 done (versions 1.1.0 and 1.1.1, 24 November 2026):**
+`heckman()`, `treatment()` and `tobit5()`. Two of 428 pre-registered Monte
+Carlo checks failed (coverage in one Heckman cell); the owner recorded
+them as a documented exception on 24 November 2026 (section 5). Progress
+note: [progress/WP2.1.md](progress/WP2.1.md). The G2 econometric gate was
+closed by the owner on 23 November 2026. Next: WP2.2. Earlier note:
+[progress/WP2.0.md](progress/WP2.0.md).
 
 ## 1. Scope (specification sections 4B, 10.1, 11.3, 13)
 
@@ -281,6 +282,38 @@ Consequences:
    version 0.2-1.
 4. Nothing is pushed. All G2 commits stay local until the owner says to
    push.
+
+### Owner's decisions after WP2.1 (24 November 2026)
+
+Three recommendations of the WP2.1 report were put to the owner:
+
+> 1. The two failed coverage checks: record a documented exception with a
+>    caution in the help page of `heckman()`, or have me add a remedy first
+>    (for example profile-likelihood intervals for rho). I recommend the
+>    exception: the shortfall is small and disappears with sample size.
+> 2. Near-boundary maxima: keep the multistart default as it is, or add a
+>    warning when the best maximum has rho close to ±1 and another start
+>    converged elsewhere. I recommend adding the warning.
+> 3. `endogMNP`: I propose dropping it for G2 and reconsidering it for
+>    Generation 4 (discrete outcomes).
+
+The owner's answer, verbatim: "proceed accordingly with all recommended
+actions validated on my side".
+
+Done in version 1.1.1:
+1. **Exception EX-G2-1.** The two failed coverage checks of design H
+   ($N = 1000$, $\rho = 0.6$, FIML: `outcome:sigma` 0.925,
+   `outcome:rho` 0.926, limit 0.93) are accepted as a documented
+   exception. The threshold is unchanged and the checks stay recorded as
+   failed in `gate_checks_G2.csv`. The help page of `heckman()` carries
+   the caution. The exception covers these two checks of the 1.1.0 run
+   only; the rerun with the release candidate in WP2.5 is evaluated
+   afresh.
+2. **Warning** of class `switch_warning_local_maximum` when the highest
+   maximum has $\lvert\hat\rho\rvert > 0.95$ and another start converged
+   to a lower local maximum. The multistart default and all estimates are
+   unchanged.
+3. **`endogMNP` dropped for G2**; to be reconsidered for Generation 4.
 
 **Still with the owner:** compiled code for the multinomial probit with
 many regimes, only if profiling in WP2.3 shows that pure R is impractical;
