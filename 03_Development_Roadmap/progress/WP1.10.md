@@ -1,6 +1,7 @@
 # WP1.10: Release 1.0.0
 
-Version 1.0.0. 23 November 2026. Status: **STATUS_110**
+Version 1.0.0. 23 November 2026. Status: **release candidate checked locally and outside; CRAN submission
+awaiting the owner's go-ahead**
 
 ## What was done
 
@@ -30,8 +31,26 @@ The release followed `tools/CRAN_RELEASE_GUIDE.md` (skill
 | regression | Monte Carlo smoke test identical to the 0.8.1 reference (largest difference 0 in every field) |
 | benchmarks | 1378 checks: 1275 pass, 103 differ, 70 documented; the same counts as BENCHMARK_G1.md, where every difference is explained |
 
-CHECKS_110_OUTSIDE
+**Outside checks on 1.0.0** (pushed as f813103 with the owner's yes, 23
+November 2026):
+
+| Environment | Result |
+| --- | --- |
+| GitHub Actions run 5: Windows, macOS and Ubuntu; R release, devel and oldrel-1 | all 9 jobs pass (the macOS R-devel job checks without Suggests, as for 0.9.1) |
+| win-builder R-devel (r90926), results `ApelQEJHS0Y8` | 1 NOTE: "New submission" and the cited surnames Falco, Heckman, Lokshin, Sajaia, Veronesi, Yesuf; tests 28 s; vignettes 15 s |
+| win-builder R-release (R 4.6.2), results `J8KpYTfC0RX8` | the same NOTE; tests 27 s; vignettes 16 s |
+| macOS builder | upload refused by the service (HTTP 502), as for 0.9.1 |
+
+Both `00check.log` files were read in full: every other check is OK,
+including the remote CRAN incoming checks, the PDF and HTML manuals and the
+re-building of the vignettes. The NOTE is the expected one, explained in
+`cran-comments.md`.
 
 ## Next
 
-NEXT_110
+1. CRAN submission of `SwitchEconometrics_1.0.0.tar.gz`, with the owner's
+   go-ahead (also the owner's sign-off of Generation 1); the maintainer
+   clicks CRAN's confirmation e-mail.
+2. Tag `v1.0.0` and a GitHub release, each with the owner's go-ahead.
+3. Fill the release record in `EVIDENCE_G1.md` section 5 and the WP1.10
+   row of `GENERATION_1.md`.

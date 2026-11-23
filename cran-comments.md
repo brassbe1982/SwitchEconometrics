@@ -12,11 +12,9 @@ identification checks, treatment effects and counterfactual scenarios.
 | Environment | Version | Result |
 | --- | --- | --- |
 | Local: Windows 11 Pro, R 4.6.2, `R CMD check --as-cran` | 1.0.0 | 0 errors, 0 warnings, 1 note (V8, below) |
-| GitHub Actions: Windows, macOS and Ubuntu; R release, devel and oldrel-1 | 1.0.0 | to be run |
-| win-builder R-release and R-devel | 1.0.0 | to be run |
-| win-builder R-release (R 4.6.2) and R-devel (r90926) | 0.9.1 (same code) | 0 errors, 0 warnings, 1 note each (below) |
-| GitHub Actions, all 9 jobs | 0.9.1 (same code) | pass |
-| macOS builder | 0.9.1 | upload refused by the service (HTTP 502, 23 Nov 2026); the macOS jobs of GitHub Actions stand in |
+| GitHub Actions: Windows, macOS and Ubuntu; R release, devel and oldrel-1 | 1.0.0 | all 9 jobs pass (run 5, 23 Nov 2026) |
+| win-builder R-release (R 4.6.2) and R-devel (r90926) | 1.0.0 | 0 errors, 0 warnings, 1 note each (below) |
+| macOS builder | 1.0.0 | upload refused by the service (HTTP 502, 23 Nov 2026); the macOS jobs of GitHub Actions stand in |
 
 The macOS R-devel job of GitHub Actions checks without the suggested
 packages: the suggested benchmark package `sampleSelection` needs Matrix,
@@ -39,7 +37,7 @@ win-builder, which has V8, checks the HTML manual without a note.
 ## Tests and examples
 
 - Every example runs in under 1 second.
-- The test suite takes under 1 minute on CRAN (28 s on win-builder).
+- The test suite takes under 1 minute on CRAN (27-28 s on win-builder).
   Longer tests are skipped on CRAN with `skip_on_cran()`.
 - The vignettes take about 20 seconds in total. Heavier results (the Monte
   Carlo study and the benchmarks) are precomputed and quoted in the text;
