@@ -55,12 +55,11 @@ re-building of the vignettes. The NOTE is the expected one, explained in
 | Confirmation | The maintainer clicked CRAN's confirmation e-mail ("Clicked it") |
 | CRAN incoming | Afterwards the package was in `https://cran.r-project.org/incoming/pretest/` (the automatic pre-tests) |
 | CRAN decision | pending |
+| Tag and GitHub release | With the owner's go-ahead ("Push, tag, release"): annotated tag `v1.0.0` on 3c10ffe (the commit checked out at submission; its package files equal those of f813103); release "SwitchEconometrics 1.0.0" with the NEWS 1.0.0 section, published 2026-11-23 03:55 UTC, https://github.com/brassbe1982/SwitchEconometrics/releases/tag/v1.0.0 |
 
 ## Next
 
 1. CRAN's decision. If CRAN asks for changes, start the release procedure
    again with 1.0.1 and answer every point in `cran-comments.md`.
-2. Tag `v1.0.0` and a GitHub release with the NEWS section, each with the
-   owner's go-ahead.
-3. On acceptance: the CRAN installation line and the CRAN page in the
+2. On acceptance: the CRAN installation line and the CRAN page in the
    README, in the next version; release record and memory updated.
