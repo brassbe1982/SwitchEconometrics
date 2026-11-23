@@ -1,7 +1,8 @@
 # Generation 1: Classical core (v0.1.0 → v1.0.0)
 
-Status: in progress; WP1.1-WP1.9 done (22-23 November 2026). **All six
-acceptance criteria are met**, and WP1.10 (release 1.0.0) is next.
+Status: WP1.1-WP1.9 done (22-23 November 2026). **All six acceptance
+criteria are met.** WP1.10: **1.0.0 submitted to CRAN on 23 November 2026**
+with the owner's go-ahead and sign-off; CRAN's decision is pending.
 - **Econometric gate approved by the owner on 22 November 2026**: the six
   questions of section 3 were accepted as proposed.
 - **Computational gate requirement met on 22 November 2026** (AC1, AC2,
@@ -35,7 +36,7 @@ plan decision D7); any Stata comparison (owner decision, 22 November 2026).
 | 1.7 | 0.7.0, 0.7.1 | Monte Carlo study ([MONTE_CARLO_DESIGN.md](../04_Validation/MONTE_CARLO_DESIGN.md)): 38 cells, 28 400 replications; gate evaluation script; sandwich rerun; supplementary I5/I6 study; AC4(b) bootstrap check | `MC_G1.md`:<br>• gate 491/501 (10 failures diagnosed: no defect; finite sample, σ at ρ = 0, noise);<br>• AC4(b) 27/30;<br>• diagnosis accepted by the owner: **AC1 and AC4 met** with documented exceptions;<br>• 0.7.1: I6 threshold lowered to R² > 0.80 (owner's decision) | **done** 2026-11-22 |
 | 1.8 | 0.8.0, 0.8.1 | Benchmarks ([BENCHMARK_PROTOCOL.md](../04_Validation/BENCHMARK_PROTOCOL.md)) against `sampleSelection` 1.2-16 and the archived `endoSwitch` 1.0.0: 14 datasets, including weighted and clustered data; benchmark and diagnostics scripts; Monte Carlo under clustering; probit accuracy fix (0.8.0); faster FIML and boundary stop (0.8.1) | `BENCHMARK_G1.md`:<br>• 1275/1378 checks pass; all 103 differences explained (numerical Hessian of `endoSwitch`, its `glm()` tolerance, non-convergence on a misspecified example);<br>• documented differences D-ES-1, D-ES-2;<br>• **AC3 met** with documented differences | **done** 2026-11-23 |
 | 1.9 | 0.9.0 | Vignettes `classical-esr`, `treatment-effects`, `simulation-validation` (must state the finite-sample coverage at N ≤ 1000 found in WP1.7, as part of the owner's decision, and the coverage of cluster-robust intervals for σ and ρ with 100 clusters found in WP1.8); README; CRAN preparation; GitHub Actions (owner creates the repository) | Three vignettes (both conditions met); README; `cran-comments.md`; output fixes; local `--as-cran` check (AC6 local part). GitHub Actions, win-builder and macOS builder await the owner | **done** 2026-11-23. 0.9.1: public repository https://github.com/brassbe1982/SwitchEconometrics; GitHub Actions 9/9 (run 2); win-builder R-release and R-devel 1 NOTE each (new submission; authors' surnames); macOS builder unavailable (HTTP 502); **AC6 met** with two documented exceptions (owner) |
-| 1.10 | 1.0.0 | Release: evidence table, gates, CRAN submission (owner) | gate record | |
+| 1.10 | 1.0.0 | Release: evidence table, gates, CRAN submission (owner) | gate record | `EVIDENCE_G1.md`; outside checks of 1.0.0: GitHub Actions 9/9 (run 5), win-builder R-release and R-devel 1 NOTE each, macOS builder HTTP 502. **Submitted to CRAN** 2026-11-23 03:49 UTC with the owner's go-ahead ("Submit and push", also the G1 sign-off); confirmed by the maintainer; in CRAN incoming pretest. CRAN decision pending |
 
 ## 3. Questions for the econometric gate (owner)
 

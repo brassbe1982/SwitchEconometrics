@@ -65,4 +65,9 @@ repository; the summaries are in `04_Validation/results/`.
 
 ## 5. Release record
 
-RELEASE_RECORD
+| Step | Date | Record |
+| --- | --- | --- |
+| Release candidate | 23 Nov 2026 | Commit f813103: version 1.0.0, code as in 0.9.1. `tools/CRAN_prepare.R full` passed every stage: tests 650 / 643 / 603 expectations, `verify_math.R` 26/26, `--as-cran` 1 NOTE (V8 absent locally), Monte Carlo smoke run identical to 0.8.1, benchmarks 1275/1378 as in BENCHMARK_G1.md |
+| Outside checks | 23 Nov 2026 | GitHub Actions run 5: all 9 jobs pass. win-builder R-release (4.6.2) and R-devel (r90926): 1 NOTE each ("New submission"; cited surnames). macOS builder: upload refused by the service (HTTP 502) |
+| CRAN submission | 23 Nov 2026, 03:49 UTC | `SwitchEconometrics_1.0.0.tar.gz` (186 954 bytes) with the owner's go-ahead ("Submit and push"), which is also the owner's sign-off of Generation 1. Confirmed by the maintainer; then in CRAN `incoming/pretest/` |
+| CRAN decision | pending | |
