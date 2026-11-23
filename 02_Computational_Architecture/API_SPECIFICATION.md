@@ -453,3 +453,25 @@ BFG corrections; these corrections with the nested logit; $\lambda > 1$;
 effects for a Heckman fit; effects between different response variables;
 removing an alternative from the choice set; non-Gaussian outcomes
 (Generation 4); copulas other than Gaussian (Generation 3).
+
+### 5.8 Gate amendments (23 November 2026)
+
+- **`dependence`** (new argument of `switch_fit()` and
+  `multinomial_switch()`, used with `selection_family = "mnl"` and
+  `method = "fiml"`): `"lee"` (default until the owner decides otherwise
+  after WP2.2) or `"normal_scores"` (MULTINOMIAL_ESR.md section 11).
+  With `"normal_scores"`, `dependence_terms = "all"` (default: $J$
+  correlations per regime), `"own"` (the regime's own score only) or
+  `"own_common"` (own score and one common correlation with the others).
+  Parameter names: `rho_<j>.<k>` for $\operatorname{Corr}(u_j, \eta_k)$,
+  with the regime labels in place of the numbers.
+- **Number of regimes:** any $J \ge 2$ that the data support; tested up
+  to $J = 8$ (and $J = 10$ for Lee's model). A classed warning
+  (`switch_warning_small_regime`) when a regime has fewer observations
+  than 10 times its number of outcome parameters; a classed error when a
+  regime's outcome design is rank deficient.
+- **`control = switch_control(draws = )`:** default 500 for $d \le 5$
+  and 2000 for $d \ge 6$ (NUMERICAL_METHODS.md section 7.7);
+  `quadrature_nodes = 32L` for the normal-score model.
+- **Benchmark mapping for `treatment(shift = )`:** `endogenous::hybrid()`
+  reports $\eta = -\delta$.

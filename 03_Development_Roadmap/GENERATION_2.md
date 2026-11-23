@@ -1,8 +1,9 @@
 # Generation 2: Generalized selection (v1.1.0 → v1.5.0)
 
-Status: **derivation set written and numerically verified (23 November
-2026); G2 econometric gate put to the owner; no G2 model code exists.**
-Package version unchanged at 1.0.0. Progress note:
+Status: **G2 econometric gate closed on 23 November 2026: the owner
+approved the 12 proposals with amendments (section 5).** Derivation set
+written and numerically verified (78 checks in two scripts). No G2 model
+code exists yet; package version 1.0.0. Next: WP2.1. Progress note:
 [progress/WP2.0.md](progress/WP2.0.md).
 
 ## 1. Scope (specification sections 4B, 10.1, 11.3, 13)
@@ -31,12 +32,12 @@ Package version unchanged at 1.0.0. Progress note:
 
 | WP | Version | Content | Status |
 | --- | --- | --- | --- |
-| 2.0 | (1.0.0, documents only) | G2 derivation set, `verify_math_g2.R`, architecture updates, validation plans, gate questions | **done 2026-11-23**: 53/53 numerical checks; awaiting the owner's econometric gate |
-| 2.1 | 1.1.0 | `heckman()`, `treatment()`, `tobit5()`; benchmarks against `sampleSelection` and `endogenous` | waiting for the gate |
-| 2.2 | 1.2.0 | MNL-ESR (Lee FIML; DMF and BFG two-step) | waiting for the gate |
-| 2.3 | 1.3.0 | MNP-ESR (FIML with Genz-Bretz and GHK; C++ after profiling) | waiting for the gate |
-| 2.4 | 1.4.0 | Ordered and sequential selection; nested logit | waiting for the gate |
-| 2.5 | 1.5.0 | Multivariate selection, multiple outcomes, pairwise effects; Monte Carlo; `switchSelection` benchmarks; vignette `multinomial-esr` | waiting for the gate |
+| 2.0 | (1.0.0, documents only) | G2 derivation set, `verify_math_g2.R`, `verify_math_g2b.R`, architecture updates, validation plans, gate | **done 2026-11-23**: 53/53 and 25/25 numerical checks; gate closed by the owner |
+| 2.1 | 1.1.0 | `heckman()`, `treatment()`, `tobit5()`; benchmarks against `sampleSelection` and `endogenous` | next |
+| 2.2 | 1.2.0 | MNL-ESR: Lee FIML; normal-score FIML (section 5, question 3); DMF and BFG two-step; $J$ up to 8 and beyond | open |
+| 2.3 | 1.3.0 | MNP-ESR (FIML with Genz-Bretz and GHK; $J$ up to 8 by GHK; C++ only with profiling evidence and the owner's approval) | open |
+| 2.4 | 1.4.0 | Ordered and sequential selection; nested logit | open |
+| 2.5 | 1.5.0 | Multivariate selection, multiple outcomes, pairwise effects; Monte Carlo; `switchSelection` benchmarks; comparative analysis; vignette `multinomial-esr` | open |
 
 ## 3. Acceptance criteria
 
@@ -203,3 +204,100 @@ only the G1 engine. Questions 3-9 concern WP2.2-WP2.5.
   regime.
 - Removing an alternative from the choice set as a counterfactual scenario
   is not offered in G2.
+
+## 5. Gate decision (owner, 23 November 2026)
+
+The owner approved the 12 proposals of section 4 with amendments. The
+owner's words, verbatim:
+
+> regarding what i must decide, i approve the 12 proposals with the
+> following amendments:
+>
+> Question 2: yes, allow installing the archived endogenous source into the
+> private library.
+>
+> Question 3: if you can find a better (less restrictive) option we can use
+> (which will be a contribution by itself compared to the lee alternative);
+> otherwise, i accept Lee's transformation as the multinomial-logit FIML
+> model, with the extra counterfactual assumption.
+>
+> Question 5: yes, keep the multinomial-probit normalisation, with the
+> restricted "independent" covariance as default and the unrestricted one
+> as an option.
+>
+> Question 9: yes, analytic scores with a differenced Hessian, exact
+> probabilities up to dimension 3, simulated ones beyond (experimental),
+> and no compiled code without profiling evidence. Note here that I would
+> like the developed framework to be flexible enough to cover/handle up to
+> 8 regimes (at least) with the possibility of further regime extension in
+> prospective upgrades if needed.
+>
+> Question 11: the Monte Carlo design and thresholds, which become fixed
+> once you approve.
+
+The owner also asked that G2 be framed as closing a gap in the literature,
+with comparative analysis against existing work where possible, and that
+everything needed for the development of G2 be verified.
+
+### What was done with each amendment
+
+| Question | Action | Evidence |
+| --- | --- | --- |
+| 2 | `endogenous` 1.0 installed from the CRAN archive into `runs/lib_g2` (not into the owner's libraries). Its convention: mean $x'\beta - S\,v'\eta$, so $\delta = -\eta$ | X01, X02: its ML estimates equal the reference maximiser of our likelihood to 5e-6, its model-based standard errors to 1.4e-5 (relative), for the constant shift and for the hybrid model |
+| 3 | A less restrictive full-likelihood model with multinomial-logit selection was derived: the **normal-score model** (MULTINOMIAL_ESR.md section 11). It has $J$ dependence parameters per regime, needs no extra assumption for counterfactual means, and has the BFG normalised two-step as its limited-information estimator. Lee's model is kept beside it | X10-X14: event identity, proper density, joint law and all conditional means for $J = 2, 3, 8$. **Not yet verified:** its score (not derived), its behaviour in estimation, its novelty |
+| 5 | Unchanged from the proposal | |
+| 9 | $J \ge 8$ made a requirement: no limit on $J$ in the code; closed-form models (Lee, ordered, sequential with independent stages) for any $J$; multinomial probit and the normal-score model by GHK when $J \ge 5$ (experimental). New tests G2-J8-1..3 and Monte Carlo cells L8, O8, P8 | X14, X20-X24: joint laws at $J = 8$ for the normal-score, Lee, probit and ordered models; GHK in 7 dimensions: error of $\log P$ 0.017 with 500 Halton draws, 0.008 with 2000; one GHK pass for 2000 observations takes 2.3 s in R |
+| 11 | Sections 8.1-8.5 of MONTE_CARLO_DESIGN.md are fixed as approved. Section 8.6 adds cells for the amendments (designs G, L8, O8, P8) without altering any approved cell or threshold | |
+
+**Decisions still with the owner** (none blocks WP2.1):
+1. Which multinomial-logit FIML model is the default of
+   `multinomial_switch()`: Lee (closed form, fast) or the normal-score
+   model (less restrictive, slower). Proposed: decide after the Monte
+   Carlo results of WP2.2; until then Lee is the default.
+2. Confirmation of the added Monte Carlo cells of section 8.6 (in
+   particular gating design G at $N = 5000$ with a bias threshold of 0.05
+   for $r_{jk}$).
+3. Whether to install `endogMNP` (Bayesian multinomial probit with
+   selection) for a comparison in WP2.3.
+4. The computing time of the multinomial probit with 8 regimes in pure R
+   may be long (each score evaluation needs many 6-dimensional
+   probabilities). If profiling in WP2.3 shows it is impractical, the
+   evidence goes to the owner with a proposal for compiled code.
+
+## 6. Positioning: what G2 contributes, and what may be claimed
+
+The owner's reading is that the thin benchmarks point to a gap that G2
+closes. The evidence supports this **for software**, and only partly for
+econometric theory. To keep the manuscript and the documentation honest:
+
+**Supported by what was found (searches of 23 November 2026, not a
+systematic review):**
+- No R package was found that estimates a multinomial endogenous switching
+  regression with continuous outcomes by full-information maximum
+  likelihood. `switchSelection` offers two-step estimation for that case.
+- No software was found that gives, in one framework, FIML and two-step
+  estimation, identification diagnostics, all pairwise treatment effects
+  with their conditioning groups, and counterfactual scenarios for
+  logit-based, probit-based, ordered, sequential and multivariate
+  selection.
+- The pairwise effects with explicit statements of the assumption each
+  counterfactual relies on (L-CI for Lee; none for the normal-score and
+  probit models; reference completion for cross-regime dependence) are
+  not reported by any of the packages examined.
+
+**Not to be claimed:**
+- That the models themselves are new. Lee (1983), Dubin and McFadden
+  (1984), Bourguignon, Fournier and Gurgand (2007) and the multinomial
+  probit selection model are established. Stata's `cmp` (Roodman 2011)
+  already offers simulated-likelihood estimation of systems with
+  multinomial probit equations, and `selmlog` and `mtreatreg` cover
+  two-step and latent-factor approaches.
+- That the normal-score model is new, until a proper literature search has
+  been done. It is a natural full-likelihood counterpart of the BFG
+  normalised correction and may exist under another name.
+- That the absence of an external benchmark shows correctness. It means
+  the validation of those models rests on simulation, exact nesting and
+  internal comparisons only, which is weaker than an independent
+  implementation.
+
+**Comparative analysis planned:** BENCHMARK_PROTOCOL.md section 6.3.

@@ -162,11 +162,13 @@ how the study was run and every departure from the plan.
 
 ## 8. Monte Carlo design for Generation 2
 
-Status: **proposed for pre-registration at the G2 econometric gate** (23
-November 2026), before any G2 estimator code exists. Once the owner
-approves the gate, the designs and thresholds of this section are fixed and
-are not changed after results are seen (handoff section 3). Sections 1-7
-(Generation 1) are unchanged.
+Status: **pre-registered. The owner approved the G2 econometric gate on 23
+November 2026** (gate question 11), before any G2 estimator code existed.
+The designs and thresholds of sections 8.1-8.5 are fixed and are not
+changed after results are seen (handoff section 3). Section 8.6 adds cells
+that follow from the owner's amendments to the gate; they were written on
+the same day, also before any estimator code, and no existing cell or
+threshold was altered. Sections 1-7 (Generation 1) are unchanged.
 
 ### 8.1 Common elements
 
@@ -277,3 +279,29 @@ changed. A diagnosis that finds no defect goes to the owner, as in WP1.7.
   the previous version by `tools/compare_mc_runs.R`.
 - The G1 smoke regression (`runs/mc_g1_0.8.1_smoke`) keeps running at every
   G2 version.
+
+### 8.6 Cells added at the gate closing (23 November 2026)
+
+Reason: the owner's amendments to gate questions 3 (a less restrictive
+alternative to Lee) and 9 (the framework must handle at least 8 regimes).
+The thresholds are those of section 8.4; nothing above is changed. The
+owner has not reviewed these additions cell by cell; they are reported to
+the owner with the gate-closing note.
+
+| Id | Model | Design | Dependence | Regime shares (simulated, $2 \times 10^6$ draws) |
+| --- | --- | --- | --- | --- |
+| G | Normal-score multinomial logit, $J = 3$ (MULTINOMIAL_ESR.md section 11) | selection as L | $r_1 = (0.4, -0.2, -0.2)$, $r_2 = (-0.3, 0.5, -0.2)$, $r_3 = (0.1, -0.4, 0.3)$ | as L |
+| L8 | MNL with Lee, $J = 8$ | $z = (1, x_1, z_1, z_2)$; $\gamma_2, \dots, \gamma_8$ = $(0.2, 0.3, 0.8, -0.2)$, $(-0.2, -0.3, 0.2, 0.8)$, $(0.1, 0.2, -0.6, 0.4)$, $(0, -0.2, 0.5, 0.5)$, $(-0.1, 0.4, -0.4, -0.6)$, $(0.1, -0.1, 0.9, 0.3)$, $(-0.1, 0.1, -0.3, 0.9)$; $\beta_j = (1 + 0.25(j-1),\ 0.5,\ 0.2)$, $\sigma_j = 1$ | $\rho = (0.5, 0.4, -0.4, 0.3, -0.3, 0.5, 0.2, -0.5)$ | 0.102, 0.157, 0.098, 0.139, 0.111, 0.138, 0.138, 0.117 |
+| O8 | Ordered, $J = 8$ | $z = (1, x_1, z_1)$, $\gamma = (1.3, 0.3, 0.8)$, $\mu = (0, 0.5, 0.9, 1.4, 1.8, 2.3, 2.9)$; $\beta_j$, $\sigma_j$ as L8 | $\rho$ as L8 | 0.162, 0.111, 0.109, 0.150, 0.117, 0.128, 0.111, 0.112 |
+| P8 | MNP, $J = 8$ (GHK, 7 dimensions) | $\gamma$ as L8; $\Omega = \tfrac12(I + \mathbf 1\mathbf 1')$; $\beta_j$, $\sigma_j$ as L8 | each regime correlated with its own utility difference only (base regime: with the first difference), correlation $0.8\rho_j$ with $\rho$ of L8 | 0.067, 0.187, 0.078, 0.154, 0.088, 0.160, 0.149, 0.116 |
+
+| Design | $N$ | $R$ | Estimators | Gated cells |
+| --- | --- | --- | --- | --- |
+| G | 2000, 5000 | 500 | FIML normal-score; two-step `"bfg2"`; FIML Lee (misspecified, reported) | FIML normal-score at $N = 5000$: bias and convergence ($\ge 97\%$); bias threshold for $r_{jk}$: 0.05, as for the dependence parameters of the two-dimensional region models. Coverage reported ($R = 500$) |
+| L | 5000 | 300 | FIML normal-score on Lee data (misspecified) | none (reported) |
+| L8 | 4000, 8000 | 500 | FIML Lee; two-step `"lee"` | FIML at $N = 8000$: bias and convergence ($\ge 99\%$). Coverage reported |
+| O8 | 4000, 8000 | 500 | FIML; two-step | FIML at $N = 8000$: bias and convergence ($\ge 99\%$). Coverage reported |
+| P8 | 8000 | 100 | FIML `"independent"` with GHK (500 and 2000 Halton draws) | none: reported, with computing time. If a fit exceeds 2 hours on one core the cell is reported as not completed |
+
+About 3000 further replications. Designs G, L8: WP2.2; P8: WP2.3; O8:
+WP2.4.

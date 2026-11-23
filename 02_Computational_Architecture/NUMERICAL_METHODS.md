@@ -169,3 +169,36 @@ Estimation uses no random numbers in G2 except the multistart perturbations
 (seeded as in G1) and the Genz-Bretz evaluation for $d \ge 4$ (fixed seed
 passed to `pmvnorm`). The record adds: probability method, number of draws,
 Hessian type, base alternative, component order, nesting structure.
+
+### 7.7 Gate amendments (23 November 2026): eight regimes and the normal-score model
+
+- **Number of regimes.** The owner requires at least $J = 8$, with room for
+  more. No routine may contain a constant that limits $J$; storage and
+  loops are sized from the data. The closed-form models (Lee, ordered,
+  sequential with independent stages, nested logit) cost $O(NJ)$ per
+  evaluation for any $J$.
+- **Probabilities by dimension $d$** (multinomial probit: $d = J - 1$;
+  normal-score model: $d = J - 1$ inside a one-dimensional rule):
+  deterministic for $d \le 3$; GHK on Halton draws for $d \ge 4$, marked
+  experimental. Measured on 24 seven-dimensional regime rectangles with
+  probabilities from 3e-4 to 0.19 (check X21 of `verify_math_g2b.R`): the
+  largest error of $\log P$ is 0.017 with 500 draws and 0.008 with 2000.
+  The default of 500 draws is therefore too coarse for likelihood-ratio
+  comparisons at $d = 7$; the fit reports the number of draws, and the
+  documentation recommends at least 2000 for $d \ge 6$ and a rerun with
+  more draws as a stability check.
+- **Cost.** One vectorised GHK pass in R for 2000 observations, $d = 7$,
+  500 draws: 2.3 s (X23, this machine). A score evaluation by Plackett
+  derivatives needs on the order of $d + d(d-1)/2$ such passes of one
+  dimension less. Whether the pure-R route is practical at $J = 8$ is
+  decided by profiling in WP2.3; compiled code needs the owner's approval.
+- **Normal-score model** (MULTINOMIAL_ESR.md section 11): Gauss-Hermite
+  rule in $\eta_j$ centred at $r_je$ with scale $\sqrt{1 - r_j^2}$ (32
+  nodes reproduced $P_k$ to 1.4e-7 at $J = 8$, X14a); inner rectangle by
+  the engine's routine with the covariance $\Sigma_c$ computed once per
+  regime and evaluation. The node count is a control argument; the tests
+  of WP2.2 fix its default by comparing 32, 48 and 64 nodes.
+- **`max.col()` is not used for the regime of maximum utility** in
+  simulation code: it treats values within a relative tolerance as ties
+  and breaks them at random (found while writing check X10). The
+  simulation scripts use an exact row-wise argmax.

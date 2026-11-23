@@ -1,0 +1,26 @@
+"id","check","value","tol","pass"
+"X01a","endogenous::hybrid ML estimates = ours (constant shift)",1.63357407179099e-06,0.005,TRUE
+"X01b","log-lik at its estimates within 1e-4 of our maximum (constant shift)",3.28327587340027e-09,1e-04,TRUE
+"X01c","its model-based std. errors = ours, rel. diff (constant shift)",1.36101407763878e-05,0.03,TRUE
+"X01d","our score at our maximum",2.14520740574569e-07,0.001,TRUE
+"X02a","endogenous::hybrid ML estimates = ours (hybrid, modifiers ~ x1)",5.43303989197774e-06,0.005,TRUE
+"X02b","log-lik at its estimates within 1e-4 of our maximum (hybrid, modifiers ~ x1)",3.94356902688742e-09,1e-04,TRUE
+"X02c","its model-based std. errors = ours, rel. diff (hybrid, modifiers ~ x1)",1.35582592886152e-05,0.03,TRUE
+"X02d","our score at our maximum",1.45477306609285e-07,0.001,TRUE
+"X10","normal scores: S = k iff eta_m < h_m(eta_k) (mismatches)",0,0,TRUE
+"X11a","normal scores: int of contribution = P_k (J = 3)",6.10622663543836e-16,1e-08,TRUE
+"X11b","normal scores: simulated P(S = k, u <= c), max |z|",1.90447871427605,4,TRUE
+"X12a","normal scores: E[u | S = k] from contribution = r'M",1.58761892521397e-14,1e-07,TRUE
+"X12b","normal scores: E[u | S = k] by simulation, max |z|",0.762805921033889,4,TRUE
+"X12c","normal scores: E[u | S = k] differs across k (min gap > 0.05)",0,0,TRUE
+"X13","normal scores: int of contribution = P_k (J = 2)",4.9960036108132e-16,1e-08,TRUE
+"X14a","normal scores, J = 8: int of contribution = P_k",1.43916966038882e-07,2e-05,TRUE
+"X14b","normal scores, J = 8: simulated P(S = k, u <= 0.5), max |z|",0.689582436080907,4,TRUE
+"X14c","normal scores, J = 8: E[u | S = k] = r'M, all k, max |z|",1.46585925407426,4,TRUE
+"X20a","Lee, J = 8: simulated P(S = j, eps_j <= c), max |z|",2.03211344060147,4,TRUE
+"X20b","Lee, J = 8: E[eps_j | S = k], own and 7 others, max |z|",2.41066395860746,4,TRUE
+"X21a","GHK, d = 7, 500 Halton draws: max abs error of log P",0.0169240089294389,0.05,TRUE
+"X21b","GHK, d = 7, 2000 Halton draws: max abs error of log P",0.00803681121598743,0.02,TRUE
+"X22","MNP, J = 8: simulated P(S = j, eps <= c), max |z|",0.509548993094971,4,TRUE
+"X23","GHK pass n = 2000, d = 7, R = 500 finishes (seconds)",2.26999999999998,60,TRUE
+"X24","ordered, J = 8: simulated P(S = j, eps <= c), max |z|",1.47080755745678,4,TRUE

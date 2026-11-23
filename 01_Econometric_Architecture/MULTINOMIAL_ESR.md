@@ -500,3 +500,115 @@ The statements about `msel` come from its help page (read 23 November
   W27); the derivative formulas are checked for $d = 3$ rectangles (W20),
   and GHK for $d \le 4$ (W25).
 - All `switchSelection` conventions (section 9).
+
+## 11. Normal-score model: a less restrictive full-likelihood alternative to Lee (gate amendment, 23 November 2026)
+
+Added after the owner's decision on gate question 3 ("if you can find a
+better (less restrictive) option we can use ... otherwise, I accept Lee's
+transformation"). Checks "X.." are in `verify_math_g2b.R`. Lee's model
+(section 3) stays in the package; this model is offered beside it.
+
+### 11.1 Model
+
+Selection is the multinomial logit of section 2: $U_k = v_k + \varepsilon^*_k$
+with $\varepsilon^*_k$ i.i.d. Gumbel, cdf $G$. Define the **normal scores**
+
+$$\eta_k = \Phi^{-1}\!\left(G(\varepsilon^*_k)\right), \qquad k = 1, \dots, J,$$
+
+which are i.i.d. $N(0, 1)$. For each regime $j$ the standardised outcome
+disturbance $u_j = \varepsilon_j / \sigma_j$ is **jointly normal with all
+$J$ scores**:
+
+$$u_j = \sum_{k=1}^J r_{jk}\,\eta_k + \sqrt{1 - \textstyle\sum_k r_{jk}^2}\;\nu_j, \qquad \nu_j \sim N(0,1) \text{ independent of } \eta,$$
+
+with $r_{jk} = \operatorname{Corr}(u_j, \eta_k)$ and $\sum_k r_{jk}^2 < 1$.
+There are $J$ dependence parameters per regime instead of Lee's one.
+
+This is the assumption of the normalised correction of Bourguignon,
+Fournier and Gurgand (section 4.2: a conditional mean linear in the normal
+scores), strengthened to joint normality so that a likelihood exists. Their
+two-step estimator `"bfg2"` is therefore the limited-information estimator
+of this model.
+
+### 11.2 Selection event in the scores (check X10)
+
+$S = k$ if and only if $\eta_m < h_{m|k}(\eta_k)$ for every $m \ne k$, with
+
+$$h_{m|k}(t) = \Phi^{-1}\!\left(\Phi(t)^{a_{mk}}\right), \qquad a_{mk} = e^{v_m - v_k},$$
+
+because $G(G^{-1}(p) + d) = p^{\exp(-d)}$. It is computed on the log scale
+as `qnorm(a * pnorm(t, log.p = TRUE), log.p = TRUE)`.
+
+### 11.3 Likelihood (checks X11, X13, X14)
+
+For an observation in regime $j$ with $e = (y - x'\beta_j)/\sigma_j$ and
+$r = (r_{j1}, \dots, r_{jJ})$:
+
+$$L = \frac{1}{\sigma_j}\,\phi(e)\int \phi\!\left(t;\, r_j e,\, 1 - r_j^2\right)\,\Phi_{J-1}\!\left(h_{\cdot|j}(t) - \mu(t, e);\ \Sigma_c\right)dt,$$
+
+where $r_j$ is short for $r_{jj}$, $r_{-j}$ collects the other $J - 1$
+correlations, and, given $(\eta_j = t, u_j = e)$, the other scores are
+normal with
+
+$$\mu(t, e) = r_{-j}\,\frac{e - r_j t}{1 - r_j^2}, \qquad \Sigma_c = I - \frac{r_{-j}r_{-j}'}{1 - r_j^2}.$$
+
+The contribution integrates over $y$ to the multinomial-logit probability
+$P_j$ (X11a: 6e-16 for $J = 3$; X13 for $J = 2$; X14a: 1.4e-7 for $J = 8$)
+and reproduces the simulated joint law of $(S, Y_j)$ (X11b, X14b).
+
+Computation: a Gauss-Hermite rule over $t$ and a $(J - 1)$-dimensional
+normal rectangle probability with a covariance that does not depend on the
+observation. This is the probability routine of the Gaussian region engine
+(GAUSSIAN_REGION_ENGINE.md section 5): deterministic for $J \le 4$, GHK
+beyond. With $r_{-j} = 0$ the rectangle factorises and the likelihood is a
+one-dimensional integral for any $J$.
+
+### 11.4 Conditional expectations: no additional assumption (check X12)
+
+The joint law of $\varepsilon_j$ and all utilities is specified, so every
+counterfactual mean is defined by the model itself:
+
+$$E[\varepsilon_j \mid S = k] = \sigma_j\sum_m r_{jm}\,E[\eta_m \mid S = k], \qquad E[\eta_k \mid S = k] = m(P_k),\quad E[\eta_m \mid S = k] = \frac{m(P_m)P_m}{P_m - 1},$$
+
+with $m(\cdot)$ of section 4.2 (check W14). These means differ across the
+regimes $k$ (X12c), unlike Lee's under L-CI. Agreement of the formula with
+the likelihood contribution: 1.6e-14 (X12a); with simulation: X12b, and
+X14c for $J = 8$.
+
+### 11.5 Comparison with Lee's model
+
+| | Lee (section 3) | Normal-score model |
+| --- | --- | --- |
+| Selection | multinomial logit | multinomial logit |
+| Dependence parameters per regime | 1 | $J$ (restrictions available: own score only; a common value for the other alternatives) |
+| Counterfactual means for $k \ne j$ | need assumption L-CI; equal across $k$ | from the model; differ across $k$ |
+| Sign pattern of the implied correlations with the other utilities | restricted (section 3.6) | free |
+| Likelihood | closed form | one-dimensional quadrature of a $(J-1)$-dimensional normal probability |
+| Matching two-step estimator | `"lee"` | `"bfg2"` |
+| Nests the other | no | no (compared by information criteria and a Vuong test) |
+
+Both keep the independence of irrelevant alternatives of the logit; the
+multinomial probit (section 6) is the model that relaxes it.
+
+### 11.6 Identification
+
+As for the Dubin-McFadden and BFG corrections without the sum restriction:
+the $J$ correlations of a regime are identified through $J$ different
+functions of the choice probabilities, so diagnostics I4b applies
+(exclusions must move the probabilities in enough directions). With
+$J = 2$ the two correlations are identified through the functional form
+only; the software warns and recommends the restricted version.
+
+### 11.7 Status and limits
+
+- **Verified:** the event identity, the likelihood as a proper density, the
+  joint law and all conditional means, for $J = 2, 3, 8$ (X10-X14).
+- **Not verified:** the analytic score (not derived yet; it uses the same
+  Plackett derivatives as the region engine plus the derivative of
+  $h_{m|k}$); estimation behaviour (no estimator exists; Monte Carlo design
+  G, MONTE_CARLO_DESIGN.md section 8.6); the accuracy needed from the
+  Gauss-Hermite rule in estimation.
+- **Novelty not established.** The searches run on 23 November 2026 found
+  no earlier statement of this full-likelihood model, but they were not a
+  systematic review. The manuscript must not claim it as new before a
+  proper literature search.

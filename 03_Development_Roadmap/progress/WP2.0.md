@@ -122,3 +122,60 @@ WP2.1.
 After the gate: WP2.1 (1.1.0). Its first step is to freeze the 1.0.0
 results on `firms` as test references, before any shared engine file is
 edited.
+
+## Addendum: gate closing (23 November 2026)
+
+The owner approved the 12 proposals with amendments to questions 2, 3, 5,
+9 and 11; the words are recorded verbatim in `GENERATION_2.md` section 5.
+Package version unchanged (1.0.0); documents and reference scripts only.
+
+**Done after the decision**
+1. `endogenous` 1.0 downloaded from the CRAN archive and installed into
+   the private library `runs/lib_g2` (workspace level; nothing installed
+   into the owner's R libraries). Source kept in
+   `runs/downloads/endogenous_1.0/`.
+2. `verify_math_g2b.R` (new) with `verify_math_g2b_results.csv`:
+   **25 of 25 checks pass** (429 s).
+
+   | Area | Checks | Result |
+   | --- | --- | --- |
+   | `endogenous::hybrid` | X01, X02 | its ML estimates equal the maximiser of our treatment likelihood (2e-6 constant shift, 5e-6 hybrid with a modifier); its model-based standard errors equal ours (1.4e-5 relative); mapping $\delta = -\eta$ |
+   | Normal-score model | X10-X14 | event identity exact (0 mismatches in $6 \times 10^6$); contribution integrates to $P_k$ (6e-16 at $J = 3$, 5e-16 at $J = 2$, 1.4e-7 at $J = 8$); simulated joint law ($\lvert z\rvert \le 1.9$; 0.69 at $J = 8$); conditional means equal the BFG normalised moments (1.6e-14) and simulation ($\lvert z\rvert \le 1.47$) and differ across regimes |
+   | Eight regimes | X20-X24 | Lee: joint law and own plus 7 counterfactual means ($\lvert z\rvert \le 2.41$); multinomial probit: GHK in 7 dimensions against Genz-Bretz (error of $\log P$ 0.017 with 500 draws, 0.008 with 2000), joint law ($\lvert z\rvert = 0.51$), one GHK pass for 2000 observations 2.3 s; ordered: joint law ($\lvert z\rvert = 1.47$) |
+3. Documents: MULTINOMIAL_ESR.md section 11 (normal-score model);
+   MONTE_CARLO_DESIGN.md section 8 status (pre-registered) and section 8.6
+   (added cells G, L8, O8, P8); BENCHMARK_PROTOCOL.md section 6 (the
+   `endogenous` row, section 6.3 comparative analysis);
+   ACCEPTANCE_TESTS.md section 5 (gate closed) and section 6 (new tests);
+   NUMERICAL_METHODS.md section 7.7; API_SPECIFICATION.md section 5.8;
+   GENERATION_2.md sections 5 (decision) and 6 (positioning).
+4. Literature and software searches (web, 23 November 2026) for the
+   positioning: summarised in GENERATION_2.md section 6 and
+   BENCHMARK_PROTOCOL.md section 6.3.
+
+**Failures on the way (fixed before the run recorded above)**
+- First run: check X10 reported 14 mismatches. Cause: `max.col()` breaks
+  near-ties at random; replaced by an exact argmax. `verify_math_g2.R`
+  also uses `max.col()` in simulation checks; the effect there is a few
+  observations in millions, inside simulation error, and that script was
+  not changed or rerun.
+- First run: the sanity check on the reference optimiser (X02d) gave
+  1.6e-3 against a tolerance of 1e-3. The optimiser was polished with
+  Newton steps; the tolerance was not changed.
+- The first test covariance of X21 was not positive definite; rescaled.
+
+**Not verified**
+- The normal-score model's score (not derived), its estimation behaviour
+  and its novelty. The literature searches were not a systematic review.
+- Multinomial probit at $J = 8$: only probabilities and the joint law
+  were checked; the score in 7 dimensions and the computing time of a
+  full fit are unknown.
+- The 14 references added in WP2.0, and the works named in the
+  positioning (Roodman 2011; Deb and Trivedi; Burgette and Nordheim), are
+  still from memory or from search summaries, not from the sources.
+- Still open from the list above: corrected two-step covariances other
+  than the treatment model's; every `switchSelection` convention;
+  `sampleSelection`'s two-step conventions. Each is established in the
+  work package that delivers the model, before the model is offered.
+- `verify_math_g2.R`, `verify_math.R` and the G1 test suite were not
+  rerun; no file they read was changed.

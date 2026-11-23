@@ -54,6 +54,16 @@ Sections 1-3 are the Generation 1 record and are unchanged.
 
 | Gate | Requirement | Date | Signed |
 | --- | --- | --- | --- |
-| Econometric | Owner approves OBSERVATION_MECHANISMS, GAUSSIAN_REGION_ENGINE, MULTINOMIAL_ESR, ORDERED_SEQUENTIAL, MULTIVARIATE_SELECTION, the G2 sections of TREATMENT_EFFECTS, IDENTIFICATION, PARAMETERIZATION and GENERAL_MODEL, and the questions of GENERATION_2.md section 4 | | open: put to the owner on 23 November 2026 |
+| Econometric | Owner approves OBSERVATION_MECHANISMS, GAUSSIAN_REGION_ENGINE, MULTINOMIAL_ESR, ORDERED_SEQUENTIAL, MULTIVARIATE_SELECTION, the G2 sections of TREATMENT_EFFECTS, IDENTIFICATION, PARAMETERIZATION and GENERAL_MODEL, and the questions of GENERATION_2.md section 4 | 23 November 2026 | **closed: approved by the owner with amendments** (all 12 proposals; the owner's words are recorded verbatim in GENERATION_2.md section 5) |
 | Computational | G2-AC1, G2-AC2, G2-AC4, G2-AC5 met | | open |
 | Software | G2-AC3, G2-AC6 met; documentation complete (vignette `multinomial-esr`) | | open |
+
+## 6. Tests added by the owner's gate amendments (23 November 2026)
+
+| Id | Test | Work package |
+| --- | --- | --- |
+| G2-J8-1 | Every G2 selection family accepts $J = 8$ regimes without code changes: fit, `summary`, pairwise effects and predictions run on a simulated data set with 8 regimes (multinomial logit with Lee, ordered, sequential; multinomial probit with GHK marked experimental) | WP2.2-WP2.4 |
+| G2-J8-2 | No constant in the code limits the number of regimes; a test fits $J = 10$ with Lee's model | WP2.2 |
+| G2-J8-3 | Monte Carlo cells L8 and O8 pass their gated thresholds (MONTE_CARLO_DESIGN.md section 8.6); P8 is reported with its computing time | WP2.2-WP2.5 |
+| G2-NS-1 | Normal-score model: analytic score equals the numerical gradient ($10^{-6}$); the likelihood equals the reference of `verify_math_g2b.R`; Monte Carlo design G passes its gated thresholds | WP2.2 |
+| G2-EN-1 | `treatment(shift = ~ modifiers)` reproduces `endogenous::hybrid()` within the protocol tolerances | WP2.1 |
