@@ -80,3 +80,64 @@ All thresholds are fields of `switch_control()`. The flags appear in
 | Multinomial-probit covariance | Differences against the base alternative; one variance fixed to 1; the remaining structure as above | G2 |
 | Copula parameters | Clayton $\theta = e^{c}$; Gumbel and Joe $\theta = 1 + e^{c}$; Frank $\theta \in \mathbb R\setminus\{0\}$ (identity, with 0 handled as the independence limit); Student-t $\rho = \tanh\alpha$, $\nu = 2 + e^{c}$; BB families on their product domains | G3 |
 | Random-effect variances | $\log$ standard deviations plus correlations as above | G5 |
+
+## 7. Generation 2 transformations
+
+Status: **draft for the G2 econometric gate** (23 November 2026). Sections
+1-6 are unchanged. Checks W05, W24 in [verify_math_g2.R](verify_math_g2.R).
+
+### 7.1 Working parameters
+
+| Natural parameter | Model | Working | Map |
+| --- | --- | --- | --- |
+| $\gamma$, $\gamma_j$, $\gamma_m$, $\beta$, $\beta_j$, $\delta$ | all | identity | |
+| $\sigma$, $\sigma_j$, $\sigma_{jk}$ | all | $\tau = \log\sigma$ | $e^\tau$ |
+| $\rho$ (Heckman, treatment), $\rho_j$ (Lee, nested logit, ordered) | | $\alpha = \operatorname{atanh}\rho$ | $\tanh\alpha$ |
+| Treatment restrictions $\beta_1 = \beta + E\delta$, $\sigma_1 = \sigma_0$, $\rho_1 = \rho_0$ | treatment | linear map $\vartheta_{\text{ESR}} = A\vartheta_T$ | [OBSERVATION_MECHANISMS.md](OBSERVATION_MECHANISMS.md) s.3.2 |
+| Thresholds $\mu_2 < \dots < \mu_{J-1}$ ($\mu_1 = 0$) | ordered | $\kappa_j = \log(\mu_j - \mu_{j-1})$ | $\mu_j = \mu_{j-1} + e^{\kappa_j}$ |
+| Dissimilarity $\lambda_g \in (0, 1)$ | nested logit | $c_g = \operatorname{logit}\lambda_g$ | $1/(1 + e^{-c_g})$; $d\lambda/dc = \lambda(1 - \lambda)$ |
+| Selection correlation matrix $R_\Omega$ or $R_u$ | MNP, sequential, multivariate | $d(d-1)/2$ values $\alpha^u$ | canonical partial correlations (section 6; `se_corr_from_cpc()`) |
+| Selection standard deviations (MNP), first fixed at 1 | MNP `"unrestricted"` | $\tau^u_m = \log\operatorname{sd}(\tilde u_m)$, $m \ge 2$ | $e^{\tau^u_m}$ |
+| Outcome-selection correlations $\psi_j \in \mathbb R^d$ | region models | $d$ values $\alpha^{(j)}$ per regime (fewer for sequential) | further Cholesky columns: $\ell_{j,m} = \tanh(\alpha^{(j)}_m)\sqrt{1 - \sum_{k<m}\ell_{j,k}^2}$, $\psi_j = \mathcal W'\ell_j$ ([GAUSSIAN_REGION_ENGINE.md](GAUSSIAN_REGION_ENGINE.md) s.3) |
+| Within-regime outcome correlations ($K \ge 2$) | several outcomes | the same construction, one column per outcome | [MULTIVARIATE_SELECTION.md](MULTIVARIATE_SELECTION.md) s.4 |
+
+**Order of the selection components.** The partial-correlation construction
+depends on the order of the components of $\tilde u$. The order is fixed by
+the model (alternatives in level order after the base; stages in order;
+selection equations in the order given), and it is recorded in the fit. The
+natural parameters ($\psi_j$, $\Omega$) and the likelihood do not depend on
+it; only the working scale does.
+
+### 7.2 Delta method and intervals
+
+- Natural-scale covariance: $J\hat V_\vartheta J'$ with
+  $J = \partial\theta/\partial\vartheta'$; closed form for the scalar
+  transformations, complex-step for the correlation-matrix maps (exact to
+  rounding, as `se_corr_jacobian()`).
+- Intervals: on the working scale and transformed back for $\sigma$,
+  $\rho$, $\lambda$ and the threshold increments. For the elements of
+  $\psi_j$ and $\Omega$ with $d \ge 2$ a working value does not correspond
+  to a single natural parameter, so their default interval is the
+  natural-scale Wald interval, truncated to the admissible range and marked;
+  the bootstrap percentile interval is the alternative.
+
+### 7.3 Starting values
+
+1. Two-step estimates of the model (its derivation document), with
+   dependence parameters moved inside the admissible set where needed
+   ($\lvert\rho\rvert \le 0.95$; $\psi_j'R_\Omega^{-1}\psi_j \le 0.9$).
+2. If the two-step fails: first-step selection estimates, within-regime OLS,
+   zero dependence.
+3. Perturbed starts as in section 4, with standard deviation 0.5 on the
+   working scale of every dependence parameter.
+4. Nested logit: $\lambda_g = 0.8$ unless supplied. MNP `"unrestricted"`:
+   $\Omega$ of the `"independent"` structure.
+
+### 7.4 Boundary flags added in G2
+
+| Flag | Condition |
+| --- | --- |
+| `lambda_boundary` | $\hat\lambda_g > 0.995$ or $< 0.05$ |
+| `omega_boundary` | a correlation of $\hat\Omega$ or $\hat R_u$ beyond 0.995 in absolute value, or a ratio of standard deviations beyond $10^{1.5}$ |
+| `psi_boundary` | $\hat\psi_j'\hat R_\Omega^{-1}\hat\psi_j > 0.99$ |
+| `threshold_boundary` | $\hat\mu_j - \hat\mu_{j-1} < 10^{-4}$ |

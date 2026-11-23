@@ -184,3 +184,54 @@ November 2026.
 | G3 | `GJRM` (copula sample-selection and bivariate models where the specifications coincide); `copula` and `VineCopula` for the copula functions | copula ESR as such: nesting (Gaussian = G1) plus Monte Carlo |
 | G4 | `GJRM`, `ssmrob`, `sampleSelection` (binary outcomes with selection) | mixed multivariate outcomes: Monte Carlo |
 | G5, G6 | no R implementation of panel or spatial ESR is known | Monte Carlo and nesting tests only; stated in the release notes |
+
+## 6. Generation 2 benchmarks
+
+Status: **proposed at the G2 econometric gate** (23 November 2026).
+Sections 1-5 are unchanged. Tolerances are those of section 3 unless a row
+says otherwise; they are fixed before the runs.
+
+### 6.1 Benchmark packages for G2
+
+| Package | State on 23 November 2026 | G2 role |
+| --- | --- | --- |
+| `sampleSelection` 1.2-16 | installed | Tobit-2 (`selection`, ML and two-step); `treatReg` (ML and two-step); Tobit-5 as in G1 |
+| `switchSelection` 2.1.0 | installed | `msel`: FIML for multivariate **ordered/binary** selection with continuous outcomes; two-step for **multinomial** selection (logit: Dubin-McFadden terms without the sum restriction; probit) |
+| `nnet` 7.3-21, `mlogit` 2.0-0 | installed | multinomial-logit first step |
+| `mvtnorm` 1.4-2 | installed | reference for the normal probabilities |
+| `endogenous` | **not installed and not on CRAN** (absent from `available.packages()` at cloud.r-project.org). The protocol's "version 1.0" comes from the research review; the archive has not been consulted | hybrid structural-shift model. Installing an archived source into `runs/lib_g2` needs the owner's approval, as `endoSwitch` did |
+
+### 6.2 Comparisons
+
+| Model | Benchmark | Quantities | Notes |
+| --- | --- | --- | --- |
+| `heckman()` FIML | `sampleSelection::selection(..., method = "ml")` | coefficients, $\sigma$, $\rho$, log-likelihood, standard errors | mapping verified at the likelihood level (W04) |
+| `heckman()` two-step | `selection(..., method = "2step")` | probit, outcome and Mills-ratio coefficients | $\sigma$, $\rho$ and standard-error conventions to be established by simulation in WP2.1 first; any difference is documented as D-SS-1 was |
+| `treatment()` FIML | `sampleSelection::treatReg(..., method = "ml")` | as Heckman, plus $\delta$ | mapping verified for a constant shift (W07); with modifiers `treatReg` takes interaction regressors, to be confirmed in WP2.1 |
+| `treatment()` two-step | `treatReg(..., method = "2step")` | coefficients | conventions to be established in WP2.1 |
+| `treatment()` with `shift = ~ modifiers` | `endogenous::hybrid()` | coefficients, $\sigma$, $\rho$, log-likelihood, effects | **only if the owner approves the installation**; otherwise the hybrid model has no external benchmark and rests on the exact restriction of the ESR (W05), `treatReg` with interactions, and Monte Carlo design Th |
+| `tobit5()` | `sampleSelection::selection()` Tobit-5 | as G1 | the G1 benchmark rerun through the new interface |
+| MNL first step | `nnet::multinom`, `mlogit` | coefficients, log-likelihood | tolerance $10^{-6}$ on coefficients after tightening their convergence settings |
+| MNL two-step `"bfg1"` | `msel(type3 = "logit", estimator = "2step")` | $\beta_j$ and correction coefficients | its base is the last alternative; conventions by simulation in WP2.2 |
+| MNP two-step | `msel(type3 = "probit", estimator = "2step")` | $\beta_j$ and correction coefficients | its correction terms are defined through the gradient of the log-probability; whether they span the same regressors as ours is to be established in WP2.3 |
+| MNL with Lee, FIML; nested logit; MNP-ESR FIML | **none found** | | simulation-only (designs L, N, P) plus nesting tests; stated in the release notes |
+| Ordered selection FIML | `msel` with one ordered equation and continuous outcomes, `estimator = "ml"` | coefficients, cuts ($\mu_j - \gamma_0$), $\sigma_j$, $\rho_j$, log-likelihood, standard errors | conventions by simulation in WP2.4 |
+| Multivariate selection FIML | `msel` with two binary equations, `estimator = "ml"` | as above, plus $R_u$ | conventions by simulation in WP2.5 |
+| Sequential selection | `msel` with `groups` excluding unobserved later stages, if its observability rules reproduce the model | | to be established in WP2.4; otherwise simulation-only |
+| Several outcomes per regime | `msel` with several continuous equations | | to be established in WP2.5 |
+| Pairwise effects | none reports them in our definitions | | our formulas evaluated at both sets of estimates, as for `sampleSelection` in G1; and simulation (G2 acceptance criterion 5) |
+
+**Datasets** (fixed seeds, saved in `runs/benchmarks_g2/`): one dataset per
+Monte Carlo design of MONTE_CARLO_DESIGN.md section 8.2 at $N = 2000$ and
+$N = 10\,000$; the documented examples of `sampleSelection` for Tobit-2 and
+`treatReg` (with their own code and seeds); the examples of the `msel` help
+page that match a G2 model.
+
+**Additional tolerance for G2.** FIML log-likelihoods that involve bivariate
+or trivariate normal probabilities: $\lvert\Delta\ell\rvert \le 10^{-3}$
+(other packages may integrate numerically with looser tolerances); the
+"ours $\ge$ theirs $- 10^{-6}$" rule of section 3 is kept when both
+log-likelihoods are evaluated by our engine at the two estimates.
+
+**Reporting:** `04_Validation/results/BENCHMARK_G2.md`, generated by
+`04_Validation/scripts/benchmark_g2.R`, with the structure of section 4.

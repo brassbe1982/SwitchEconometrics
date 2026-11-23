@@ -126,3 +126,105 @@ Distributions of outcome changes come from simulating $(u, \varepsilon_1, \varep
 from the fitted model. Under the policy scenario this needs no assumption on
 $r_{10}$, because only the realised regime's outcome enters. For individual
 gains $Y(1) - Y(0)$ the bounds and assumption of section 4 apply.
+
+---
+
+# Generation 2: effects with several regimes
+
+Status: **draft for the G2 econometric gate** (23 November 2026).
+Specification section 11.3. Checks W12, W27, W33 and W38 in
+[verify_math_g2.R](verify_math_g2.R). Sections 1-6 above are unchanged and
+remain the definition for two regimes.
+
+## 7. Conditional expectations with $J$ regimes
+
+For every pair (outcome regime $j$, conditioning regime $k$):
+
+$$\mu_{j \mid k}(i) = E[Y_i(j) \mid S_i = k, x_i, z_i] = x_{ji}'\beta_j + c_{j \mid k}(i),$$
+
+a $J \times J$ table per unit. The diagonal ($k = j$) holds the expected
+observed outcomes; the off-diagonal cells are counterfactuals. The
+selection term $c_{j \mid k}$ depends on the model:
+
+| Model | $c_{j \mid k}$ | Basis | Document |
+| --- | --- | --- | --- |
+| Gaussian region models (multinomial probit, ordered, sequential, multivariate) | $\kappa_j'\,m_k(W)$, with $\kappa_j = \sigma_jR_\Omega^{-1}\psi_j$ and $m_k$ the standardised truncated mean of the selection vector in regime $k$ | joint normality | GAUSSIAN_REGION_ENGINE.md s.6 |
+| Ordered probit (closed form) | $\sigma_j\rho_j\,m_k(w)$ | joint normality | ORDERED_SEQUENTIAL.md s.1.4 |
+| Multinomial logit, Lee | $\theta_j\,m_1(w_j)$ if $k = j$; $\theta_j\,m_0(w_j)$ if $k \ne j$ | Lee's assumption; for $k \ne j$ also assumption L-CI | MULTINOMIAL_ESR.md s.3.5 |
+| Nested logit, Lee | $\theta_j\,m_1(w_j)$ if $k = j$; $\theta_j\,E[u^*_j \mid S = k]$ by quadrature if $k \ne j$ | as above | MULTINOMIAL_ESR.md s.5.3 |
+| Multinomial logit, DMF / BFG two-step | linear in the conditional Gumbel moments | linearity assumption | MULTINOMIAL_ESR.md s.4.4 |
+| Sequential, $k > j$ | as the first row, with non-identified partial correlations set to zero | **stated assumption**, marked in the output | ORDERED_SEQUENTIAL.md s.2.4 |
+
+**Adding up.** In every model
+$\sum_k \Pr(S = k \mid z)\,c_{j \mid k} = 0$, so
+$E[Y(j) \mid x, z] = x_j'\beta_j$ (W27b; for Lee,
+$P_jm_1(w_j) + (1 - P_j)m_0(w_j) = 0$).
+
+## 8. Pairwise effects (specification section 11.3)
+
+For each of the $J(J-1)/2$ unordered pairs, reported as "$j$ against $k$"
+with $k$ the earlier regime in the order of the regime labels (so that the
+base regime is the comparison where it is involved):
+
+| Effect | Definition | Sample estimator |
+| --- | --- | --- |
+| $ATE_{jk}$ | $E[Y(j) - Y(k)]$ | $\frac1N\sum_i\left[x_{ji}'\beta_j - x_{ki}'\beta_k\right]$ |
+| $ATT_{jk}$ | $E[Y(j) - Y(k) \mid S = j]$: the effect of regime $j$ rather than $k$ on the units that are in $j$ | $\frac{1}{n_j}\sum_{S_i = j}\left[\mu_{j \mid j}(i) - \mu_{k \mid j}(i)\right]$ |
+| $ATU_{jk}$ | $E[Y(j) - Y(k) \mid S = k]$: the same effect on the units that are in $k$ | $\frac{1}{n_k}\sum_{S_i = k}\left[\mu_{j \mid k}(i) - \mu_{k \mid k}(i)\right]$ |
+| $TE_{jk \mid l}$ | $E[Y(j) - Y(k) \mid S = l]$ for any conditioning regime $l$ | mean of $\mu_{j \mid l} - \mu_{k \mid l}$ over $S_i = l$ |
+| $TH_{jk}$ | $ATT_{jk} - ATU_{jk}$ | difference |
+
+With $J = 2$ ($j = 1$, $k = 0$) these are the ATT, ATU, ATE and TH of
+section 3, and the $2 \times 2$ table of section 2.
+
+- **Reversal and transitivity.** $ATE_{kj} = -ATE_{jk}$ and
+  $ATE_{jk} + ATE_{kl} = ATE_{jl}$. For conditional effects,
+  $TE_{jk \mid l} + TE_{kl' \mid l} = TE_{jl' \mid l}$ holds for a fixed
+  conditioning regime only: $ATT_{jk} + ATT_{kl}$ is **not** $ATT_{jl}$,
+  because the conditioning groups differ. The output states the
+  conditioning group of every effect.
+- **Base heterogeneity** generalises to
+  $BH_{j}(k, l) = E[Y(j) \mid S = k] - E[Y(j) \mid S = l]$; reported on
+  request for chosen triples, not by default.
+- **Subpopulations.** `by =` and `subset =` restrict the averages, as in
+  G1. Conditioning on a regime and on a covariate group can be combined.
+- **Several outcomes per regime.** One table per outcome, with a joint
+  covariance across outcomes.
+
+**None of these effects depends on the cross-regime outcome correlations**,
+which are not identified. Distributions of individual gains
+$Y(j) - Y(k)$ do, and are reported only as bounds over the admissible range
+or under the reference completion (GAUSSIAN_REGION_ENGINE.md section 11).
+
+## 9. Standard errors of the pairwise effects
+
+- **Closed-form models** (Heckman, treatment, multinomial logit with Lee,
+  ordered): analytic delta-method gradients, as in section 5. For Lee,
+  $\partial m_1(w_j)/\partial\gamma_k = -\delta_1(w_j)\,g_kz$ and
+  $\partial m_0(w_j)/\partial\gamma_k = -\delta_0(w_j)\,g_kz$, with $g_k$ of
+  MULTINOMIAL_ESR.md section 3.3.
+- **Region models with $d \ge 2$ and the nested logit.** The effect is a
+  smooth function $g(\vartheta)$ built from truncated means or
+  one-dimensional quadratures. **Proposed for the gate:** its gradient is
+  computed by central differences with Richardson extrapolation of the
+  closed-form $g$ (deterministic probabilities, so $g$ is smooth), and the
+  delta method is applied to that gradient. The package test compares the
+  resulting standard errors with the bootstrap. With GHK probabilities the
+  effect standard errors come from the bootstrap.
+- **Two-step fits.** Bootstrap over both steps; for Lee's and the ordered
+  two-step also the joint first-step-corrected covariance.
+
+## 10. Counterfactual scenarios with several regimes
+
+| Scenario | Expected outcome |
+| --- | --- |
+| Observed assignment (baseline) | $\sum_k P_k\,\mu_{k \mid k}$ |
+| Everyone in regime $j$ | $x_j'\beta_j$ on average; $\mu_{j \mid k}$ for the units observed in regime $k$ |
+| Policy change $z \to z^*$ | $\sum_k P_k(z^*)\,\mu_{k \mid k}(z^*)$, with the new regime probabilities; the selection terms are evaluated at $z^*$, which keeps the dependence between selection and outcomes (specification section 11.4) |
+| Regime $j$ removed from the choice set | **not offered in G2.** It needs the model of choice among the remaining alternatives, which the multinomial logit gives (IIA) but which changes the meaning of Lee's index; it is listed as an open item, not coded as a guess |
+
+## 11. Models with one potential outcome
+
+- **Heckman:** no effects; predictions of
+  OBSERVATION_MECHANISMS.md section 2.6.
+- **Treatment:** OBSERVATION_MECHANISMS.md section 3.5.

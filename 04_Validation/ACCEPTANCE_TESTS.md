@@ -34,3 +34,26 @@ Each generation's `GENERATION_n.md` defines criteria of the same kind:
 4. Reliable inference.
 5. Correct effects on the economic scale.
 6. Automated checks.
+
+## 4. Generation 2
+
+Status: **proposed at the G2 econometric gate** (23 November 2026).
+Criteria from [GENERATION_2.md](../03_Development_Roadmap/GENERATION_2.md).
+Sections 1-3 are the Generation 1 record and are unchanged.
+
+| # | Criterion | Concrete tests | Evidence | Status |
+| --- | --- | --- | --- | --- |
+| G2-AC1 | Monte Carlo recovery for each selection mechanism | (a) the bias, root-$N$ and convergence thresholds of [MONTE_CARLO_DESIGN.md](MONTE_CARLO_DESIGN.md) section 8.4 in the gated cells of designs H, T, L, D, P, O, S, V, K, N; (b) one fast recovery test per model on CRAN (one dataset, every estimate within 4 standard errors) | `results/MC_G2.md`; `tests/testthat/` | open |
+| G2-AC2 | Exact nesting | (a) region engine with $J = 2$ (multinomial probit, ordered, sequential, multivariate with $M = 1$) equals the frozen G1 log-likelihood per observation to $10^{-8}$, and the fitted model equals the 1.0.0 fit to $10^{-6}$ in the estimates; (b) Heckman log-likelihood equals `sampleSelection` Tobit-2 at identical parameters to $10^{-8}$, and satisfies the identity of OBSERVATION_MECHANISMS.md s.2.5 to $10^{-8}$; (c) treatment log-likelihood equals the restricted ESR to $10^{-10}$; (d) nested logit with $\lambda = 1$ equals the multinomial logit; (e) the frozen 1.0.0 results of `esr()` to $10^{-8}$ at every G2 version | `verify_math_g2_results.csv` (W03, W04, W05, W07, W22, W32, W37b: reference level, 23 Nov 2026); package tests | open (reference level verified) |
+| G2-AC3 | Benchmarks within the protocol tolerances | [BENCHMARK_PROTOCOL.md](BENCHMARK_PROTOCOL.md) section 6: `sampleSelection` (Tobit-2, `treatReg`), `switchSelection::msel` (ordered and multivariate FIML; multinomial two-step), `endogenous` if approved | `results/BENCHMARK_G2.md` | open |
+| G2-AC4 | Coverage within [0.93, 0.97] in gated cells | (a) the standard-error ratio and coverage thresholds of section 8.4; (b) differenced Hessians equal `numDeriv` Hessians of the log-likelihood to $10^{-5}$; (c) bootstrap and default standard errors within 10% at the largest gated $N$ of one design per engine (L, P, O) | `results/MC_G2.md`; package tests | open |
+| G2-AC5 | Pairwise effects verified by simulation | (a) W12, W27, W33, W38 (reference level); (b) package $J \times J$ conditional expectations equal the reference formulas to $10^{-10}$; (c) $ATE_{jk}$, $ATT_{jk}$, $ATU_{jk}$ of every pair match simulated potential outcomes at $n = 200\,000$ within 4 Monte Carlo standard errors, for each selection mechanism; (d) the adding-up identity and $ATE_{jk} + ATE_{kl} = ATE_{jl}$ exactly; (e) effect gradients equal numerical ones | `verify_math_g2_results.csv`; `tests/testthat/test-effects-g2.R` | open (reference level verified) |
+| G2-AC6 | Checks on three operating systems | `R CMD check --as-cran` 0 errors, 0 warnings; GitHub Actions on Windows, macOS, Ubuntu; win-builder; macOS builder (owner's approval each) | check logs; `cran-comments.md` | open |
+
+## 5. Gate record (G2)
+
+| Gate | Requirement | Date | Signed |
+| --- | --- | --- | --- |
+| Econometric | Owner approves OBSERVATION_MECHANISMS, GAUSSIAN_REGION_ENGINE, MULTINOMIAL_ESR, ORDERED_SEQUENTIAL, MULTIVARIATE_SELECTION, the G2 sections of TREATMENT_EFFECTS, IDENTIFICATION, PARAMETERIZATION and GENERAL_MODEL, and the questions of GENERATION_2.md section 4 | | open: put to the owner on 23 November 2026 |
+| Computational | G2-AC1, G2-AC2, G2-AC4, G2-AC5 met | | open |
+| Software | G2-AC3, G2-AC6 met; documentation complete (vignette `multinomial-esr`) | | open |

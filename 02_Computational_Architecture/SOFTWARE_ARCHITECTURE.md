@@ -190,3 +190,82 @@ switch_bootstrap(fit) -> refits through est_*()                   L6
 
 Every class has `print` and `format` methods. Result objects also have
 `as.data.frame` methods for tables.
+
+## 7. Generation 2 (draft for the G2 gate, 23 November 2026)
+
+Sections 1-6 are unchanged. G2 uses the extension points of section 5; no
+layer contract changes, and `esr()` keeps the G1 code path.
+
+### 7.1 Protecting the G1 results
+
+Before any shared file is edited (WP2.1, first step): a test file
+`tests/testthat/test-g1-frozen.R` with the 1.0.0 results on `firms`
+(estimates, log-likelihood, standard errors of the four covariance types,
+two-step results, effects), compared at 1e-8 at every later version. The
+G1 test suite and the Monte Carlo smoke regression
+(`runs/mc_g1_0.8.1_smoke`, tolerance 1e-6) run unchanged.
+
+### 7.2 Planned files
+
+```
+R/wrappers.R              heckman(), treatment(), tobit5(), multinomial_switch(),
+                          multiswitch()                                 (WP2.1-2.5)
+R/lik_heckman_gaussian.R  Heckman: Gaussian block + probit term         (WP2.1)
+R/par_map.R               + linear-restriction matrix (treatment), blocks for
+                          thresholds, selection covariance, psi          (WP2.1-2.3)
+R/sel_mnl.R               multinomial logit: probabilities, derivatives,
+                          first-step ML                                  (WP2.2)
+R/lik_lee.R               Lee likelihood for any choice-probability function
+                          (score, Hessian for MNL)                       (WP2.2)
+R/est_two_step_multi.R    Lee, DMF, BFG and region two-step estimators   (WP2.2-2.3)
+R/num_mvnorm.R            bivariate/trivariate normal cdf, rectangle
+                          probabilities, Plackett derivatives, Halton, GHK (WP2.3)
+R/num_truncated.R         truncated normal means and covariances         (WP2.3)
+R/num_quadrature.R        Gauss-Legendre nodes; BFG m(P); Lee moments    (WP2.2, 2.4)
+R/sel_region.R            region definitions (A_j, limits) for MNP, ordered,
+                          sequential, multivariate                       (WP2.3-2.5)
+R/lik_region_gaussian.R   the Gaussian region engine, K >= 1 outcomes    (WP2.3, 2.5)
+R/est_selection.R         first-step ML of selection systems (no outcomes) (WP2.3)
+R/lik_ordered_gaussian.R  ordered probit selection, closed forms         (WP2.4)
+R/sel_nested_logit.R      nested logit probabilities and derivatives     (WP2.4)
+R/eff_multi.R             J x J conditional expectations, pairwise effects,
+                          scenarios                                      (WP2.2-2.5)
+R/inf_identification.R    + I4b, I12 and the G2 versions of I1-I11       (each WP)
+R/sim_simulate.R          + simulation from every G2 model               (each WP)
+R/data.R                  + one simulated multi-regime dataset (documented
+                          data-generating process; name fixed in WP2.2)
+```
+
+No `src/` directory is planned. Compiled code is added only after profiling
+and the owner's decision (D10).
+
+### 7.3 Changes to the internal objects
+
+| Object | G2 additions |
+| --- | --- |
+| `switch_spec` | `model` values of API_SPECIFICATION.md s.5; `observation` in `"switching"`, `"selection"`, `"treatment"`; `selection` becomes a list with `family`, `formulas` (one or several), `base`, `nests`, `covariance`, `stage_dependence`; `outcomes[[regime]]` may hold several equations; `shift` (treatment) |
+| `switch_data` | `S` integer in $1..J$ with `regimes` labels; `Z` a list of selection designs; `y` and `X` lists by regime and outcome; `at_risk` (sequential); `y` is `NA` where not observed |
+| `se_parmap` | blocks `gamma[[k]]`, `cut`, `sel_sd`, `sel_cpc`, `beta[[j]][[k]]`, `sigma`, `dep[[j]]`; `restriction` (linear map to an engine's parameters); `order` of the selection components |
+| Likelihood contract | unchanged: `lik_<model>(theta_w, data, map, deriv, weights)`; `deriv = 2` returns the Hessian with `attr(, "type")` `"analytic"` or `"score_difference"`; engines without Hessian support return `NULL` and the optimiser uses BFGS/BHHH |
+| `switch_estimate` | `probability` (method, draws, error estimate); `correction` (two-step type) |
+| `switch_fit$record` | the additions of NUMERICAL_METHODS.md s.7.6 |
+
+`se_lik_engine()` dispatches on `(model, selection family)`:
+
+| Model | Engine |
+| --- | --- |
+| `esr`, `tobit5` | `lik_esr_gaussian` (G1, unchanged) |
+| `treatment` | `lik_esr_gaussian` through the restriction map |
+| `heckman` | `lik_heckman_gaussian` |
+| `multinomial_esr` with `multinomial_logit` or `nested_logit` | `lik_lee` |
+| `multinomial_esr` with `multinomial_probit`; `sequential_esr`; `multivariate_esr` | `lik_region_gaussian` |
+| `ordered_esr` | `lik_ordered_gaussian` (tested against `lik_region_gaussian`) |
+
+### 7.4 Tests added per work package
+
+Reference implementations in `tests/testthat/helper-reference-g2.R`, taken
+from `verify_math_g2.R`; package against reference at 1e-10; derivative
+tests; the nesting tests of G2 acceptance criterion 2 (region engine with
+$J = 2$ against the frozen G1 engine; Heckman identity; treatment
+restriction); recovery tests; frozen references for each new model from its
+first version.

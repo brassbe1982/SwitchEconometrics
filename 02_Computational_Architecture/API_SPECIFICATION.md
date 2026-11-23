@@ -310,3 +310,146 @@ Returns two parts (specification section 15):
 | `anova(object, ...)` | LR tests between nested fits |
 | `update` | |
 | `model.frame`, `model.matrix(object, part)`, `terms(object, part)` | |
+
+## 5. Generation 2 (draft for the G2 gate, 23 November 2026)
+
+Sections 1-4 are unchanged: no G1 signature changes, and every G1 call
+returns the 1.0.0 result. G2 adds argument values, a few arguments with
+defaults, and wrappers. Specification sections 6.3 and 10.1; plan decisions
+D4 and D7. Functions are `lifecycle: experimental` until the acceptance
+tests of their work package pass.
+
+### 5.1 `model` and `selection_family`
+
+| `model` | `selection_family` (default first) | Version | Wrapper |
+| --- | --- | --- | --- |
+| `"esr"` | `"probit"` | 1.0.0 | `esr()` |
+| `"tobit5"` | `"probit"` | 1.1.0 | `tobit5()` |
+| `"heckman"` | `"probit"` | 1.1.0 | `heckman()` |
+| `"treatment"` | `"probit"` | 1.1.0 | `treatment()` |
+| `"multinomial_esr"` | `"multinomial_logit"` | 1.2.0 | `multinomial_switch()` |
+| `"multinomial_esr"` | `"multinomial_probit"` | 1.3.0 | `multinomial_switch()` |
+| `"multinomial_esr"` | `"nested_logit"` | 1.4.0 | `multinomial_switch()` |
+| `"ordered_esr"` | `"ordered_probit"` | 1.4.0 | none (`switch_fit()`) |
+| `"sequential_esr"` | `"sequential_probit"` | 1.4.0 | none |
+| `"multivariate_esr"` | `"multivariate_probit"` | 1.5.0 | `multiswitch()` |
+
+The specification's example (section 6.3) runs as written:
+
+```r
+switch_fit(selection = financing_regime ~ firm_size + collateral +
+             financial_access + digital_infrastructure,
+           outcomes = list(internal = productivity ~ x1 + x2 + x3,
+                           bank     = productivity ~ x1 + x2 + x3,
+                           digital  = productivity ~ x1 + x2 + x3),
+           data = firms, model = "multinomial_esr",
+           selection_family = "multinomial_probit",
+           dependence = "gaussian", method = "fiml")
+```
+
+`dependence = "gaussian"` means joint normality for the probit families and
+the Gaussian copula of Lee (1983) for the logit families.
+
+### 5.2 Formulas
+
+| Model | `selection` | `outcomes` |
+| --- | --- | --- |
+| Heckman | one formula | one formula (or a list of length 1); the response may be `NA` when $S = 0$ |
+| Treatment | one formula | one formula **without** the regime variable; `shift = ~ 1` (default) or `~ modifiers` gives $d_i$ |
+| Tobit-5 | one formula | list of two, positional: first observed when $S = 0$ |
+| Multinomial | one formula with a factor response of $J \ge 3$ levels (common regressors), or a named list of formulas, one per non-base alternative | named list, one element per regime, matched to the levels by name |
+| Ordered | one formula with an ordered factor (or integer) response | as multinomial |
+| Sequential | list of formulas, one per stage, each with a binary response that is `NA` for units that stopped earlier | list of $J$, in the order: stopped at stage 1, ..., passed all |
+| Multivariate | named list of formulas, one per binary equation | named list; names are the combinations, for example `"1.0"`, in the order of the equations; combinations without an element have no outcome |
+| Several outcomes | | an element of `outcomes` may itself be a list of formulas |
+
+### 5.3 New arguments (all with defaults; ignored with a classed error if they do not apply to the model)
+
+| Argument | Values | Meaning |
+| --- | --- | --- |
+| `base` | a regime label; default the first level | base alternative of multinomial models |
+| `shift` | one-sided formula; default `~ 1` | effect modifiers of the treatment model |
+| `nests` | named list of character vectors | nesting structure of the nested logit |
+| `selection_covariance` | `"independent"`, `"unrestricted"` | MNP covariance of the utility differences |
+| `stage_dependence` | `"independent"`, `"unrestricted"` | correlation between sequential stages |
+| `correction` | `"lee"`, `"dmf"`, `"bfg1"`, `"bfg2"` | two-step correction with multinomial-logit selection (`method = "two_step"`) |
+
+`method`: `"fiml"` and `"two_step"` as in G1. FIML is refused for
+`correction` other than `"lee"` (they are moment models). `vcov` as in G1;
+`"hessian"` uses the Hessian type of NUMERICAL_METHODS.md s.7.1, and the
+default becomes `"sandwich"` when probabilities are simulated.
+
+`switch_control()` gains `draws = 500L`,
+`probability = c("auto", "deterministic", "ghk")` and
+`bootstrap_R = 999L` (two-step standard errors that need the bootstrap).
+
+### 5.4 Wrappers
+
+```r
+heckman(selection, outcome, data, method = "fiml", ...)
+treatment(selection, outcome, data, shift = ~ 1, method = "fiml", ...)
+tobit5(selection, outcomes, data, method = "fiml", ...)
+multinomial_switch(selection, outcomes, data,
+                   selection_family = "multinomial_logit",
+                   method = "fiml", ...)
+multiswitch(selection, outcomes, data, method = "fiml", ...)
+```
+
+Each is `switch_fit()` with `model` set, as `esr()` is.
+
+### 5.5 Parameter names
+
+| Parameter | Name |
+| --- | --- |
+| Selection coefficients | `selection:<term>` (one equation); `selection[<alternative, stage or equation>]:<term>` |
+| Thresholds | `selection:cut[<j>]` |
+| Nested-logit dissimilarity | `selection:lambda[<nest>]` |
+| Selection covariance | `selection:sd[<alt>]`, `selection:cor[<a>,<b>]` |
+| Outcome coefficients | `<regime>:<term>`; `outcome:<term>` (Heckman, treatment); with several outcomes `<regime>[<response>]:<term>` |
+| Shift | `shift:<term>` |
+| Scales | `<regime>:sigma` |
+| Dependence, one per regime | `<regime>:rho` |
+| Dependence, several per regime | `<regime>:rho[<alternative, stage or equation>]` |
+| Two-step correction coefficients | `<regime>:theta`, `<regime>:theta[<term>]` |
+| Within-regime outcome correlations | `<regime>:cor[<response a>,<response b>]` |
+
+`summary()` prints, under the dependence parameters, the sentence that
+defines them for the model (they are not comparable across models:
+MULTINOMIAL_ESR.md section 7).
+
+### 5.6 Post-estimation
+
+- **`switch_effects()`** gains `pairs = "all"` (or a list of regime pairs)
+  and `given = NULL` (conditioning regimes for $TE_{jk \mid l}$). `effects`
+  accepts `"ATE"`, `"ATT"`, `"ATU"`, `"TH"` (`"BH"` only for two regimes).
+  The table has the columns effect, regime, against, group, estimate,
+  std_error, statistic, p_value, lower, upper, and `assumption` (empty, or
+  the name of the stated assumption the estimate relies on: `"L-CI"`,
+  `"zero partial correlation"`). `means` is the $J \times J$ table.
+- **`switch_predict()`**: `"probability"` returns an $n \times J$ matrix;
+  `"conditional"` the $J \times J$ expectations per unit (columns
+  `EY<j>_S<k>`); the other types as in G1. For Heckman: `"probability"`,
+  `"linear"`, `"conditional"` (observed and unobserved group),
+  `"unconditional"`.
+- **`switch_counterfactual()`**: `scenario = "all_regime"` with
+  `regime = "<label>"`, and `"policy"`; the G1 names stay for two regimes.
+- **`switch_test()`**: `lr_independence` and `wald_independence` test all
+  dependence parameters of the model. New type `"lr_structure"` compares
+  the restricted and unrestricted selection covariance, or the multinomial
+  and nested logit (with the boundary reference distribution).
+- **`switch_simulate()`**: `potential_outcomes = TRUE` uses the reference
+  completion of GAUSSIAN_REGION_ENGINE.md s.11 (conditional independence
+  given the selection disturbances), or a user `completion =` matrix of
+  partial correlations; stated in an attribute.
+- **`switch_bootstrap()`, `switch_validate()`, `switch_diagnostics()`,
+  `switch_compare()`**: unchanged signatures; contents extended
+  (IDENTIFICATION.md s.8).
+
+### 5.7 Refusals
+
+Requests that the derivation documents do not cover give
+`switch_error_unsupported` with the reason: FIML with the Dubin-McFadden or
+BFG corrections; these corrections with the nested logit; $\lambda > 1$;
+effects for a Heckman fit; effects between different response variables;
+removing an alternative from the choice set; non-Gaussian outcomes
+(Generation 4); copulas other than Gaussian (Generation 3).

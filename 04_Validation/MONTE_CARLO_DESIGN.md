@@ -155,3 +155,125 @@ how the study was run and every departure from the plan.
   defect (MC_G1.md section 9, option 1), and AC1 and AC4 are met with
   documented exceptions. Sections 1-6, including the thresholds, stay as
   pre-registered.
+
+---
+
+# Generation 2
+
+## 8. Monte Carlo design for Generation 2
+
+Status: **proposed for pre-registration at the G2 econometric gate** (23
+November 2026), before any G2 estimator code exists. Once the owner
+approves the gate, the designs and thresholds of this section are fixed and
+are not changed after results are seen (handoff section 3). Sections 1-7
+(Generation 1) are unchanged.
+
+### 8.1 Common elements
+
+- Regressors $x_1, x_2, z_1, z_2$ i.i.d. $N(0, 1)$. Outcome design
+  $(1, x_1, x_2)$ in every regime. $z_1$ and $z_2$ are excluded from the
+  outcome equations.
+- Outcome parameters for three-regime designs:
+  $\beta_1 = (1.0, 0.5, 0.2)$, $\beta_2 = (1.5, 0.8, 0.4)$,
+  $\beta_3 = (2.0, 0.3, -0.3)$; $\sigma = (1, 1, 1.2)$.
+- Performance measures: section 4. Effects: $ATE_{jk}$ and $ATT_{jk}$ for
+  all pairs; the estimand is the same formula at the true parameters on the
+  replication's sample.
+- Each fit records estimates, standard errors (default covariance and
+  sandwich), convergence code, iterations, gradient maximum, boundary
+  flags, the identification diagnostics I4b, I5, I6, I12, and time.
+- FIML uses `starts = 1` (the two-step start).
+- Regime shares below were computed by simulation ($2 \times 10^6$ draws)
+  on 23 November 2026.
+
+### 8.2 Designs
+
+| Id | Model | Selection design and parameters | Dependence | Regime shares |
+| --- | --- | --- | --- | --- |
+| H | Heckman | $z = (1, x_1, z_1)$, $\gamma = (0.5, 0.3, -0.4)$ (G1 base); $\beta = (1.5, 0.8, 0.4)$, $\sigma = 1$ | $\rho \in \{0, 0.6\}$ | observed 0.673 |
+| T | Treatment, constant shift | as H; $\beta = (1.0, 0.5, 0.2)$, $\delta = 0.5$, $\sigma = 1$ | $\rho \in \{0, 0.6\}$ | treated 0.673 |
+| Th | Treatment, hybrid | as T with $d = (1, x_1)$, $\delta = (0.5, 0.3)$ | $\rho = 0.6$ | 0.673 |
+| L | MNL with Lee, $J = 3$ | $z = (1, x_1, z_1, z_2)$; $\gamma_2 = (0.2, 0.3, 0.8, -0.2)$, $\gamma_3 = (-0.2, -0.3, 0.2, 0.8)$; base 1 | $\rho = (0.5, 0.4, -0.4)$ or $(0, 0, 0)$ | 0.307, 0.402, 0.291 |
+| D | MNL, linear Gumbel dependence (Dubin-McFadden data-generating process) | as L | $r_1 = (0.4, -0.2, -0.2)$, $r_2 = (-0.3, 0.5, -0.2)$, $r_3 = (0.1, -0.4, 0.3)$ (rows sum to 0) | as L |
+| P | MNP, $J = 3$ | $\gamma$ as L; $\Omega = \tfrac12(I + \mathbf 1\mathbf 1')$ | $\psi_1 = (-0.4, -0.2)$, $\psi_2 = (0.5, 0.2)$, $\psi_3 = (0.1, 0.5)$ | 0.283, 0.437, 0.281 |
+| Pu | MNP, unrestricted truth | as P with $\operatorname{sd}(\tilde u_2) = 1.3$, $\operatorname{Corr}(\tilde u_1, \tilde u_2) = 0.2$ | as P | not computed |
+| O | Ordered, $J = 3$ | $z = (1, x_1, z_1)$, $\gamma = (0.4, 0.3, 0.8)$, $\mu_2 = 1.2$ | $\rho = (0.5, 0.4, -0.4)$ or $(0, 0, 0)$ | 0.381, 0.348, 0.271 |
+| S | Sequential, $J = 3$ | stage 1: $(1, x_1, z_1)$, $(0.6, 0.3, 0.8)$; stage 2: $(1, x_1, z_2)$, $(0.2, -0.3, 0.8)$; independent stages | $\rho_1 = 0.5$; $\rho_2 = (0.3, -0.4)$; $\rho_3 = (0.3, 0.5)$ | 0.325, 0.304, 0.371 |
+| V | Multivariate, $M = 2$, four regimes | eq. 1: $(1, x_1, z_1)$, $(0.3, 0.3, 0.8)$; eq. 2: $(1, x_1, z_2)$, $(-0.2, -0.3, 0.8)$; $\operatorname{Corr}(u_1, u_2) = 0.4$; $\beta_{00} = (1, 0.5, 0.2)$, $\beta_{10} = (1.5, 0.8, 0.4)$, $\beta_{01} = (1.2, 0.3, 0.1)$, $\beta_{11} = (2, 0.6, 0.3)$; $\sigma = 1$ | $\psi_{00} = (0.3, 0.2)$, $\psi_{10} = (0.5, -0.2)$, $\psi_{01} = (-0.3, 0.4)$, $\psi_{11} = (0.4, 0.4)$ | 0.257, 0.303, 0.153, 0.287 |
+| K | Binary selection, $K = 2$ outcomes per regime | G1 base; second outcome with $\beta$ of the first reversed in sign, $\sigma = 1$, within-regime correlation 0.3 | outcome 1: $\rho_1 = 0.6$, $\rho_0 = 0.4$ (G1 base); outcome 2: correlation with $u$ of 0.3 in regime 1 and $-0.3$ in regime 0 | 0.673 in regime 1 |
+| N | Nested logit with Lee, nests $\{1\}$, $\{2, 3\}$ | $\gamma$ as L; $\lambda = 0.6$ | $\rho = (0.5, 0.4, -0.4)$ | 0.347, 0.394, 0.259 |
+| Lw, Pw | Weak identification: L and P with the coefficients of $z_1$, $z_2$ multiplied by 0.25 | | as L, P | not computed |
+
+In design D, $\varepsilon_j = \sigma_j\left[\frac{\sqrt6}{\pi}\sum_kr_{jk}(u_k - \gamma_E) + \sqrt{1 - \sum_kr_{jk}^2}\,\nu_j\right]$.
+
+### 8.3 Cells and estimators
+
+| Design | $N$ | $R$ | Estimators | Gated cells |
+| --- | --- | --- | --- | --- |
+| H | 500, 1000, 2000, 5000 $\times$ 2 values of $\rho$ | 1000 | FIML, two-step | FIML, $N \ge 1000$; two-step coverage at $N \ge 2000$ |
+| T | 500, 1000, 2000, 5000 $\times$ 2 | 1000 | FIML, two-step | as H |
+| Th | 1000, 5000 | 500 | FIML, two-step | none (reported) |
+| L | 1000, 2000, 5000 $\times$ 2 | 1000 | FIML; two-step `"lee"`; `"dmf"`, `"bfg1"`, `"bfg2"` (point estimates of $\beta$) | FIML, $N \ge 2000$; Lee two-step coverage at $N = 5000$ |
+| D | 2000, 5000 | 500 | `"dmf"`, `"bfg1"`, `"bfg2"`, `"lee"` two-step; bootstrap (199 replicates) and stacked-sandwich standard errors at $N = 2000$ | bias of $\beta$ and $a_{jk}$ for `"dmf"` and `"bfg1"` at $N = 5000$ |
+| P | 1000, 2000, 5000 | 1000 at $N \ge 2000$, 500 at 1000 | FIML `"independent"`; two-step | FIML `"independent"`, $N \ge 2000$ |
+| P | 2000, 5000 | 500 | FIML `"unrestricted"` | none (reported) |
+| Pu | 5000 | 300 | FIML `"unrestricted"` and `"independent"` (misspecified) | none (reported) |
+| O | 1000, 2000, 5000 $\times$ 2 | 1000 | FIML, two-step | FIML, $N \ge 2000$; two-step coverage at $N = 5000$ |
+| S | 2000, 5000 | 1000 at 5000, 500 at 2000 | FIML `"independent"`; `"unrestricted"` at 5000 ($R = 300$, reported) | FIML `"independent"`, $N = 5000$ |
+| V | 2000, 5000 | 1000 at 5000, 500 at 2000 | FIML, two-step | FIML, $N = 5000$ |
+| K | 2000 | 1000 | FIML | FIML |
+| N | 2000, 5000 | 500 | FIML | $\beta_j$, $\sigma_j$ and $ATE_{jk}$ at $N = 5000$ (bias and convergence only) |
+| Lw, Pw | 2000 | 500 | FIML | none (reported, with the identification diagnostics) |
+
+About 34 000 replications. The region-model cells are the expensive ones;
+all runs use at most 3 cores (handoff section 4).
+
+### 8.4 Pre-registered thresholds (gated cells)
+
+| Criterion | Threshold |
+| --- | --- |
+| Relative bias of selection coefficients, thresholds, $\beta$, $\delta$, $\sigma$ ($\lvert\theta_0\rvert \ge 0.2$) | $\le 5\%$ ($\lvert\text{bias}\rvert \le 0.01$ otherwise) |
+| Bias of dependence parameters with one per regime ($\rho$, $\rho_j$: H, T, L, O, K) | $\le 0.03$ in absolute value |
+| Bias of dependence parameters of region models with $d = 2$ ($\psi_{jm}$, selection correlation: P, S, V) | $\le 0.05$ in absolute value |
+| Root-$N$ behaviour, where two gated sample sizes exist | $\sqrt{N_2}\,\text{RMSE}_{N_2}/\sqrt{N_1}\,\text{RMSE}_{N_1} \in [0.8, 1.2]$ for the smallest and largest gated $N$ |
+| Standard-error ratio (default covariance) | $\in [0.90, 1.10]$ |
+| 95% coverage (G2 acceptance criterion 4) | $\in [0.93, 0.97]$ |
+| Convergence rate | $\ge 99\%$ (H, T, L, O, K); $\ge 97\%$ (P, S, V, N) |
+| $ATE_{jk}$, $ATT_{jk}$, all pairs | relative bias $\le 5\%$ when $\lvert\text{effect}\rvert \ge 0.2$, $\lvert\text{bias}\rvert \le 0.02$ otherwise; coverage $\in [0.93, 0.97]$ |
+| Two-step, where gated | coverage of $\beta$ and of the correction coefficients $\in [0.93, 0.97]$ |
+| Design D | relative bias of $\beta$ $\le 5\%$; $\lvert\text{bias}\rvert$ of $a_{jk}$ $\le 0.03$ |
+
+Coverage is gated only in cells with $R = 1000$ (Monte Carlo standard error
+0.0069), as in G1.
+
+**Reported but not gated**, with an honest discussion required in
+`MC_G2.md`: every cell not listed as gated in section 8.3; the sandwich
+standard errors; the unrestricted covariance structures; the nested-logit
+$\gamma$, $\lambda$ and $\rho$; the weak-identification cells; the
+Dubin-McFadden and BFG corrections applied to design L (where their
+linearity assumption does not hold) and Lee's correction applied to design
+D; computing times.
+
+Failing a gated threshold blocks G2 acceptance criteria 1 and 4 until the
+cause is understood and, if it is a defect, fixed. The threshold is not
+changed. A diagnosis that finds no defect goes to the owner, as in WP1.7.
+
+### 8.5 Execution
+
+- **Driver:** `04_Validation/scripts/mc_g2.R`, modelled on `mc_g1.R`; gate
+  evaluation by `mc_g2_report.R` with the thresholds of section 8.4 written
+  into the script.
+- **Random numbers:** L'Ecuyer-CMRG streams, master seed 20261123, one
+  stream per cell, substream per replication.
+- **Storage:** `runs/mc_g2_<version>_<mode>/`; private library
+  `runs/lib_g2`; summaries in `04_Validation/results/MC_G2.md`.
+- **Timing.** Each design is run in the work package that delivers its
+  model (H, T, Th: WP2.1; L, D, Lw: WP2.2; P, Pu, Pw: WP2.3; O, S, N:
+  WP2.4; V, K: WP2.5), so that problems surface early. All cells are rerun
+  with the release candidate in WP2.5, and the gate is evaluated on that
+  rerun.
+- **Smoke test** ($R = 20$, one cell per delivered design at its smallest
+  $N$): at every version from the design's work package on, compared with
+  the previous version by `tools/compare_mc_runs.R`.
+- The G1 smoke regression (`runs/mc_g1_0.8.1_smoke`) keeps running at every
+  G2 version.
