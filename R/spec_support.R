@@ -5,6 +5,10 @@ se_generations <- c("1" = "0.1.0-1.0.0", "2" = "1.1.0-1.5.0",
                     "3" = "2.0.0-2.5.0", "4" = "3.0.0-3.5.0",
                     "5" = "4.0.0-4.5.0", "6" = "5.0.0 and later")
 
+## Values of a later generation that are already available (Generation 2
+## is delivered in steps: 1.1.0 heckman, treatment, tobit5).
+se_available_later <- list(model = c("heckman", "treatment", "tobit5"))
+
 se_support_table <- function() {
   rows <- list(
     model = c(esr = 1, multinomial_esr = 2, ordered_esr = 2,
@@ -47,6 +51,7 @@ se_check_choice <- function(argument, value, current_generation = 1L) {
                      paste(tab$value, collapse = ", ")), "argument")
   }
   g <- tab$generation[i]
+  if (value %in% se_available_later[[argument]]) g <- current_generation
   if (g > current_generation) {
     se_abort(sprintf(paste0(
       "%s = \"%s\" is planned for Generation %d (versions %s) and is not ",

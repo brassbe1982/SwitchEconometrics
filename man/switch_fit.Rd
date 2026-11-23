@@ -21,6 +21,7 @@ switch_fit(
   vcov = c("hessian", "opg", "sandwich", "cluster"),
   missing = c("drop", "fail"),
   control = switch_control(),
+  shift = NULL,
   ...
 )
 
@@ -34,7 +35,8 @@ esr(selection, outcomes, data, method = "fiml", ...)
 
 \item{data}{Data frame.}
 
-\item{model}{Model type (\code{"esr"}) or a \code{switch_spec} from
+\item{model}{Model type (\code{"esr"}; from version 1.1.0 also \code{"heckman"},
+\code{"treatment"} and \code{"tobit5"}, see \code{\link[=heckman]{heckman()}}) or a \code{switch_spec} from
 \code{\link[=switch_model]{switch_model()}}.}
 
 \item{selection_family, outcome_family, dependence}{Families; see
@@ -54,6 +56,9 @@ length \code{nrow(data)}.}
 and a record in \code{fit$na_report}; \code{"fail"} makes them an error.}
 
 \item{control}{Numerical controls from \code{\link[=switch_control]{switch_control()}}.}
+
+\item{shift}{For \code{model = "treatment"}: one-sided formula of the effect
+modifiers (see \code{\link[=treatment]{treatment()}}).}
 
 \item{...}{Not used; unknown arguments give an error.}
 }

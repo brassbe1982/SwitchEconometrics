@@ -1,10 +1,11 @@
 # Generation 2: Generalized selection (v1.1.0 → v1.5.0)
 
-Status: **G2 econometric gate closed on 23 November 2026: the owner
-approved the 12 proposals with amendments (section 5).** Derivation set
-written and numerically verified (78 checks in two scripts). No G2 model
-code exists yet; package version 1.0.0. Next: WP2.1. Progress note:
-[progress/WP2.0.md](progress/WP2.0.md).
+Status: **WP2.1 done (version 1.1.0, 23 November 2026):** `heckman()`,
+`treatment()` and `tobit5()`. One point awaits the owner: two of 428
+pre-registered Monte Carlo checks failed (coverage in one Heckman cell;
+progress note [progress/WP2.1.md](progress/WP2.1.md)). The G2 econometric
+gate was closed by the owner on 23 November 2026 (section 5). Next: WP2.2.
+Earlier note: [progress/WP2.0.md](progress/WP2.0.md).
 
 ## 1. Scope (specification sections 4B, 10.1, 11.3, 13)
 
@@ -33,8 +34,8 @@ code exists yet; package version 1.0.0. Next: WP2.1. Progress note:
 | WP | Version | Content | Status |
 | --- | --- | --- | --- |
 | 2.0 | (1.0.0, documents only) | G2 derivation set, `verify_math_g2.R`, `verify_math_g2b.R`, architecture updates, validation plans, gate | **done 2026-11-23**: 53/53 and 25/25 numerical checks; gate closed by the owner |
-| 2.1 | 1.1.0 | `heckman()`, `treatment()`, `tobit5()`; benchmarks against `sampleSelection` and `endogenous` | next |
-| 2.2 | 1.2.0 | MNL-ESR: Lee FIML; normal-score FIML (section 5, question 3); DMF and BFG two-step; $J$ up to 8 and beyond | open |
+| 2.1 | 1.1.0 | `heckman()`, `treatment()`, `tobit5()`; benchmarks against `sampleSelection` and `endogenous` | **done 2026-11-23**: 802 test expectations; check clean; benchmarks 48/48; Monte Carlo 426/428 (two coverage checks with the owner) |
+| 2.2 | 1.2.0 | MNL-ESR: Lee FIML; normal-score FIML (section 5, question 3); DMF and BFG two-step; $J$ up to 8 and beyond | next |
 | 2.3 | 1.3.0 | MNP-ESR (FIML with Genz-Bretz and GHK; $J$ up to 8 by GHK; C++ only with profiling evidence and the owner's approval) | open |
 | 2.4 | 1.4.0 | Ordered and sequential selection; nested logit | open |
 | 2.5 | 1.5.0 | Multivariate selection, multiple outcomes, pairwise effects; Monte Carlo; `switchSelection` benchmarks; comparative analysis; vignette `multinomial-esr` | open |
@@ -249,20 +250,41 @@ everything needed for the development of G2 be verified.
 | 9 | $J \ge 8$ made a requirement: no limit on $J$ in the code; closed-form models (Lee, ordered, sequential with independent stages) for any $J$; multinomial probit and the normal-score model by GHK when $J \ge 5$ (experimental). New tests G2-J8-1..3 and Monte Carlo cells L8, O8, P8 | X14, X20-X24: joint laws at $J = 8$ for the normal-score, Lee, probit and ordered models; GHK in 7 dimensions: error of $\log P$ 0.017 with 500 Halton draws, 0.008 with 2000; one GHK pass for 2000 observations takes 2.3 s in R |
 | 11 | Sections 8.1-8.5 of MONTE_CARLO_DESIGN.md are fixed as approved. Section 8.6 adds cells for the amendments (designs G, L8, O8, P8) without altering any approved cell or threshold | |
 
-**Decisions still with the owner** (none blocks WP2.1):
-1. Which multinomial-logit FIML model is the default of
-   `multinomial_switch()`: Lee (closed form, fast) or the normal-score
-   model (less restrictive, slower). Proposed: decide after the Monte
-   Carlo results of WP2.2; until then Lee is the default.
-2. Confirmation of the added Monte Carlo cells of section 8.6 (in
-   particular gating design G at $N = 5000$ with a bias threshold of 0.05
-   for $r_{jk}$).
-3. Whether to install `endogMNP` (Bayesian multinomial probit with
-   selection) for a comparison in WP2.3.
-4. The computing time of the multinomial probit with 8 regimes in pure R
-   may be long (each score evaluation needs many 6-dimensional
-   probabilities). If profiling in WP2.3 shows it is impractical, the
-   evidence goes to the owner with a proposal for compiled code.
+### Owner's further decisions (23 November 2026, second message)
+
+The four points left open above were put to the owner, who answered,
+verbatim:
+
+> yes, build WP2.1; and consider the following as my decisions:
+>
+> Default multinomial-logit model: yes, keep Lee (fast) as default; and
+> ensure to have the normal-score model (less restrictive, slower) as an
+> option for users.
+>
+> Added Monte Carlo cells (MONTE_CARLO_DESIGN.md section 8.6): OK. (in
+> particular, the normal-score design is gated at N = 5000 with a bias
+> threshold of 0.05 for its correlations).
+>
+> endogMNP: yes, install this Bayesian multinomial-probit package for a
+> comparison in WP2.3.
+>
+> Push: the two local commits stay unpushed until you say so. yes, keep
+> them local untill necessary to push
+
+Consequences:
+1. `dependence = "lee"` is the default of the multinomial-logit FIML
+   model; `dependence = "normal_scores"` is offered (WP2.2).
+2. The cells of MONTE_CARLO_DESIGN.md section 8.6 are pre-registered with
+   the owner's approval and are fixed like sections 8.1-8.5.
+3. `endogMNP` may be installed into the private library `runs/lib_g2` for
+   WP2.3. It is not on CRAN (checked 23 November 2026); the archive holds
+   version 0.2-1.
+4. Nothing is pushed. All G2 commits stay local until the owner says to
+   push.
+
+**Still with the owner:** compiled code for the multinomial probit with
+many regimes, only if profiling in WP2.3 shows that pure R is impractical;
+the evidence is brought to the owner then.
 
 ## 6. Positioning: what G2 contributes, and what may be claimed
 

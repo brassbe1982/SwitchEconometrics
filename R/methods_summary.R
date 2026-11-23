@@ -72,13 +72,16 @@ summary.switch_fit <- function(object, level = 0.95, ...) {
   tab <- cbind(Estimate = est, `Std. Error` = se, `z value` = zval,
                `Pr(>|z|)` = 2 * stats::pnorm(-abs(zval)))
   ci <- confint(object, level = level)
-  coef_tables <- lapply(c("selection", object$regimes), function(eq) {
-    i <- which(e$equation == eq & e$block %in% c("gamma", "beta"))
+  eqs <- se_equations(object)
+  coef_tables <- lapply(eqs, function(eq) {
+    i <- which(e$equation == eq & e$block %in% c("gamma", "beta", "delta"))
     m <- tab[i, , drop = FALSE]
     rownames(m) <- e$term[i]
     m
   })
-  names(coef_tables) <- c("selection", object$regimes)
+  names(coef_tables) <- eqs
+  eq_titles <- vapply(eqs, function(eq) se_equation_title(object, eq),
+                      character(1))
   ia <- which(e$block %in% c("sigma", "rho"))
   anc <- cbind(tab[ia, 1:2, drop = FALSE], ci[ia, , drop = FALSE])
 
@@ -92,17 +95,19 @@ summary.switch_fit <- function(object, level = 0.95, ...) {
   lambda <- NULL
   if (object$method == "two_step") {
     ts <- object$two_step
-    i <- unlist(lapply(object$regimes, function(l)
-      ts$index_psi[[l]][length(ts$index_psi[[l]])]))
+    i <- se_theta_positions(object)
     th <- ts$psi[i]
     s <- sqrt(diag(ts$vcov_psi)[i])
     lambda <- cbind(Estimate = th, `Std. Error` = s, `z value` = th / s,
                     `Pr(>|z|)` = 2 * stats::pnorm(-abs(th / s)))
-    rownames(lambda) <- paste0(object$regimes, ": sigma*rho")
+    rownames(lambda) <- if (se_is_obs(object$model)) "sigma*rho"
+                        else paste0(object$regimes, ": sigma*rho")
   }
   ll <- object$loglik
   structure(list(
     call = object$call, method = object$method, vcov_type = object$vcov_type,
+    model = object$model, titles = eq_titles,
+    nrho = length(unlist(object$map$index$rho)),
     nobs = object$nobs, n_regime = object$n_regime, regimes = object$regimes,
     loglik = ll, aic = if (is.finite(ll)) -2 * ll + 2 * object$npar else NA,
     bic = if (is.finite(ll)) -2 * ll + log(object$nobs) * object$npar else NA,
@@ -121,8 +126,8 @@ summary.switch_fit <- function(object, level = 0.95, ...) {
 #' @export
 print.summary.switch_fit <- function(x, digits = max(3L, getOption("digits") - 3L),
                                      ...) {
-  cat("Endogenous switching regression (SwitchEconometrics ", se_version(),
-      ")\n\n", sep = "")
+  cat(se_model_title(x$model %||% "esr"), " (SwitchEconometrics ",
+      se_version(), ")\n\n", sep = "")
   cat("Call:\n", paste(deparse(x$call, width.cutoff = 70L), collapse = "\n"),
       "\n\n", sep = "")
   meth <- if (x$method == "fiml") "full-information maximum likelihood"
@@ -139,8 +144,9 @@ print.summary.switch_fit <- function(x, digits = max(3L, getOption("digits") - 3
                 format(x$bic, digits = digits + 3L)))
   }
   for (eq in names(x$coefficients)) {
-    cat(if (eq == "selection") "\nSelection equation (probit):\n"
-        else sprintf("\nOutcome equation, regime '%s':\n", eq))
+    cat(sprintf("\n%s:\n", x$titles[[eq]] %||%
+                  if (eq == "selection") "Selection equation (probit)"
+                  else sprintf("Outcome equation, regime '%s'", eq)))
     stats::printCoefmat(x$coefficients[[eq]], digits = digits,
                         signif.legend = FALSE)
   }
@@ -153,9 +159,11 @@ print.summary.switch_fit <- function(x, digits = max(3L, getOption("digits") - 3
     stats::printCoefmat(x$lambda, digits = digits, signif.legend = FALSE)
     cat("sigma and rho are derived two-step quantities; use switch_bootstrap() for their standard errors.\n")
   }
-  cat("\nIndependent equations (H0: rho_1 = rho_0 = 0):\n")
+  cat(if (identical(x$nrho, 1L)) "\nIndependent equations (H0: rho = 0):\n"
+      else "\nIndependent equations (H0: rho_1 = rho_0 = 0):\n")
   if (!is.null(x$tests$lr)) {
-    cat(sprintf("  LR test:   chi2(2) = %.3f, p = %s\n", x$tests$lr$statistic,
+    cat(sprintf("  LR test:   chi2(%d) = %.3f, p = %s\n",
+                as.integer(x$tests$lr$df), x$tests$lr$statistic,
                 format.pval(x$tests$lr$p_value, digits = 4)))
   }
   if (!is.null(x$tests$wald)) {

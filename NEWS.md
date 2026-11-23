@@ -1,3 +1,47 @@
+# SwitchEconometrics 1.1.0
+
+First step of Generation 2 (generalised selection): three models that use
+the Gaussian likelihood of the binary switching regression with a different
+observation mechanism. Results of `esr()` and `switch_fit(model = "esr")`
+are unchanged from 1.0.0 (tested at 1e-8 against stored 1.0.0 results).
+
+## New
+
+* `heckman()`: sample selection model (Tobit-2), full-information maximum
+  likelihood with analytic gradient and Hessian, and Heckman's two-step
+  estimator with corrected covariances. The outcome and its regressors may
+  be missing for units whose outcome is not observed.
+* `treatment()`: endogenous treatment model with a shift,
+  `y = x'beta + S d'delta + eps`. `shift = ~ 1` gives a constant shift;
+  `shift = ~ modifiers` lets the treatment effect vary with covariates (the
+  hybrid model with a structural shift). The likelihood is the switching
+  regression likelihood under a linear restriction and uses the same
+  engine; the two-step estimator is a regression on `(x, S d, h)` with the
+  generalised residual `h` of the probit.
+* `tobit5()`: a second interface to the model of `esr()`, with the two
+  outcome equations matched to the regimes by position and possibly
+  different response variables.
+* `switch_fit()` and `switch_model()` accept `model = "heckman"`,
+  `"treatment"` and `"tobit5"` and the new argument `shift`.
+* The methods and post-estimation functions work with the new models:
+  `summary()`, `confint()`, `predict()`, `residuals()`, `simulate()`,
+  `switch_predict()`, `switch_test()`, `switch_validate()`,
+  `switch_diagnostics()`, `switch_bootstrap()`, `switch_simulate()` and
+  `switch_compare()`. For treatment fits `switch_effects()` and
+  `switch_counterfactual()` give the averages of `d'delta`;
+  `switch_compare()` gives the likelihood-ratio test of the treatment model
+  against the switching regression with the same regressors.
+* Requests the models do not define give a classed error
+  (`switch_error_unsupported`): effects and regime scenarios for a Heckman
+  fit, and effects for a Tobit-5 fit with two different response variables.
+
+## Validation
+
+* Likelihoods, estimates and standard errors agree with
+  `sampleSelection::selection()` (Tobit-2, ML and two-step) and
+  `sampleSelection::treatReg()` (ML), and the hybrid model with
+  `endogenous::hybrid()`.
+
 # SwitchEconometrics 1.0.0
 
 First release for CRAN: Generation 1, the classical binary endogenous

@@ -475,3 +475,25 @@ removing an alternative from the choice set; non-Gaussian outcomes
   `quadrature_nodes = 32L` for the normal-score model.
 - **Benchmark mapping for `treatment(shift = )`:** `endogenous::hybrid()`
   reports $\eta = -\delta$.
+
+### 5.9 As built in version 1.1.0, and the owner's decision on the default
+
+- `switch_fit()` and `switch_model()` have the new argument `shift`
+  (default `NULL`; `~ 1` for the treatment model).
+- Regime labels: `not_observed`, `observed` (Heckman); `untreated`,
+  `treated` (treatment). Equations: `selection`, `outcome`, `shift`.
+- `switch_predict()` for a Heckman fit: `"conditional"` has the columns
+  `EY_S1` and `EY_S0`; `"linear"` and `"unconditional"` are $x'\beta$;
+  `"observed"` is `NA` for units without an observed outcome.
+- `switch_simulate(potential_outcomes = TRUE)`: `.latent` (Heckman);
+  `.potential_untreated`, `.potential_treated` (treatment; one disturbance,
+  so no completion is needed).
+- `switch_compare()` gives the likelihood-ratio test of a treatment fit
+  against the switching regression with the same regressors when the
+  modifiers are among the outcome regressors.
+- Refused with `switch_error_unsupported`: `switch_effects()` and
+  `switch_counterfactual()` for a Heckman fit and for a Tobit-5 fit with
+  two different responses; the effects bootstrap for a Heckman fit.
+- **Owner's decision (23 November 2026):** `dependence = "lee"` stays the
+  default of the multinomial-logit FIML model; `"normal_scores"` is an
+  option (section 5.8).

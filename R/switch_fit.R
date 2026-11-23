@@ -51,7 +51,10 @@
 #'   [switch_model()]). Must be `NULL` when `model` is a `switch_spec`.
 #' @param outcomes List of two outcome formulas (see [switch_model()]).
 #' @param data Data frame.
-#' @param model Model type (`"esr"`) or a `switch_spec` from
+#' @param shift For `model = "treatment"`: one-sided formula of the effect
+#'   modifiers (see [treatment()]).
+#' @param model Model type (`"esr"`; from version 1.1.0 also `"heckman"`,
+#'   `"treatment"` and `"tobit5"`, see [heckman()]) or a `switch_spec` from
 #'   [switch_model()].
 #' @param selection_family,outcome_family,dependence Families; see
 #'   [switch_model()].
@@ -97,7 +100,7 @@ switch_fit <- function(selection = NULL, outcomes = NULL, data, model = "esr",
                        subset = NULL,
                        vcov = c("hessian", "opg", "sandwich", "cluster"),
                        missing = c("drop", "fail"),
-                       control = switch_control(), ...) {
+                       control = switch_control(), shift = NULL, ...) {
   cl <- match.call()
   se_check_dots(list(...))
   na_mode <- match.arg(missing)
@@ -119,6 +122,10 @@ switch_fit <- function(selection = NULL, outcomes = NULL, data, model = "esr",
                "argument")
     }
     spec <- model
+    if (!is.null(shift)) {
+      se_abort("give 'shift' to switch_model() when 'model' is a switch_spec",
+               "argument")
+    }
   } else {
     if (is.null(selection) || is.null(outcomes)) {
       se_abort("'selection' and 'outcomes' are required unless 'model' is a switch_spec",
@@ -127,8 +134,9 @@ switch_fit <- function(selection = NULL, outcomes = NULL, data, model = "esr",
     spec <- switch_model(selection, outcomes, model = model,
                          selection_family = selection_family,
                          outcome_family = outcome_family,
-                         dependence = dependence)
+                         dependence = dependence, shift = shift)
   }
+  obs <- se_is_obs(spec$model)
 
   vcov <- if (missing(vcov)) {
     if (!is.null(cluster)) "cluster" else if (!is.null(weights)) "sandwich"
@@ -146,15 +154,18 @@ switch_fit <- function(selection = NULL, outcomes = NULL, data, model = "esr",
       "use \"sandwich\" or \"cluster\""), vcov), "vcov")
   }
 
-  sd <- se_build_data(spec, data, weights = weights, cluster = cluster,
-                      subset = subset, missing = na_mode)
-  map <- se_parmap_esr(sd)
+  sd <- if (obs) se_build_data_obs(spec, data, weights = weights,
+                                   cluster = cluster, subset = subset,
+                                   missing = na_mode)
+        else se_build_data(spec, data, weights = weights, cluster = cluster,
+                           subset = subset, missing = na_mode)
+  map <- se_parmap(sd)
 
   ## two-step: the estimator itself, or the FIML start
   ts_type <- switch(vcov, hessian = "model", opg = "model",
                     sandwich = "robust", cluster = "cluster")
-  ts <- tryCatch(est_two_step(sd, map, if (method == "two_step") ts_type
-                              else "model"),
+  ts <- tryCatch(se_two_step(sd, map, if (method == "two_step") ts_type
+                             else "model"),
                  error = function(e) e)
   if (inherits(ts, "error")) {
     if (method == "two_step") stop(ts)
@@ -201,7 +212,7 @@ switch_fit <- function(selection = NULL, outcomes = NULL, data, model = "esr",
       start_list[[length(start_list) + 1L]] <- list(theta = th_ts,
                                                     origin = "two_step")
     } else {
-      th0 <- est_naive_start(sd, map)
+      th0 <- se_naive_start(sd, map)
       se_scale <- rep(NA_real_, map$p)
       start_list[[length(start_list) + 1L]] <- list(theta = th0,
                                                     origin = "probit_ols")
@@ -212,8 +223,9 @@ switch_fit <- function(selection = NULL, outcomes = NULL, data, model = "esr",
 
   fit <- new_switch_fit(est, spec, sd, map, ts, control, method, vcov, cl,
                         start_info)
-  fit$identification <- tryCatch(se_validate_core(spec, sd, fit),
-                                 error = function(e) NULL)
+  fit$identification <- tryCatch(
+    if (obs) se_validate_obs(spec, sd, fit) else se_validate_core(spec, sd, fit),
+    error = function(e) NULL)
   if (!control$keep_data) fit$data <- NULL
   se_fit_warnings(fit)
   fit
@@ -247,7 +259,7 @@ new_switch_fit <- function(est, spec, sd, map, ts, control, method, vcov, cl,
   flags <- list(
     rho_boundary = names(rho)[is.finite(rho) & abs(rho) > control$boundary_rho],
     sigma_boundary = names(sig)[is.finite(sig) &
-                                  sig < 1e-6 * stats::sd(sd$y)],
+                                  sig < 1e-6 * stats::sd(sd$y, na.rm = TRUE)],
     hessian_not_nd = method == "fiml" && est$convergence$code == 2L,
     ill_conditioned = method == "fiml" &&
       isTRUE(est$hessian_condition > control$hessian_condition))

@@ -24,9 +24,14 @@ se_part_index <- function(object, part) {
   if (identical(part, "all")) return(seq_len(nrow(e)))
   if (identical(part, "ancillary")) return(which(e$block %in% c("sigma", "rho")))
   if (identical(part, "selection")) return(which(e$block == "gamma"))
-  if (part %in% object$regimes) return(which(e$equation == part))
-  se_abort(sprintf("unknown part '%s'; use \"all\", \"selection\", \"ancillary\" or a regime label (%s)",
-                   part, paste(object$regimes, collapse = ", ")), "argument")
+  eqs <- setdiff(se_equations(object), "selection")
+  if (part %in% eqs) {
+    return(which(e$equation == part))
+  }
+  se_abort(sprintf("unknown part '%s'; use \"all\", \"selection\", \"ancillary\" or %s (%s)",
+                   part, if (se_is_obs(object$model)) "an equation"
+                   else "a regime label", paste(eqs, collapse = ", ")),
+           "argument")
 }
 
 #' @rdname switch_fit-methods
@@ -79,7 +84,7 @@ print.switch_fit <- function(x, digits = max(3L, getOption("digits") - 3L),
     sprintf("FIML (%s; %d start%s)", x$convergence$optimizer,
             nrow(x$starts), if (nrow(x$starts) == 1L) "" else "s")
   } else "two-step (Heckman-Lee)"
-  cat(sprintf("Endogenous switching regression (SwitchEconometrics %s)\n",
+  cat(sprintf("%s (SwitchEconometrics %s)\n", se_model_title(x$model),
               se_version()))
   cat(sprintf("Method: %s; covariance: %s\n", meth, x$vcov_type))
   cat(sprintf("Observations: %d (%s)\n", x$nobs,
@@ -88,10 +93,10 @@ print.switch_fit <- function(x, digits = max(3L, getOption("digits") - 3L),
     cat(sprintf("Log-likelihood: %s\n", format(x$loglik, digits = digits + 3L)))
   }
   e <- x$map$elements
-  for (eq in c("selection", x$regimes)) {
+  for (eq in se_equations(x)) {
     i <- which(e$equation == eq)
     cat(sprintf("\n%s:\n", if (eq == "selection") "Selection equation"
-                else sprintf("Outcome equation, regime '%s'", eq)))
+                else se_equation_title(x, eq)))
     v <- x$coefficients[i]
     names(v) <- e$term[i]
     print(v, digits = digits)

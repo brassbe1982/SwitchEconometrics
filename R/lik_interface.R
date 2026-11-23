@@ -8,8 +8,15 @@ se_lik_engine <- function(sd) {
   key <- paste(sd$model, sd$selection_family, sd$outcome_family,
                sd$dependence, sep = "/")
   switch(key,
-    "esr/probit/gaussian/gaussian" = list(
+    "esr/probit/gaussian/gaussian" = ,
+    "tobit5/probit/gaussian/gaussian" = list(
       lik = lik_esr_gaussian, components = lik_esr_gaussian_components),
+    "heckman/probit/gaussian/gaussian" = list(
+      lik = lik_heckman_gaussian,
+      components = lik_heckman_gaussian_components),
+    "treatment/probit/gaussian/gaussian" = list(
+      lik = lik_treatment_gaussian,
+      components = lik_treatment_gaussian_components),
     se_abort(sprintf("no likelihood engine for model %s", key),
              "unsupported"))
 }

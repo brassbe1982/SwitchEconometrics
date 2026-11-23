@@ -85,6 +85,14 @@ se_sim_chol <- function(r1, r0, r10) {
 switch_simulate <- function(model, data, parameters = NULL, nsim = 1L,
                             seed = NULL, potential_outcomes = FALSE,
                             r10 = NULL) {
+  if ((inherits(model, "switch_fit") || inherits(model, "switch_spec")) &&
+      se_is_obs(model$model)) {
+    if (!is.null(r10)) {
+      se_abort("'r10' applies to the switching model only", "argument")
+    }
+    return(se_simulate_obs(model, data, parameters, nsim, seed,
+                           potential_outcomes))
+  }
   if (inherits(model, "switch_fit")) {
     spec <- model$spec
     labels <- model$regimes
@@ -158,6 +166,7 @@ simulate.switch_fit <- function(object, nsim = 1, seed = NULL, ...) {
   sd <- object$data
   if (is.null(sd)) se_abort("simulate() needs the data; refit with keep_data = TRUE",
                             "argument")
+  if (se_is_obs(object$model)) return(se_simulate_fit_obs(object, nsim, seed))
   map <- object$map
   th <- object$coefficients
   reg <- sd$regimes

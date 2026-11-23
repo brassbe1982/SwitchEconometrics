@@ -59,6 +59,13 @@
 #' climate change provide food security? A micro-perspective from Ethiopia.
 #' *American Journal of Agricultural Economics*, 93(3), 829--846.
 #' \doi{10.1093/ajae/aar006}
+#' @section Other models:
+#' For a fit of [treatment()] the effects are averages of the shift
+#' \eqn{d'\delta} over the treated (ATT), the untreated (ATU) and all units
+#' (ATE); with a constant shift they all equal \eqn{\delta} and TH is zero.
+#' A fit of [heckman()] has one potential outcome, and a fit of [tobit5()]
+#' with two different response variables has no common outcome scale: both
+#' are refused with an error of class `switch_error_unsupported`.
 #' @examples
 #' fit <- switch_fit(
 #'   digital_adoption ~ internet_access + management_quality + firm_size +
@@ -77,6 +84,14 @@ switch_effects <- function(object, effects = c("ATT", "ATU", "ATE", "TH", "BH"),
   if (!inherits(object, "switch_fit")) {
     se_abort("'object' must be a switch_fit", "argument")
   }
+  if (identical(object$model, "heckman")) se_refuse_heckman("Treatment effects")
+  if (identical(object$model, "tobit5") && se_responses_differ(object)) {
+    se_abort(paste0("effects are not defined for a Tobit-5 fit with two ",
+                    "different response variables: their difference is not a ",
+                    "treatment effect"), "unsupported")
+  }
+  fit0 <- object
+  object <- se_esr_view(object)
   sd <- object$data
   if (is.null(sd)) {
     se_abort("effects need the estimation data; refit with switch_control(keep_data = TRUE)",
@@ -114,7 +129,7 @@ switch_effects <- function(object, effects = c("ATT", "ATU", "ATE", "TH", "BH"),
                            "argument")
   }
   if (se == "bootstrap") {
-    boot <- switch_bootstrap(object, R = R, statistics = "effects", seed = seed,
+    boot <- switch_bootstrap(fit0, R = R, statistics = "effects", seed = seed,
                              level = level,
                              .effects = list(by = grp, subset = sel))
   }

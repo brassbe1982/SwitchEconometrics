@@ -67,3 +67,17 @@ Sections 1-3 are the Generation 1 record and are unchanged.
 | G2-J8-3 | Monte Carlo cells L8 and O8 pass their gated thresholds (MONTE_CARLO_DESIGN.md section 8.6); P8 is reported with its computing time | WP2.2-WP2.5 |
 | G2-NS-1 | Normal-score model: analytic score equals the numerical gradient ($10^{-6}$); the likelihood equals the reference of `verify_math_g2b.R`; Monte Carlo design G passes its gated thresholds | WP2.2 |
 | G2-EN-1 | `treatment(shift = ~ modifiers)` reproduces `endogenous::hybrid()` within the protocol tolerances | WP2.1 |
+
+## 7. G2 status by work package
+
+### After WP2.1 (version 1.1.0, 23 November 2026)
+
+| Criterion | Status for the models of WP2.1 | Evidence |
+| --- | --- | --- |
+| G2-AC1 (recovery) | **met** for designs H and T: bias, root-$N$ and convergence checks all pass (152 of 152) | `results/MC_G2.md` |
+| G2-AC2 (nesting) | (b) **met**: Heckman log-likelihood equals `sampleSelection` (difference below 1e-10) and satisfies the identity with the G1 engine to 1e-12; (c) **met**: treatment log-likelihood equals the direct formula per observation to 1e-12 through the restricted G1 engine; (e) **met at 1.1.0**: frozen 1.0.0 results at 1e-8 | `test-observation-models.R`, `test-g1-frozen.R` |
+| G2-AC3 (benchmarks) | **met** for `sampleSelection` (Tobit-2, `treatReg` ML, Tobit-5) and `endogenous`: 48 of 48 toleranced comparisons; differences D-SS-2 and D-SS-3 documented; the treatment two-step has no external benchmark | `results/BENCHMARK_G2.md` |
+| G2-AC4 (coverage) | **not fully met**: 148 of 150 coverage checks and all 114 standard-error checks pass; two coverage checks fail in design H at $N = 1000$, $\rho = 0.6$ (0.925 and 0.926 against 0.93). Diagnosis: small-sample effect, no defect. **Awaits the owner's decision** | `results/MC_G2.md` |
+| G2-AC5 (effects) | treatment effects equal the averages of $d'\delta$ and their delta-method standard errors to 1e-8; Monte Carlo bias of ATE and ATT within 5% (12 of 12) | package tests; `results/MC_G2.md` |
+| G2-AC6 (three systems) | open: `R CMD check --as-cran` on Windows only (0 errors, 0 warnings, 1 note: `V8` absent). Nothing was pushed, so no GitHub Actions run exists for 1.1.0 | check log in `runs/build/1.1.0` |
+| G2-EN-1 | **met** | `results/BENCHMARK_G2.md` |

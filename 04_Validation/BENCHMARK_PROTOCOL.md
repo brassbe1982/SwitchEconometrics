@@ -247,7 +247,7 @@ the searches of 23 November 2026 show (not a systematic review):
 | `switchSelection::msel` (R, CRAN) | two-step for multinomial (logit, probit) selection with continuous outcomes; FIML for ordered/binary multivariate selection | benchmark (section 6.2) |
 | `sampleSelection` (R, CRAN) | Tobit-2, Tobit-5, `treatReg` | benchmark |
 | `endogenous` (R, archived) | Heckman selection and hybrid model | benchmark (installed) |
-| `endogMNP` (R) | Bayesian multinomial probit with endogenous selection (Burgette and Nordheim); whether it is still on CRAN was not checked | a possible comparison of posterior means with our FIML on design P. **Not installed; needs the owner's approval** |
+| `endogMNP` 0.2-1 (R, archived on CRAN; 2010) | Bayesian multinomial probit with endogenous selection (Burgette and Nordheim). Its help page shows that **the outcome is itself a discrete choice** (argument `outBase`, the base category of the outcome), not a continuous variable | **not usable for G2.** The owner approved its installation (23 November 2026); the source from the CRAN archive does not compile under R 4.6.2 (its C code calls LAPACK with signatures that R no longer accepts), and it was not patched. Because its outcome is discrete it would not be a benchmark for the continuous-outcome models of G2 in any case; it is a candidate comparison for Generation 4 (discrete outcomes), where a decision on patching it can be put to the owner |
 | Stata `cmp` (Roodman 2011) | mixed-process models by simulated likelihood (GHK), including multinomial probit equations and observation-specific models, which can express switching regressions | not runnable here (Stata is out of the plan, decision D11); cited as the closest existing full-likelihood implementation for the probit case |
 | Stata `selmlog` (Bourguignon, Fournier, Gurgand) | two-step Lee, Dubin-McFadden and BFG corrections | not runnable; our `"dmf"`, `"bfg1"`, `"bfg2"` are checked by simulation (design D) and against `msel` where conventions agree |
 | Stata `mtreatreg` (Deb and Trivedi) | multinomial treatment with latent factors, simulated likelihood, common outcome equation | not runnable; a different model (mixed logit selection); cited |
@@ -261,3 +261,19 @@ are reported in `BENCHMARK_G2.md` and `MC_G2.md`:
 3. Exact nesting: $J = 2$ probit and ordered models against G1.
 
 What may be claimed, and what may not, is in GENERATION_2.md section 6.
+
+### 6.4 Execution record and documented differences (WP2.1, 23 November 2026)
+
+Script `04_Validation/scripts/benchmark_g2.R`; results in
+`results/BENCHMARK_G2.md`. Version 1.1.0 installed in `runs/lib_g2`.
+
+| Id | Difference | Cause (established, not assumed) |
+| --- | --- | --- |
+| D-SS-2 | On the Mroz (1987) example of `sampleSelection`, our default fit (3 starts) reaches a log-likelihood of $-1479.65$ with $\hat\rho = 0.993$; `sampleSelection` reports $-1581.26$ with $\hat\rho = -0.13$ | The Tobit-2 likelihood of this example has two local maxima. Our likelihood evaluated at the `sampleSelection` estimates equals its log-likelihood, and our fit from the two-step start alone (`starts = 1`) reproduces its estimates and standard errors within the tolerances. The multistart finds the higher maximum from two perturbed starts; it lies close to the boundary $\rho = 1$, which the fit reports (one lower local maximum recorded in `fit$starts`; identification check I9). Neither package is in error |
+| D-SS-3 | Two-step standard errors of the outcome coefficients differ from `sampleSelection` by up to $2.3 \times 10^{-4}$ (relative) | We use the expected (Fisher) information of the probit for $\hat V_\gamma$, as in Generation 1; `sampleSelection` uses the observed information. With the observed information in the same formula the standard errors agree to $2 \times 10^{-10}$ or better (toleranced row of the benchmark) |
+| not run | `treatment()` two-step against `treatReg(method = "2step")` | `treatReg(..., method = "2step")` stops with the error "unknown type" in `sampleSelection` 1.2-16. The treatment two-step estimator therefore has no external benchmark; it is checked against a direct least-squares computation in the package tests, by check W08 of `verify_math_g2.R` and by Monte Carlo designs T and Th |
+| note | `endogenous::hybrid()` with its default starting values stops in `optim()` ("non-finite finite-difference value") on 2 of the 4 benchmark datasets | Its optimiser works on the untransformed $\rho$ and starts from the sample correlation of the treatment and the outcome. It is then restarted from **our two-step estimates** (not from our FIML estimates), and converges to our FIML estimates within the tolerances |
+
+Convention established for the Heckman two-step: $\hat\sigma$ and
+$\hat\rho$ of `sampleSelection`'s Tobit-2 two-step equal ours to
+$10^{-10}$ (unlike its Tobit-5 two-step, D-SS-1).

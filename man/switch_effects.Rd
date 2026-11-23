@@ -89,6 +89,16 @@ quantities depends on the unidentified correlation of the two outcome
 disturbances; distributional effects (for example the variance of
 \eqn{Y(1) - Y(0)}) do and are not reported as estimates.
 }
+\section{Other models}{
+
+For a fit of \code{\link[=treatment]{treatment()}} the effects are averages of the shift
+\eqn{d'\delta} over the treated (ATT), the untreated (ATU) and all units
+(ATE); with a constant shift they all equal \eqn{\delta} and TH is zero.
+A fit of \code{\link[=heckman]{heckman()}} has one potential outcome, and a fit of \code{\link[=tobit5]{tobit5()}}
+with two different response variables has no common outcome scale: both
+are refused with an error of class \code{switch_error_unsupported}.
+}
+
 \examples{
 fit <- switch_fit(
   digital_adoption ~ internet_access + management_quality + firm_size +

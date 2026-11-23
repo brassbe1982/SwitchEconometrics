@@ -63,6 +63,14 @@ switch_counterfactual <- function(object,
   if (!inherits(object, "switch_fit")) {
     se_abort("'object' must be a switch_fit", "argument")
   }
+  if (identical(object$model, "heckman")) {
+    se_refuse_heckman("Counterfactual regime scenarios")
+  }
+  if (identical(object$model, "tobit5") && se_responses_differ(object)) {
+    se_abort(paste0("counterfactual scenarios are not defined for a Tobit-5 ",
+                    "fit with two different response variables"), "unsupported")
+  }
+  object <- se_esr_view(object)
   sd <- object$data
   if (is.null(sd)) {
     se_abort("counterfactuals need the estimation data; refit with keep_data = TRUE",

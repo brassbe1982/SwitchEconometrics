@@ -1,0 +1,429 @@
+"cell","design","N","rho","method","quantity","criterion","value","limit","pass"
+"H_N1000_rho0","H",1000,0,"fiml","selection:(Intercept)","relative bias",0.00112835206526363,"<= 0.05",TRUE
+"H_N1000_rho0","H",1000,0,"fiml","selection:(Intercept)","standard-error ratio",0.996245571546596,"[0.90, 1.10]",TRUE
+"H_N1000_rho0","H",1000,0,"fiml","selection:(Intercept)","95% coverage",0.944,"[0.93, 0.97]",TRUE
+"H_N1000_rho0","H",1000,0,"fiml","selection:x1","relative bias",0.00836190429410337,"<= 0.05",TRUE
+"H_N1000_rho0","H",1000,0,"fiml","selection:x1","standard-error ratio",0.981245042435283,"[0.90, 1.10]",TRUE
+"H_N1000_rho0","H",1000,0,"fiml","selection:x1","95% coverage",0.947,"[0.93, 0.97]",TRUE
+"H_N1000_rho0","H",1000,0,"fiml","selection:z1","relative bias",0.0057655752389478,"<= 0.05",TRUE
+"H_N1000_rho0","H",1000,0,"fiml","selection:z1","standard-error ratio",1.00264546039367,"[0.90, 1.10]",TRUE
+"H_N1000_rho0","H",1000,0,"fiml","selection:z1","95% coverage",0.957,"[0.93, 0.97]",TRUE
+"H_N1000_rho0","H",1000,0,"fiml","outcome:(Intercept)","relative bias",0.00223230105678211,"<= 0.05",TRUE
+"H_N1000_rho0","H",1000,0,"fiml","outcome:(Intercept)","standard-error ratio",0.984986427255765,"[0.90, 1.10]",TRUE
+"H_N1000_rho0","H",1000,0,"fiml","outcome:(Intercept)","95% coverage",0.934,"[0.93, 0.97]",TRUE
+"H_N1000_rho0","H",1000,0,"fiml","outcome:x1","relative bias",0.000354525814884876,"<= 0.05",TRUE
+"H_N1000_rho0","H",1000,0,"fiml","outcome:x1","standard-error ratio",0.973745510107788,"[0.90, 1.10]",TRUE
+"H_N1000_rho0","H",1000,0,"fiml","outcome:x1","95% coverage",0.942,"[0.93, 0.97]",TRUE
+"H_N1000_rho0","H",1000,0,"fiml","outcome:x2","relative bias",0.000291891292281549,"<= 0.05",TRUE
+"H_N1000_rho0","H",1000,0,"fiml","outcome:x2","standard-error ratio",1.00270109542943,"[0.90, 1.10]",TRUE
+"H_N1000_rho0","H",1000,0,"fiml","outcome:x2","95% coverage",0.948,"[0.93, 0.97]",TRUE
+"H_N1000_rho0","H",1000,0,"fiml","outcome:sigma","relative bias",0.00766097519257536,"<= 0.05",TRUE
+"H_N1000_rho0","H",1000,0,"fiml","outcome:sigma","standard-error ratio",1.0955381693388,"[0.90, 1.10]",TRUE
+"H_N1000_rho0","H",1000,0,"fiml","outcome:sigma","95% coverage",0.969,"[0.93, 0.97]",TRUE
+"H_N1000_rho0","H",1000,0,"fiml","outcome:rho","absolute bias (rho)",0.00316911985012719,"<= 0.03",TRUE
+"H_N1000_rho0","H",1000,0,"fiml","outcome:rho","standard-error ratio",0.980873572102288,"[0.90, 1.10]",TRUE
+"H_N1000_rho0","H",1000,0,"fiml","outcome:rho","95% coverage",0.951,"[0.93, 0.97]",TRUE
+"H_N1000_rho0.6","H",1000,0.6,"fiml","selection:(Intercept)","relative bias",0.00433382549358585,"<= 0.05",TRUE
+"H_N1000_rho0.6","H",1000,0.6,"fiml","selection:(Intercept)","standard-error ratio",0.993749364472013,"[0.90, 1.10]",TRUE
+"H_N1000_rho0.6","H",1000,0.6,"fiml","selection:(Intercept)","95% coverage",0.946,"[0.93, 0.97]",TRUE
+"H_N1000_rho0.6","H",1000,0.6,"fiml","selection:x1","relative bias",0.00106295209528059,"<= 0.05",TRUE
+"H_N1000_rho0.6","H",1000,0.6,"fiml","selection:x1","standard-error ratio",0.963927357952297,"[0.90, 1.10]",TRUE
+"H_N1000_rho0.6","H",1000,0.6,"fiml","selection:x1","95% coverage",0.942,"[0.93, 0.97]",TRUE
+"H_N1000_rho0.6","H",1000,0.6,"fiml","selection:z1","relative bias",0.00563322771507807,"<= 0.05",TRUE
+"H_N1000_rho0.6","H",1000,0.6,"fiml","selection:z1","standard-error ratio",1.00925148035527,"[0.90, 1.10]",TRUE
+"H_N1000_rho0.6","H",1000,0.6,"fiml","selection:z1","95% coverage",0.947,"[0.93, 0.97]",TRUE
+"H_N1000_rho0.6","H",1000,0.6,"fiml","outcome:(Intercept)","relative bias",0.00136034958825793,"<= 0.05",TRUE
+"H_N1000_rho0.6","H",1000,0.6,"fiml","outcome:(Intercept)","standard-error ratio",0.999367395680862,"[0.90, 1.10]",TRUE
+"H_N1000_rho0.6","H",1000,0.6,"fiml","outcome:(Intercept)","95% coverage",0.948,"[0.93, 0.97]",TRUE
+"H_N1000_rho0.6","H",1000,0.6,"fiml","outcome:x1","relative bias",0.00233869757327046,"<= 0.05",TRUE
+"H_N1000_rho0.6","H",1000,0.6,"fiml","outcome:x1","standard-error ratio",0.992739731736162,"[0.90, 1.10]",TRUE
+"H_N1000_rho0.6","H",1000,0.6,"fiml","outcome:x1","95% coverage",0.952,"[0.93, 0.97]",TRUE
+"H_N1000_rho0.6","H",1000,0.6,"fiml","outcome:x2","relative bias",0.00271415090989491,"<= 0.05",TRUE
+"H_N1000_rho0.6","H",1000,0.6,"fiml","outcome:x2","standard-error ratio",1.0214872785365,"[0.90, 1.10]",TRUE
+"H_N1000_rho0.6","H",1000,0.6,"fiml","outcome:x2","95% coverage",0.961,"[0.93, 0.97]",TRUE
+"H_N1000_rho0.6","H",1000,0.6,"fiml","outcome:sigma","relative bias",0.00112055616924156,"<= 0.05",TRUE
+"H_N1000_rho0.6","H",1000,0.6,"fiml","outcome:sigma","standard-error ratio",0.984946420893217,"[0.90, 1.10]",TRUE
+"H_N1000_rho0.6","H",1000,0.6,"fiml","outcome:sigma","95% coverage",0.925,"[0.93, 0.97]",FALSE
+"H_N1000_rho0.6","H",1000,0.6,"fiml","outcome:rho","absolute bias (rho)",0.00831480225988868,"<= 0.03",TRUE
+"H_N1000_rho0.6","H",1000,0.6,"fiml","outcome:rho","standard-error ratio",0.936039853254087,"[0.90, 1.10]",TRUE
+"H_N1000_rho0.6","H",1000,0.6,"fiml","outcome:rho","95% coverage",0.926,"[0.93, 0.97]",FALSE
+"H_N2000_rho0","H",2000,0,"fiml","selection:(Intercept)","relative bias",0.00441689358288433,"<= 0.05",TRUE
+"H_N2000_rho0","H",2000,0,"fiml","selection:(Intercept)","standard-error ratio",0.979345044985195,"[0.90, 1.10]",TRUE
+"H_N2000_rho0","H",2000,0,"fiml","selection:(Intercept)","95% coverage",0.947,"[0.93, 0.97]",TRUE
+"H_N2000_rho0","H",2000,0,"fiml","selection:x1","relative bias",0.00777149012339033,"<= 0.05",TRUE
+"H_N2000_rho0","H",2000,0,"fiml","selection:x1","standard-error ratio",0.995176185566359,"[0.90, 1.10]",TRUE
+"H_N2000_rho0","H",2000,0,"fiml","selection:x1","95% coverage",0.951,"[0.93, 0.97]",TRUE
+"H_N2000_rho0","H",2000,0,"fiml","selection:z1","relative bias",0.000589957353882287,"<= 0.05",TRUE
+"H_N2000_rho0","H",2000,0,"fiml","selection:z1","standard-error ratio",1.01339121643986,"[0.90, 1.10]",TRUE
+"H_N2000_rho0","H",2000,0,"fiml","selection:z1","95% coverage",0.951,"[0.93, 0.97]",TRUE
+"H_N2000_rho0","H",2000,0,"fiml","outcome:(Intercept)","relative bias",0.00251567588942484,"<= 0.05",TRUE
+"H_N2000_rho0","H",2000,0,"fiml","outcome:(Intercept)","standard-error ratio",0.973214418322124,"[0.90, 1.10]",TRUE
+"H_N2000_rho0","H",2000,0,"fiml","outcome:(Intercept)","95% coverage",0.939,"[0.93, 0.97]",TRUE
+"H_N2000_rho0","H",2000,0,"fiml","outcome:x1","relative bias",0.0013101761896965,"<= 0.05",TRUE
+"H_N2000_rho0","H",2000,0,"fiml","outcome:x1","standard-error ratio",0.991499304668839,"[0.90, 1.10]",TRUE
+"H_N2000_rho0","H",2000,0,"fiml","outcome:x1","95% coverage",0.948,"[0.93, 0.97]",TRUE
+"H_N2000_rho0","H",2000,0,"fiml","outcome:x2","relative bias",0.00687142169184057,"<= 0.05",TRUE
+"H_N2000_rho0","H",2000,0,"fiml","outcome:x2","standard-error ratio",0.980502759171736,"[0.90, 1.10]",TRUE
+"H_N2000_rho0","H",2000,0,"fiml","outcome:x2","95% coverage",0.939,"[0.93, 0.97]",TRUE
+"H_N2000_rho0","H",2000,0,"fiml","outcome:sigma","relative bias",0.00397778610367427,"<= 0.05",TRUE
+"H_N2000_rho0","H",2000,0,"fiml","outcome:sigma","standard-error ratio",1.03980323220346,"[0.90, 1.10]",TRUE
+"H_N2000_rho0","H",2000,0,"fiml","outcome:sigma","95% coverage",0.96,"[0.93, 0.97]",TRUE
+"H_N2000_rho0","H",2000,0,"fiml","outcome:rho","absolute bias (rho)",0.00568305576290757,"<= 0.03",TRUE
+"H_N2000_rho0","H",2000,0,"fiml","outcome:rho","standard-error ratio",0.962374682863814,"[0.90, 1.10]",TRUE
+"H_N2000_rho0","H",2000,0,"fiml","outcome:rho","95% coverage",0.932,"[0.93, 0.97]",TRUE
+"H_N2000_rho0","H",2000,0,"two_step","outcome:(Intercept)","95% coverage (two-step)",0.948,"[0.93, 0.97]",TRUE
+"H_N2000_rho0","H",2000,0,"two_step","outcome:x1","95% coverage (two-step)",0.949,"[0.93, 0.97]",TRUE
+"H_N2000_rho0","H",2000,0,"two_step","outcome:x2","95% coverage (two-step)",0.939,"[0.93, 0.97]",TRUE
+"H_N2000_rho0","H",2000,0,"two_step","outcome:theta","95% coverage (two-step)",0.936,"[0.93, 0.97]",TRUE
+"H_N2000_rho0.6","H",2000,0.6,"fiml","selection:(Intercept)","relative bias",0.00147034144346159,"<= 0.05",TRUE
+"H_N2000_rho0.6","H",2000,0.6,"fiml","selection:(Intercept)","standard-error ratio",0.990075759222407,"[0.90, 1.10]",TRUE
+"H_N2000_rho0.6","H",2000,0.6,"fiml","selection:(Intercept)","95% coverage",0.945,"[0.93, 0.97]",TRUE
+"H_N2000_rho0.6","H",2000,0.6,"fiml","selection:x1","relative bias",0.0058488337884253,"<= 0.05",TRUE
+"H_N2000_rho0.6","H",2000,0.6,"fiml","selection:x1","standard-error ratio",1.03105219147511,"[0.90, 1.10]",TRUE
+"H_N2000_rho0.6","H",2000,0.6,"fiml","selection:x1","95% coverage",0.955,"[0.93, 0.97]",TRUE
+"H_N2000_rho0.6","H",2000,0.6,"fiml","selection:z1","relative bias",0.00510826288813895,"<= 0.05",TRUE
+"H_N2000_rho0.6","H",2000,0.6,"fiml","selection:z1","standard-error ratio",0.994124316549927,"[0.90, 1.10]",TRUE
+"H_N2000_rho0.6","H",2000,0.6,"fiml","selection:z1","95% coverage",0.953,"[0.93, 0.97]",TRUE
+"H_N2000_rho0.6","H",2000,0.6,"fiml","outcome:(Intercept)","relative bias",0.000991224012818333,"<= 0.05",TRUE
+"H_N2000_rho0.6","H",2000,0.6,"fiml","outcome:(Intercept)","standard-error ratio",1.00107863249004,"[0.90, 1.10]",TRUE
+"H_N2000_rho0.6","H",2000,0.6,"fiml","outcome:(Intercept)","95% coverage",0.955,"[0.93, 0.97]",TRUE
+"H_N2000_rho0.6","H",2000,0.6,"fiml","outcome:x1","relative bias",0.00247318777601577,"<= 0.05",TRUE
+"H_N2000_rho0.6","H",2000,0.6,"fiml","outcome:x1","standard-error ratio",1.00331507252042,"[0.90, 1.10]",TRUE
+"H_N2000_rho0.6","H",2000,0.6,"fiml","outcome:x1","95% coverage",0.949,"[0.93, 0.97]",TRUE
+"H_N2000_rho0.6","H",2000,0.6,"fiml","outcome:x2","relative bias",0.00157335496355243,"<= 0.05",TRUE
+"H_N2000_rho0.6","H",2000,0.6,"fiml","outcome:x2","standard-error ratio",0.975565125809635,"[0.90, 1.10]",TRUE
+"H_N2000_rho0.6","H",2000,0.6,"fiml","outcome:x2","95% coverage",0.944,"[0.93, 0.97]",TRUE
+"H_N2000_rho0.6","H",2000,0.6,"fiml","outcome:sigma","relative bias",0.000281448780909521,"<= 0.05",TRUE
+"H_N2000_rho0.6","H",2000,0.6,"fiml","outcome:sigma","standard-error ratio",0.98453153845429,"[0.90, 1.10]",TRUE
+"H_N2000_rho0.6","H",2000,0.6,"fiml","outcome:sigma","95% coverage",0.931,"[0.93, 0.97]",TRUE
+"H_N2000_rho0.6","H",2000,0.6,"fiml","outcome:rho","absolute bias (rho)",0.00586724962043461,"<= 0.03",TRUE
+"H_N2000_rho0.6","H",2000,0.6,"fiml","outcome:rho","standard-error ratio",0.984744466884469,"[0.90, 1.10]",TRUE
+"H_N2000_rho0.6","H",2000,0.6,"fiml","outcome:rho","95% coverage",0.945,"[0.93, 0.97]",TRUE
+"H_N2000_rho0.6","H",2000,0.6,"two_step","outcome:(Intercept)","95% coverage (two-step)",0.953,"[0.93, 0.97]",TRUE
+"H_N2000_rho0.6","H",2000,0.6,"two_step","outcome:x1","95% coverage (two-step)",0.955,"[0.93, 0.97]",TRUE
+"H_N2000_rho0.6","H",2000,0.6,"two_step","outcome:x2","95% coverage (two-step)",0.945,"[0.93, 0.97]",TRUE
+"H_N2000_rho0.6","H",2000,0.6,"two_step","outcome:theta","95% coverage (two-step)",0.952,"[0.93, 0.97]",TRUE
+"H_N5000_rho0","H",5000,0,"fiml","selection:(Intercept)","relative bias",0.000489672374585304,"<= 0.05",TRUE
+"H_N5000_rho0","H",5000,0,"fiml","selection:(Intercept)","standard-error ratio",0.991297946144274,"[0.90, 1.10]",TRUE
+"H_N5000_rho0","H",5000,0,"fiml","selection:(Intercept)","95% coverage",0.949,"[0.93, 0.97]",TRUE
+"H_N5000_rho0","H",5000,0,"fiml","selection:x1","relative bias",0.000539216846186889,"<= 0.05",TRUE
+"H_N5000_rho0","H",5000,0,"fiml","selection:x1","standard-error ratio",0.982419758664137,"[0.90, 1.10]",TRUE
+"H_N5000_rho0","H",5000,0,"fiml","selection:x1","95% coverage",0.946,"[0.93, 0.97]",TRUE
+"H_N5000_rho0","H",5000,0,"fiml","selection:z1","relative bias",0.00496868119584992,"<= 0.05",TRUE
+"H_N5000_rho0","H",5000,0,"fiml","selection:z1","standard-error ratio",0.999105001772102,"[0.90, 1.10]",TRUE
+"H_N5000_rho0","H",5000,0,"fiml","selection:z1","95% coverage",0.948,"[0.93, 0.97]",TRUE
+"H_N5000_rho0","H",5000,0,"fiml","outcome:(Intercept)","relative bias",0.00147625841038076,"<= 0.05",TRUE
+"H_N5000_rho0","H",5000,0,"fiml","outcome:(Intercept)","standard-error ratio",1.00742312391239,"[0.90, 1.10]",TRUE
+"H_N5000_rho0","H",5000,0,"fiml","outcome:(Intercept)","95% coverage",0.951,"[0.93, 0.97]",TRUE
+"H_N5000_rho0","H",5000,0,"fiml","outcome:x1","relative bias",0.000355622799090294,"<= 0.05",TRUE
+"H_N5000_rho0","H",5000,0,"fiml","outcome:x1","standard-error ratio",0.991838057325931,"[0.90, 1.10]",TRUE
+"H_N5000_rho0","H",5000,0,"fiml","outcome:x1","95% coverage",0.948,"[0.93, 0.97]",TRUE
+"H_N5000_rho0","H",5000,0,"fiml","outcome:x2","relative bias",0.00213286092248716,"<= 0.05",TRUE
+"H_N5000_rho0","H",5000,0,"fiml","outcome:x2","standard-error ratio",0.965480471510664,"[0.90, 1.10]",TRUE
+"H_N5000_rho0","H",5000,0,"fiml","outcome:x2","95% coverage",0.945,"[0.93, 0.97]",TRUE
+"H_N5000_rho0","H",5000,0,"fiml","outcome:sigma","relative bias",6.8994282257373e-06,"<= 0.05",TRUE
+"H_N5000_rho0","H",5000,0,"fiml","outcome:sigma","standard-error ratio",1.00393374183093,"[0.90, 1.10]",TRUE
+"H_N5000_rho0","H",5000,0,"fiml","outcome:sigma","95% coverage",0.947,"[0.93, 0.97]",TRUE
+"H_N5000_rho0","H",5000,0,"fiml","outcome:rho","absolute bias (rho)",0.00334403211091507,"<= 0.03",TRUE
+"H_N5000_rho0","H",5000,0,"fiml","outcome:rho","standard-error ratio",1.02631560274878,"[0.90, 1.10]",TRUE
+"H_N5000_rho0","H",5000,0,"fiml","outcome:rho","95% coverage",0.947,"[0.93, 0.97]",TRUE
+"H_N5000_rho0","H",5000,0,"two_step","outcome:(Intercept)","95% coverage (two-step)",0.949,"[0.93, 0.97]",TRUE
+"H_N5000_rho0","H",5000,0,"two_step","outcome:x1","95% coverage (two-step)",0.951,"[0.93, 0.97]",TRUE
+"H_N5000_rho0","H",5000,0,"two_step","outcome:x2","95% coverage (two-step)",0.946,"[0.93, 0.97]",TRUE
+"H_N5000_rho0","H",5000,0,"two_step","outcome:theta","95% coverage (two-step)",0.946,"[0.93, 0.97]",TRUE
+"H_N5000_rho0.6","H",5000,0.6,"fiml","selection:(Intercept)","relative bias",0.0013086521058534,"<= 0.05",TRUE
+"H_N5000_rho0.6","H",5000,0.6,"fiml","selection:(Intercept)","standard-error ratio",0.987890376169554,"[0.90, 1.10]",TRUE
+"H_N5000_rho0.6","H",5000,0.6,"fiml","selection:(Intercept)","95% coverage",0.944,"[0.93, 0.97]",TRUE
+"H_N5000_rho0.6","H",5000,0.6,"fiml","selection:x1","relative bias",3.99213275574054e-05,"<= 0.05",TRUE
+"H_N5000_rho0.6","H",5000,0.6,"fiml","selection:x1","standard-error ratio",1.00245809926634,"[0.90, 1.10]",TRUE
+"H_N5000_rho0.6","H",5000,0.6,"fiml","selection:x1","95% coverage",0.942,"[0.93, 0.97]",TRUE
+"H_N5000_rho0.6","H",5000,0.6,"fiml","selection:z1","relative bias",0.00242555177018614,"<= 0.05",TRUE
+"H_N5000_rho0.6","H",5000,0.6,"fiml","selection:z1","standard-error ratio",1.01393903506746,"[0.90, 1.10]",TRUE
+"H_N5000_rho0.6","H",5000,0.6,"fiml","selection:z1","95% coverage",0.951,"[0.93, 0.97]",TRUE
+"H_N5000_rho0.6","H",5000,0.6,"fiml","outcome:(Intercept)","relative bias",0.00130836971452997,"<= 0.05",TRUE
+"H_N5000_rho0.6","H",5000,0.6,"fiml","outcome:(Intercept)","standard-error ratio",1.01412118390714,"[0.90, 1.10]",TRUE
+"H_N5000_rho0.6","H",5000,0.6,"fiml","outcome:(Intercept)","95% coverage",0.953,"[0.93, 0.97]",TRUE
+"H_N5000_rho0.6","H",5000,0.6,"fiml","outcome:x1","relative bias",0.000988554814011222,"<= 0.05",TRUE
+"H_N5000_rho0.6","H",5000,0.6,"fiml","outcome:x1","standard-error ratio",1.03991972547878,"[0.90, 1.10]",TRUE
+"H_N5000_rho0.6","H",5000,0.6,"fiml","outcome:x1","95% coverage",0.962,"[0.93, 0.97]",TRUE
+"H_N5000_rho0.6","H",5000,0.6,"fiml","outcome:x2","relative bias",0.000322968198413626,"<= 0.05",TRUE
+"H_N5000_rho0.6","H",5000,0.6,"fiml","outcome:x2","standard-error ratio",0.993761750524104,"[0.90, 1.10]",TRUE
+"H_N5000_rho0.6","H",5000,0.6,"fiml","outcome:x2","95% coverage",0.946,"[0.93, 0.97]",TRUE
+"H_N5000_rho0.6","H",5000,0.6,"fiml","outcome:sigma","relative bias",0.000513359180602024,"<= 0.05",TRUE
+"H_N5000_rho0.6","H",5000,0.6,"fiml","outcome:sigma","standard-error ratio",1.00587628075524,"[0.90, 1.10]",TRUE
+"H_N5000_rho0.6","H",5000,0.6,"fiml","outcome:sigma","95% coverage",0.951,"[0.93, 0.97]",TRUE
+"H_N5000_rho0.6","H",5000,0.6,"fiml","outcome:rho","absolute bias (rho)",0.0033816385371318,"<= 0.03",TRUE
+"H_N5000_rho0.6","H",5000,0.6,"fiml","outcome:rho","standard-error ratio",1.01693165591593,"[0.90, 1.10]",TRUE
+"H_N5000_rho0.6","H",5000,0.6,"fiml","outcome:rho","95% coverage",0.949,"[0.93, 0.97]",TRUE
+"H_N5000_rho0.6","H",5000,0.6,"two_step","outcome:(Intercept)","95% coverage (two-step)",0.946,"[0.93, 0.97]",TRUE
+"H_N5000_rho0.6","H",5000,0.6,"two_step","outcome:x1","95% coverage (two-step)",0.968,"[0.93, 0.97]",TRUE
+"H_N5000_rho0.6","H",5000,0.6,"two_step","outcome:x2","95% coverage (two-step)",0.947,"[0.93, 0.97]",TRUE
+"H_N5000_rho0.6","H",5000,0.6,"two_step","outcome:theta","95% coverage (two-step)",0.957,"[0.93, 0.97]",TRUE
+"T_N1000_rho0","T",1000,0,"fiml","selection:(Intercept)","relative bias",0.00458457381027633,"<= 0.05",TRUE
+"T_N1000_rho0","T",1000,0,"fiml","selection:(Intercept)","standard-error ratio",1.02498426963237,"[0.90, 1.10]",TRUE
+"T_N1000_rho0","T",1000,0,"fiml","selection:(Intercept)","95% coverage",0.952,"[0.93, 0.97]",TRUE
+"T_N1000_rho0","T",1000,0,"fiml","selection:x1","relative bias",0.00193442483129728,"<= 0.05",TRUE
+"T_N1000_rho0","T",1000,0,"fiml","selection:x1","standard-error ratio",1.01542225588552,"[0.90, 1.10]",TRUE
+"T_N1000_rho0","T",1000,0,"fiml","selection:x1","95% coverage",0.958,"[0.93, 0.97]",TRUE
+"T_N1000_rho0","T",1000,0,"fiml","selection:z1","relative bias",0.00188141135237796,"<= 0.05",TRUE
+"T_N1000_rho0","T",1000,0,"fiml","selection:z1","standard-error ratio",0.986675900588019,"[0.90, 1.10]",TRUE
+"T_N1000_rho0","T",1000,0,"fiml","selection:z1","95% coverage",0.952,"[0.93, 0.97]",TRUE
+"T_N1000_rho0","T",1000,0,"fiml","outcome:(Intercept)","relative bias",0.00055822049509946,"<= 0.05",TRUE
+"T_N1000_rho0","T",1000,0,"fiml","outcome:(Intercept)","standard-error ratio",0.951841379082856,"[0.90, 1.10]",TRUE
+"T_N1000_rho0","T",1000,0,"fiml","outcome:(Intercept)","95% coverage",0.939,"[0.93, 0.97]",TRUE
+"T_N1000_rho0","T",1000,0,"fiml","outcome:x1","relative bias",0.00281739562539141,"<= 0.05",TRUE
+"T_N1000_rho0","T",1000,0,"fiml","outcome:x1","standard-error ratio",0.965083753183451,"[0.90, 1.10]",TRUE
+"T_N1000_rho0","T",1000,0,"fiml","outcome:x1","95% coverage",0.949,"[0.93, 0.97]",TRUE
+"T_N1000_rho0","T",1000,0,"fiml","outcome:x2","relative bias",0.00795624137569423,"<= 0.05",TRUE
+"T_N1000_rho0","T",1000,0,"fiml","outcome:x2","standard-error ratio",1.02564828361008,"[0.90, 1.10]",TRUE
+"T_N1000_rho0","T",1000,0,"fiml","outcome:x2","95% coverage",0.966,"[0.93, 0.97]",TRUE
+"T_N1000_rho0","T",1000,0,"fiml","shift:(Intercept)","relative bias",0.00155726752235297,"<= 0.05",TRUE
+"T_N1000_rho0","T",1000,0,"fiml","shift:(Intercept)","standard-error ratio",0.9478919292752,"[0.90, 1.10]",TRUE
+"T_N1000_rho0","T",1000,0,"fiml","shift:(Intercept)","95% coverage",0.944,"[0.93, 0.97]",TRUE
+"T_N1000_rho0","T",1000,0,"fiml","outcome:sigma","relative bias",0.00397421003626564,"<= 0.05",TRUE
+"T_N1000_rho0","T",1000,0,"fiml","outcome:sigma","standard-error ratio",1.03049495064174,"[0.90, 1.10]",TRUE
+"T_N1000_rho0","T",1000,0,"fiml","outcome:sigma","95% coverage",0.96,"[0.93, 0.97]",TRUE
+"T_N1000_rho0","T",1000,0,"fiml","outcome:rho","absolute bias (rho)",0.00133455872592239,"<= 0.03",TRUE
+"T_N1000_rho0","T",1000,0,"fiml","outcome:rho","standard-error ratio",0.951137113461082,"[0.90, 1.10]",TRUE
+"T_N1000_rho0","T",1000,0,"fiml","outcome:rho","95% coverage",0.935,"[0.93, 0.97]",TRUE
+"T_N1000_rho0","T",1000,0,"fiml","ATT","relative bias (effect)",0.00155726752235297,"<= 0.05",TRUE
+"T_N1000_rho0","T",1000,0,"fiml","ATT","standard-error ratio",0.9478919292752,"[0.90, 1.10]",TRUE
+"T_N1000_rho0","T",1000,0,"fiml","ATT","95% coverage",0.944,"[0.93, 0.97]",TRUE
+"T_N1000_rho0","T",1000,0,"fiml","ATE","relative bias (effect)",0.00155726752235297,"<= 0.05",TRUE
+"T_N1000_rho0","T",1000,0,"fiml","ATE","standard-error ratio",0.9478919292752,"[0.90, 1.10]",TRUE
+"T_N1000_rho0","T",1000,0,"fiml","ATE","95% coverage",0.944,"[0.93, 0.97]",TRUE
+"T_N1000_rho0.6","T",1000,0.6,"fiml","selection:(Intercept)","relative bias",0.00293222731120046,"<= 0.05",TRUE
+"T_N1000_rho0.6","T",1000,0.6,"fiml","selection:(Intercept)","standard-error ratio",0.990901718789694,"[0.90, 1.10]",TRUE
+"T_N1000_rho0.6","T",1000,0.6,"fiml","selection:(Intercept)","95% coverage",0.941,"[0.93, 0.97]",TRUE
+"T_N1000_rho0.6","T",1000,0.6,"fiml","selection:x1","relative bias",0.00729499626021202,"<= 0.05",TRUE
+"T_N1000_rho0.6","T",1000,0.6,"fiml","selection:x1","standard-error ratio",1.00169220191757,"[0.90, 1.10]",TRUE
+"T_N1000_rho0.6","T",1000,0.6,"fiml","selection:x1","95% coverage",0.946,"[0.93, 0.97]",TRUE
+"T_N1000_rho0.6","T",1000,0.6,"fiml","selection:z1","relative bias",0.00928865576858978,"<= 0.05",TRUE
+"T_N1000_rho0.6","T",1000,0.6,"fiml","selection:z1","standard-error ratio",0.958849196700978,"[0.90, 1.10]",TRUE
+"T_N1000_rho0.6","T",1000,0.6,"fiml","selection:z1","95% coverage",0.945,"[0.93, 0.97]",TRUE
+"T_N1000_rho0.6","T",1000,0.6,"fiml","outcome:(Intercept)","relative bias",0.00175455078286735,"<= 0.05",TRUE
+"T_N1000_rho0.6","T",1000,0.6,"fiml","outcome:(Intercept)","standard-error ratio",0.980251269273973,"[0.90, 1.10]",TRUE
+"T_N1000_rho0.6","T",1000,0.6,"fiml","outcome:(Intercept)","95% coverage",0.941,"[0.93, 0.97]",TRUE
+"T_N1000_rho0.6","T",1000,0.6,"fiml","outcome:x1","relative bias",0.00179372610306394,"<= 0.05",TRUE
+"T_N1000_rho0.6","T",1000,0.6,"fiml","outcome:x1","standard-error ratio",1.04754453443104,"[0.90, 1.10]",TRUE
+"T_N1000_rho0.6","T",1000,0.6,"fiml","outcome:x1","95% coverage",0.959,"[0.93, 0.97]",TRUE
+"T_N1000_rho0.6","T",1000,0.6,"fiml","outcome:x2","relative bias",0.00125248006351622,"<= 0.05",TRUE
+"T_N1000_rho0.6","T",1000,0.6,"fiml","outcome:x2","standard-error ratio",0.999665467178512,"[0.90, 1.10]",TRUE
+"T_N1000_rho0.6","T",1000,0.6,"fiml","outcome:x2","95% coverage",0.949,"[0.93, 0.97]",TRUE
+"T_N1000_rho0.6","T",1000,0.6,"fiml","shift:(Intercept)","relative bias",0.00559727782172947,"<= 0.05",TRUE
+"T_N1000_rho0.6","T",1000,0.6,"fiml","shift:(Intercept)","standard-error ratio",0.987831170971053,"[0.90, 1.10]",TRUE
+"T_N1000_rho0.6","T",1000,0.6,"fiml","shift:(Intercept)","95% coverage",0.946,"[0.93, 0.97]",TRUE
+"T_N1000_rho0.6","T",1000,0.6,"fiml","outcome:sigma","relative bias",0.000879510681350948,"<= 0.05",TRUE
+"T_N1000_rho0.6","T",1000,0.6,"fiml","outcome:sigma","standard-error ratio",0.984145469812239,"[0.90, 1.10]",TRUE
+"T_N1000_rho0.6","T",1000,0.6,"fiml","outcome:sigma","95% coverage",0.948,"[0.93, 0.97]",TRUE
+"T_N1000_rho0.6","T",1000,0.6,"fiml","outcome:rho","absolute bias (rho)",0.00545791121718997,"<= 0.03",TRUE
+"T_N1000_rho0.6","T",1000,0.6,"fiml","outcome:rho","standard-error ratio",0.986444725976409,"[0.90, 1.10]",TRUE
+"T_N1000_rho0.6","T",1000,0.6,"fiml","outcome:rho","95% coverage",0.953,"[0.93, 0.97]",TRUE
+"T_N1000_rho0.6","T",1000,0.6,"fiml","ATT","relative bias (effect)",0.0055972778217297,"<= 0.05",TRUE
+"T_N1000_rho0.6","T",1000,0.6,"fiml","ATT","standard-error ratio",0.987831170971053,"[0.90, 1.10]",TRUE
+"T_N1000_rho0.6","T",1000,0.6,"fiml","ATT","95% coverage",0.946,"[0.93, 0.97]",TRUE
+"T_N1000_rho0.6","T",1000,0.6,"fiml","ATE","relative bias (effect)",0.00559727782172947,"<= 0.05",TRUE
+"T_N1000_rho0.6","T",1000,0.6,"fiml","ATE","standard-error ratio",0.987831170971053,"[0.90, 1.10]",TRUE
+"T_N1000_rho0.6","T",1000,0.6,"fiml","ATE","95% coverage",0.946,"[0.93, 0.97]",TRUE
+"T_N2000_rho0","T",2000,0,"fiml","selection:(Intercept)","relative bias",0.00336378649404656,"<= 0.05",TRUE
+"T_N2000_rho0","T",2000,0,"fiml","selection:(Intercept)","standard-error ratio",0.9905093475817,"[0.90, 1.10]",TRUE
+"T_N2000_rho0","T",2000,0,"fiml","selection:(Intercept)","95% coverage",0.955,"[0.93, 0.97]",TRUE
+"T_N2000_rho0","T",2000,0,"fiml","selection:x1","relative bias",0.00067653064428889,"<= 0.05",TRUE
+"T_N2000_rho0","T",2000,0,"fiml","selection:x1","standard-error ratio",1.0281355664458,"[0.90, 1.10]",TRUE
+"T_N2000_rho0","T",2000,0,"fiml","selection:x1","95% coverage",0.957,"[0.93, 0.97]",TRUE
+"T_N2000_rho0","T",2000,0,"fiml","selection:z1","relative bias",0.0015216659895588,"<= 0.05",TRUE
+"T_N2000_rho0","T",2000,0,"fiml","selection:z1","standard-error ratio",1.00110355063345,"[0.90, 1.10]",TRUE
+"T_N2000_rho0","T",2000,0,"fiml","selection:z1","95% coverage",0.954,"[0.93, 0.97]",TRUE
+"T_N2000_rho0","T",2000,0,"fiml","outcome:(Intercept)","relative bias",0.00078672577426675,"<= 0.05",TRUE
+"T_N2000_rho0","T",2000,0,"fiml","outcome:(Intercept)","standard-error ratio",0.974119730400781,"[0.90, 1.10]",TRUE
+"T_N2000_rho0","T",2000,0,"fiml","outcome:(Intercept)","95% coverage",0.942,"[0.93, 0.97]",TRUE
+"T_N2000_rho0","T",2000,0,"fiml","outcome:x1","relative bias",0.00131403189882873,"<= 0.05",TRUE
+"T_N2000_rho0","T",2000,0,"fiml","outcome:x1","standard-error ratio",1.02258033189232,"[0.90, 1.10]",TRUE
+"T_N2000_rho0","T",2000,0,"fiml","outcome:x1","95% coverage",0.958,"[0.93, 0.97]",TRUE
+"T_N2000_rho0","T",2000,0,"fiml","outcome:x2","relative bias",0.00151587638992062,"<= 0.05",TRUE
+"T_N2000_rho0","T",2000,0,"fiml","outcome:x2","standard-error ratio",1.01821120948573,"[0.90, 1.10]",TRUE
+"T_N2000_rho0","T",2000,0,"fiml","outcome:x2","95% coverage",0.961,"[0.93, 0.97]",TRUE
+"T_N2000_rho0","T",2000,0,"fiml","shift:(Intercept)","relative bias",0.000944683359375587,"<= 0.05",TRUE
+"T_N2000_rho0","T",2000,0,"fiml","shift:(Intercept)","standard-error ratio",0.973963169341956,"[0.90, 1.10]",TRUE
+"T_N2000_rho0","T",2000,0,"fiml","shift:(Intercept)","95% coverage",0.944,"[0.93, 0.97]",TRUE
+"T_N2000_rho0","T",2000,0,"fiml","outcome:sigma","relative bias",0.00198099160419529,"<= 0.05",TRUE
+"T_N2000_rho0","T",2000,0,"fiml","outcome:sigma","standard-error ratio",1.01425399824422,"[0.90, 1.10]",TRUE
+"T_N2000_rho0","T",2000,0,"fiml","outcome:sigma","95% coverage",0.951,"[0.93, 0.97]",TRUE
+"T_N2000_rho0","T",2000,0,"fiml","outcome:rho","absolute bias (rho)",0.000766300667916983,"<= 0.03",TRUE
+"T_N2000_rho0","T",2000,0,"fiml","outcome:rho","standard-error ratio",0.982461925351175,"[0.90, 1.10]",TRUE
+"T_N2000_rho0","T",2000,0,"fiml","outcome:rho","95% coverage",0.945,"[0.93, 0.97]",TRUE
+"T_N2000_rho0","T",2000,0,"fiml","ATT","relative bias (effect)",0.000944683359375587,"<= 0.05",TRUE
+"T_N2000_rho0","T",2000,0,"fiml","ATT","standard-error ratio",0.973963169341956,"[0.90, 1.10]",TRUE
+"T_N2000_rho0","T",2000,0,"fiml","ATT","95% coverage",0.944,"[0.93, 0.97]",TRUE
+"T_N2000_rho0","T",2000,0,"fiml","ATE","relative bias (effect)",0.000944683359375587,"<= 0.05",TRUE
+"T_N2000_rho0","T",2000,0,"fiml","ATE","standard-error ratio",0.973963169341956,"[0.90, 1.10]",TRUE
+"T_N2000_rho0","T",2000,0,"fiml","ATE","95% coverage",0.944,"[0.93, 0.97]",TRUE
+"T_N2000_rho0","T",2000,0,"two_step","outcome:(Intercept)","95% coverage (two-step)",0.942,"[0.93, 0.97]",TRUE
+"T_N2000_rho0","T",2000,0,"two_step","outcome:x1","95% coverage (two-step)",0.958,"[0.93, 0.97]",TRUE
+"T_N2000_rho0","T",2000,0,"two_step","outcome:x2","95% coverage (two-step)",0.961,"[0.93, 0.97]",TRUE
+"T_N2000_rho0","T",2000,0,"two_step","shift:(Intercept)","95% coverage (two-step)",0.945,"[0.93, 0.97]",TRUE
+"T_N2000_rho0","T",2000,0,"two_step","outcome:theta","95% coverage (two-step)",0.948,"[0.93, 0.97]",TRUE
+"T_N2000_rho0.6","T",2000,0.6,"fiml","selection:(Intercept)","relative bias",0.000667405415947453,"<= 0.05",TRUE
+"T_N2000_rho0.6","T",2000,0.6,"fiml","selection:(Intercept)","standard-error ratio",0.98399648260689,"[0.90, 1.10]",TRUE
+"T_N2000_rho0.6","T",2000,0.6,"fiml","selection:(Intercept)","95% coverage",0.953,"[0.93, 0.97]",TRUE
+"T_N2000_rho0.6","T",2000,0.6,"fiml","selection:x1","relative bias",0.0033574013244105,"<= 0.05",TRUE
+"T_N2000_rho0.6","T",2000,0.6,"fiml","selection:x1","standard-error ratio",1.04718226641486,"[0.90, 1.10]",TRUE
+"T_N2000_rho0.6","T",2000,0.6,"fiml","selection:x1","95% coverage",0.965,"[0.93, 0.97]",TRUE
+"T_N2000_rho0.6","T",2000,0.6,"fiml","selection:z1","relative bias",0.00266780596777594,"<= 0.05",TRUE
+"T_N2000_rho0.6","T",2000,0.6,"fiml","selection:z1","standard-error ratio",1.01734698821523,"[0.90, 1.10]",TRUE
+"T_N2000_rho0.6","T",2000,0.6,"fiml","selection:z1","95% coverage",0.953,"[0.93, 0.97]",TRUE
+"T_N2000_rho0.6","T",2000,0.6,"fiml","outcome:(Intercept)","relative bias",0.00273806802103227,"<= 0.05",TRUE
+"T_N2000_rho0.6","T",2000,0.6,"fiml","outcome:(Intercept)","standard-error ratio",1.00349959235428,"[0.90, 1.10]",TRUE
+"T_N2000_rho0.6","T",2000,0.6,"fiml","outcome:(Intercept)","95% coverage",0.949,"[0.93, 0.97]",TRUE
+"T_N2000_rho0.6","T",2000,0.6,"fiml","outcome:x1","relative bias",0.00375420812373861,"<= 0.05",TRUE
+"T_N2000_rho0.6","T",2000,0.6,"fiml","outcome:x1","standard-error ratio",1.03953696576674,"[0.90, 1.10]",TRUE
+"T_N2000_rho0.6","T",2000,0.6,"fiml","outcome:x1","95% coverage",0.956,"[0.93, 0.97]",TRUE
+"T_N2000_rho0.6","T",2000,0.6,"fiml","outcome:x2","relative bias",0.00467503370395653,"<= 0.05",TRUE
+"T_N2000_rho0.6","T",2000,0.6,"fiml","outcome:x2","standard-error ratio",0.998592987326316,"[0.90, 1.10]",TRUE
+"T_N2000_rho0.6","T",2000,0.6,"fiml","outcome:x2","95% coverage",0.951,"[0.93, 0.97]",TRUE
+"T_N2000_rho0.6","T",2000,0.6,"fiml","shift:(Intercept)","relative bias",0.00565107992482017,"<= 0.05",TRUE
+"T_N2000_rho0.6","T",2000,0.6,"fiml","shift:(Intercept)","standard-error ratio",1.0020788123169,"[0.90, 1.10]",TRUE
+"T_N2000_rho0.6","T",2000,0.6,"fiml","shift:(Intercept)","95% coverage",0.946,"[0.93, 0.97]",TRUE
+"T_N2000_rho0.6","T",2000,0.6,"fiml","outcome:sigma","relative bias",0.000228962458230342,"<= 0.05",TRUE
+"T_N2000_rho0.6","T",2000,0.6,"fiml","outcome:sigma","standard-error ratio",1.01410814842435,"[0.90, 1.10]",TRUE
+"T_N2000_rho0.6","T",2000,0.6,"fiml","outcome:sigma","95% coverage",0.947,"[0.93, 0.97]",TRUE
+"T_N2000_rho0.6","T",2000,0.6,"fiml","outcome:rho","absolute bias (rho)",0.00305364227686356,"<= 0.03",TRUE
+"T_N2000_rho0.6","T",2000,0.6,"fiml","outcome:rho","standard-error ratio",0.994232266902536,"[0.90, 1.10]",TRUE
+"T_N2000_rho0.6","T",2000,0.6,"fiml","outcome:rho","95% coverage",0.95,"[0.93, 0.97]",TRUE
+"T_N2000_rho0.6","T",2000,0.6,"fiml","ATT","relative bias (effect)",0.00565107992482017,"<= 0.05",TRUE
+"T_N2000_rho0.6","T",2000,0.6,"fiml","ATT","standard-error ratio",1.0020788123169,"[0.90, 1.10]",TRUE
+"T_N2000_rho0.6","T",2000,0.6,"fiml","ATT","95% coverage",0.946,"[0.93, 0.97]",TRUE
+"T_N2000_rho0.6","T",2000,0.6,"fiml","ATE","relative bias (effect)",0.00565107992482017,"<= 0.05",TRUE
+"T_N2000_rho0.6","T",2000,0.6,"fiml","ATE","standard-error ratio",1.0020788123169,"[0.90, 1.10]",TRUE
+"T_N2000_rho0.6","T",2000,0.6,"fiml","ATE","95% coverage",0.946,"[0.93, 0.97]",TRUE
+"T_N2000_rho0.6","T",2000,0.6,"two_step","outcome:(Intercept)","95% coverage (two-step)",0.943,"[0.93, 0.97]",TRUE
+"T_N2000_rho0.6","T",2000,0.6,"two_step","outcome:x1","95% coverage (two-step)",0.951,"[0.93, 0.97]",TRUE
+"T_N2000_rho0.6","T",2000,0.6,"two_step","outcome:x2","95% coverage (two-step)",0.953,"[0.93, 0.97]",TRUE
+"T_N2000_rho0.6","T",2000,0.6,"two_step","shift:(Intercept)","95% coverage (two-step)",0.946,"[0.93, 0.97]",TRUE
+"T_N2000_rho0.6","T",2000,0.6,"two_step","outcome:theta","95% coverage (two-step)",0.951,"[0.93, 0.97]",TRUE
+"T_N5000_rho0","T",5000,0,"fiml","selection:(Intercept)","relative bias",0.000974007570389013,"<= 0.05",TRUE
+"T_N5000_rho0","T",5000,0,"fiml","selection:(Intercept)","standard-error ratio",1.00365831303529,"[0.90, 1.10]",TRUE
+"T_N5000_rho0","T",5000,0,"fiml","selection:(Intercept)","95% coverage",0.953,"[0.93, 0.97]",TRUE
+"T_N5000_rho0","T",5000,0,"fiml","selection:x1","relative bias",0.00140378412750812,"<= 0.05",TRUE
+"T_N5000_rho0","T",5000,0,"fiml","selection:x1","standard-error ratio",1.00388393820818,"[0.90, 1.10]",TRUE
+"T_N5000_rho0","T",5000,0,"fiml","selection:x1","95% coverage",0.95,"[0.93, 0.97]",TRUE
+"T_N5000_rho0","T",5000,0,"fiml","selection:z1","relative bias",0.00141688825606182,"<= 0.05",TRUE
+"T_N5000_rho0","T",5000,0,"fiml","selection:z1","standard-error ratio",0.970892385844314,"[0.90, 1.10]",TRUE
+"T_N5000_rho0","T",5000,0,"fiml","selection:z1","95% coverage",0.942,"[0.93, 0.97]",TRUE
+"T_N5000_rho0","T",5000,0,"fiml","outcome:(Intercept)","relative bias",0.000692497091816846,"<= 0.05",TRUE
+"T_N5000_rho0","T",5000,0,"fiml","outcome:(Intercept)","standard-error ratio",0.951746674030515,"[0.90, 1.10]",TRUE
+"T_N5000_rho0","T",5000,0,"fiml","outcome:(Intercept)","95% coverage",0.942,"[0.93, 0.97]",TRUE
+"T_N5000_rho0","T",5000,0,"fiml","outcome:x1","relative bias",0.000618458378008668,"<= 0.05",TRUE
+"T_N5000_rho0","T",5000,0,"fiml","outcome:x1","standard-error ratio",0.994555234864468,"[0.90, 1.10]",TRUE
+"T_N5000_rho0","T",5000,0,"fiml","outcome:x1","95% coverage",0.951,"[0.93, 0.97]",TRUE
+"T_N5000_rho0","T",5000,0,"fiml","outcome:x2","relative bias",0.00229413397940928,"<= 0.05",TRUE
+"T_N5000_rho0","T",5000,0,"fiml","outcome:x2","standard-error ratio",1.05192711914051,"[0.90, 1.10]",TRUE
+"T_N5000_rho0","T",5000,0,"fiml","outcome:x2","95% coverage",0.967,"[0.93, 0.97]",TRUE
+"T_N5000_rho0","T",5000,0,"fiml","shift:(Intercept)","relative bias",0.00163052816493914,"<= 0.05",TRUE
+"T_N5000_rho0","T",5000,0,"fiml","shift:(Intercept)","standard-error ratio",0.96650867905987,"[0.90, 1.10]",TRUE
+"T_N5000_rho0","T",5000,0,"fiml","shift:(Intercept)","95% coverage",0.943,"[0.93, 0.97]",TRUE
+"T_N5000_rho0","T",5000,0,"fiml","outcome:sigma","relative bias",0.00107141149704026,"<= 0.05",TRUE
+"T_N5000_rho0","T",5000,0,"fiml","outcome:sigma","standard-error ratio",1.03776665762122,"[0.90, 1.10]",TRUE
+"T_N5000_rho0","T",5000,0,"fiml","outcome:sigma","95% coverage",0.953,"[0.93, 0.97]",TRUE
+"T_N5000_rho0","T",5000,0,"fiml","outcome:rho","absolute bias (rho)",0.000361817742565203,"<= 0.03",TRUE
+"T_N5000_rho0","T",5000,0,"fiml","outcome:rho","standard-error ratio",0.972698762771052,"[0.90, 1.10]",TRUE
+"T_N5000_rho0","T",5000,0,"fiml","outcome:rho","95% coverage",0.944,"[0.93, 0.97]",TRUE
+"T_N5000_rho0","T",5000,0,"fiml","ATT","relative bias (effect)",0.00163052816493914,"<= 0.05",TRUE
+"T_N5000_rho0","T",5000,0,"fiml","ATT","standard-error ratio",0.96650867905987,"[0.90, 1.10]",TRUE
+"T_N5000_rho0","T",5000,0,"fiml","ATT","95% coverage",0.943,"[0.93, 0.97]",TRUE
+"T_N5000_rho0","T",5000,0,"fiml","ATE","relative bias (effect)",0.00163052816493914,"<= 0.05",TRUE
+"T_N5000_rho0","T",5000,0,"fiml","ATE","standard-error ratio",0.96650867905987,"[0.90, 1.10]",TRUE
+"T_N5000_rho0","T",5000,0,"fiml","ATE","95% coverage",0.943,"[0.93, 0.97]",TRUE
+"T_N5000_rho0","T",5000,0,"two_step","outcome:(Intercept)","95% coverage (two-step)",0.943,"[0.93, 0.97]",TRUE
+"T_N5000_rho0","T",5000,0,"two_step","outcome:x1","95% coverage (two-step)",0.947,"[0.93, 0.97]",TRUE
+"T_N5000_rho0","T",5000,0,"two_step","outcome:x2","95% coverage (two-step)",0.967,"[0.93, 0.97]",TRUE
+"T_N5000_rho0","T",5000,0,"two_step","shift:(Intercept)","95% coverage (two-step)",0.943,"[0.93, 0.97]",TRUE
+"T_N5000_rho0","T",5000,0,"two_step","outcome:theta","95% coverage (two-step)",0.944,"[0.93, 0.97]",TRUE
+"T_N5000_rho0.6","T",5000,0.6,"fiml","selection:(Intercept)","relative bias",0.000820408475876278,"<= 0.05",TRUE
+"T_N5000_rho0.6","T",5000,0.6,"fiml","selection:(Intercept)","standard-error ratio",0.99031830725937,"[0.90, 1.10]",TRUE
+"T_N5000_rho0.6","T",5000,0.6,"fiml","selection:(Intercept)","95% coverage",0.947,"[0.93, 0.97]",TRUE
+"T_N5000_rho0.6","T",5000,0.6,"fiml","selection:x1","relative bias",0.000785306453401728,"<= 0.05",TRUE
+"T_N5000_rho0.6","T",5000,0.6,"fiml","selection:x1","standard-error ratio",0.970910814676345,"[0.90, 1.10]",TRUE
+"T_N5000_rho0.6","T",5000,0.6,"fiml","selection:x1","95% coverage",0.94,"[0.93, 0.97]",TRUE
+"T_N5000_rho0.6","T",5000,0.6,"fiml","selection:z1","relative bias",0.00294696647709619,"<= 0.05",TRUE
+"T_N5000_rho0.6","T",5000,0.6,"fiml","selection:z1","standard-error ratio",1.02236138382022,"[0.90, 1.10]",TRUE
+"T_N5000_rho0.6","T",5000,0.6,"fiml","selection:z1","95% coverage",0.955,"[0.93, 0.97]",TRUE
+"T_N5000_rho0.6","T",5000,0.6,"fiml","outcome:(Intercept)","relative bias",0.00017075939840594,"<= 0.05",TRUE
+"T_N5000_rho0.6","T",5000,0.6,"fiml","outcome:(Intercept)","standard-error ratio",1.00227814748533,"[0.90, 1.10]",TRUE
+"T_N5000_rho0.6","T",5000,0.6,"fiml","outcome:(Intercept)","95% coverage",0.951,"[0.93, 0.97]",TRUE
+"T_N5000_rho0.6","T",5000,0.6,"fiml","outcome:x1","relative bias",0.000895517362968223,"<= 0.05",TRUE
+"T_N5000_rho0.6","T",5000,0.6,"fiml","outcome:x1","standard-error ratio",1.00396227663426,"[0.90, 1.10]",TRUE
+"T_N5000_rho0.6","T",5000,0.6,"fiml","outcome:x1","95% coverage",0.952,"[0.93, 0.97]",TRUE
+"T_N5000_rho0.6","T",5000,0.6,"fiml","outcome:x2","relative bias",0.00011686660644411,"<= 0.05",TRUE
+"T_N5000_rho0.6","T",5000,0.6,"fiml","outcome:x2","standard-error ratio",1.01046532670087,"[0.90, 1.10]",TRUE
+"T_N5000_rho0.6","T",5000,0.6,"fiml","outcome:x2","95% coverage",0.952,"[0.93, 0.97]",TRUE
+"T_N5000_rho0.6","T",5000,0.6,"fiml","shift:(Intercept)","relative bias",0.00163890134424416,"<= 0.05",TRUE
+"T_N5000_rho0.6","T",5000,0.6,"fiml","shift:(Intercept)","standard-error ratio",1.00273589569055,"[0.90, 1.10]",TRUE
+"T_N5000_rho0.6","T",5000,0.6,"fiml","shift:(Intercept)","95% coverage",0.949,"[0.93, 0.97]",TRUE
+"T_N5000_rho0.6","T",5000,0.6,"fiml","outcome:sigma","relative bias",0.000502059552513368,"<= 0.05",TRUE
+"T_N5000_rho0.6","T",5000,0.6,"fiml","outcome:sigma","standard-error ratio",1.01863307254635,"[0.90, 1.10]",TRUE
+"T_N5000_rho0.6","T",5000,0.6,"fiml","outcome:sigma","95% coverage",0.956,"[0.93, 0.97]",TRUE
+"T_N5000_rho0.6","T",5000,0.6,"fiml","outcome:rho","absolute bias (rho)",0.00101251456926588,"<= 0.03",TRUE
+"T_N5000_rho0.6","T",5000,0.6,"fiml","outcome:rho","standard-error ratio",1.00258868979909,"[0.90, 1.10]",TRUE
+"T_N5000_rho0.6","T",5000,0.6,"fiml","outcome:rho","95% coverage",0.951,"[0.93, 0.97]",TRUE
+"T_N5000_rho0.6","T",5000,0.6,"fiml","ATT","relative bias (effect)",0.00163890134424416,"<= 0.05",TRUE
+"T_N5000_rho0.6","T",5000,0.6,"fiml","ATT","standard-error ratio",1.00273589569055,"[0.90, 1.10]",TRUE
+"T_N5000_rho0.6","T",5000,0.6,"fiml","ATT","95% coverage",0.949,"[0.93, 0.97]",TRUE
+"T_N5000_rho0.6","T",5000,0.6,"fiml","ATE","relative bias (effect)",0.00163890134424416,"<= 0.05",TRUE
+"T_N5000_rho0.6","T",5000,0.6,"fiml","ATE","standard-error ratio",1.00273589569055,"[0.90, 1.10]",TRUE
+"T_N5000_rho0.6","T",5000,0.6,"fiml","ATE","95% coverage",0.949,"[0.93, 0.97]",TRUE
+"T_N5000_rho0.6","T",5000,0.6,"two_step","outcome:(Intercept)","95% coverage (two-step)",0.943,"[0.93, 0.97]",TRUE
+"T_N5000_rho0.6","T",5000,0.6,"two_step","outcome:x1","95% coverage (two-step)",0.946,"[0.93, 0.97]",TRUE
+"T_N5000_rho0.6","T",5000,0.6,"two_step","outcome:x2","95% coverage (two-step)",0.952,"[0.93, 0.97]",TRUE
+"T_N5000_rho0.6","T",5000,0.6,"two_step","shift:(Intercept)","95% coverage (two-step)",0.939,"[0.93, 0.97]",TRUE
+"T_N5000_rho0.6","T",5000,0.6,"two_step","outcome:theta","95% coverage (two-step)",0.942,"[0.93, 0.97]",TRUE
+"H_N1000_rho0","H",1000,0,"fiml","(all)","convergence rate",1,">= 0.99",TRUE
+"H_N1000_rho0.6","H",1000,0.6,"fiml","(all)","convergence rate",1,">= 0.99",TRUE
+"H_N2000_rho0","H",2000,0,"fiml","(all)","convergence rate",1,">= 0.99",TRUE
+"H_N2000_rho0.6","H",2000,0.6,"fiml","(all)","convergence rate",1,">= 0.99",TRUE
+"H_N5000_rho0","H",5000,0,"fiml","(all)","convergence rate",1,">= 0.99",TRUE
+"H_N5000_rho0.6","H",5000,0.6,"fiml","(all)","convergence rate",1,">= 0.99",TRUE
+"T_N1000_rho0","T",1000,0,"fiml","(all)","convergence rate",1,">= 0.99",TRUE
+"T_N1000_rho0.6","T",1000,0.6,"fiml","(all)","convergence rate",1,">= 0.99",TRUE
+"T_N2000_rho0","T",2000,0,"fiml","(all)","convergence rate",1,">= 0.99",TRUE
+"T_N2000_rho0.6","T",2000,0.6,"fiml","(all)","convergence rate",1,">= 0.99",TRUE
+"T_N5000_rho0","T",5000,0,"fiml","(all)","convergence rate",1,">= 0.99",TRUE
+"T_N5000_rho0.6","T",5000,0.6,"fiml","(all)","convergence rate",1,">= 0.99",TRUE
+"H rho 0: N 1000 vs 5000","H",5000,0,"fiml","selection:(Intercept)","root-N ratio of RMSE",1.00303951384973,"[0.8, 1.2]",TRUE
+"H rho 0: N 1000 vs 5000","H",5000,0,"fiml","selection:x1","root-N ratio of RMSE",0.994251837183809,"[0.8, 1.2]",TRUE
+"H rho 0: N 1000 vs 5000","H",5000,0,"fiml","selection:z1","root-N ratio of RMSE",1.00361047907744,"[0.8, 1.2]",TRUE
+"H rho 0: N 1000 vs 5000","H",5000,0,"fiml","outcome:(Intercept)","root-N ratio of RMSE",0.967791470086012,"[0.8, 1.2]",TRUE
+"H rho 0: N 1000 vs 5000","H",5000,0,"fiml","outcome:x1","root-N ratio of RMSE",0.968406309681803,"[0.8, 1.2]",TRUE
+"H rho 0: N 1000 vs 5000","H",5000,0,"fiml","outcome:x2","root-N ratio of RMSE",1.03534961448256,"[0.8, 1.2]",TRUE
+"H rho 0: N 1000 vs 5000","H",5000,0,"fiml","outcome:sigma","root-N ratio of RMSE",0.909510864562395,"[0.8, 1.2]",TRUE
+"H rho 0: N 1000 vs 5000","H",5000,0,"fiml","outcome:rho","root-N ratio of RMSE",0.972162570643486,"[0.8, 1.2]",TRUE
+"H rho 0.6: N 1000 vs 5000","H",5000,0.6,"fiml","selection:(Intercept)","root-N ratio of RMSE",1.00288154902119,"[0.8, 1.2]",TRUE
+"H rho 0.6: N 1000 vs 5000","H",5000,0.6,"fiml","selection:x1","root-N ratio of RMSE",0.957312943689566,"[0.8, 1.2]",TRUE
+"H rho 0.6: N 1000 vs 5000","H",5000,0.6,"fiml","selection:z1","root-N ratio of RMSE",0.995508209440679,"[0.8, 1.2]",TRUE
+"H rho 0.6: N 1000 vs 5000","H",5000,0.6,"fiml","outcome:(Intercept)","root-N ratio of RMSE",0.984845870287185,"[0.8, 1.2]",TRUE
+"H rho 0.6: N 1000 vs 5000","H",5000,0.6,"fiml","outcome:x1","root-N ratio of RMSE",0.949518200678807,"[0.8, 1.2]",TRUE
+"H rho 0.6: N 1000 vs 5000","H",5000,0.6,"fiml","outcome:x2","root-N ratio of RMSE",1.02578825370062,"[0.8, 1.2]",TRUE
+"H rho 0.6: N 1000 vs 5000","H",5000,0.6,"fiml","outcome:sigma","root-N ratio of RMSE",0.997806469698603,"[0.8, 1.2]",TRUE
+"H rho 0.6: N 1000 vs 5000","H",5000,0.6,"fiml","outcome:rho","root-N ratio of RMSE",0.913773947301498,"[0.8, 1.2]",TRUE
+"T rho 0: N 1000 vs 5000","T",5000,0,"fiml","selection:(Intercept)","root-N ratio of RMSE",1.01823447583121,"[0.8, 1.2]",TRUE
+"T rho 0: N 1000 vs 5000","T",5000,0,"fiml","selection:x1","root-N ratio of RMSE",1.00878730325785,"[0.8, 1.2]",TRUE
+"T rho 0: N 1000 vs 5000","T",5000,0,"fiml","selection:z1","root-N ratio of RMSE",1.01402807725996,"[0.8, 1.2]",TRUE
+"T rho 0: N 1000 vs 5000","T",5000,0,"fiml","outcome:(Intercept)","root-N ratio of RMSE",0.986715889923366,"[0.8, 1.2]",TRUE
+"T rho 0: N 1000 vs 5000","T",5000,0,"fiml","outcome:x1","root-N ratio of RMSE",0.960778347998348,"[0.8, 1.2]",TRUE
+"T rho 0: N 1000 vs 5000","T",5000,0,"fiml","outcome:x2","root-N ratio of RMSE",0.974457323893887,"[0.8, 1.2]",TRUE
+"T rho 0: N 1000 vs 5000","T",5000,0,"fiml","shift:(Intercept)","root-N ratio of RMSE",0.968843218035719,"[0.8, 1.2]",TRUE
+"T rho 0: N 1000 vs 5000","T",5000,0,"fiml","outcome:sigma","root-N ratio of RMSE",0.892995540016361,"[0.8, 1.2]",TRUE
+"T rho 0: N 1000 vs 5000","T",5000,0,"fiml","outcome:rho","root-N ratio of RMSE",0.981341622120773,"[0.8, 1.2]",TRUE
+"T rho 0: N 1000 vs 5000","T",5000,0,"fiml","ATT","root-N ratio of RMSE",0.968843218035719,"[0.8, 1.2]",TRUE
+"T rho 0: N 1000 vs 5000","T",5000,0,"fiml","ATE","root-N ratio of RMSE",0.968843218035719,"[0.8, 1.2]",TRUE
+"T rho 0.6: N 1000 vs 5000","T",5000,0.6,"fiml","selection:(Intercept)","root-N ratio of RMSE",0.99789013547286,"[0.8, 1.2]",TRUE
+"T rho 0.6: N 1000 vs 5000","T",5000,0.6,"fiml","selection:x1","root-N ratio of RMSE",1.02727037085427,"[0.8, 1.2]",TRUE
+"T rho 0.6: N 1000 vs 5000","T",5000,0.6,"fiml","selection:z1","root-N ratio of RMSE",0.936323572312596,"[0.8, 1.2]",TRUE
+"T rho 0.6: N 1000 vs 5000","T",5000,0.6,"fiml","outcome:(Intercept)","root-N ratio of RMSE",0.97920071945778,"[0.8, 1.2]",TRUE
+"T rho 0.6: N 1000 vs 5000","T",5000,0.6,"fiml","outcome:x1","root-N ratio of RMSE",1.03920049946793,"[0.8, 1.2]",TRUE
+"T rho 0.6: N 1000 vs 5000","T",5000,0.6,"fiml","outcome:x2","root-N ratio of RMSE",0.991035221074476,"[0.8, 1.2]",TRUE
+"T rho 0.6: N 1000 vs 5000","T",5000,0.6,"fiml","shift:(Intercept)","root-N ratio of RMSE",0.986856483457678,"[0.8, 1.2]",TRUE
+"T rho 0.6: N 1000 vs 5000","T",5000,0.6,"fiml","outcome:sigma","root-N ratio of RMSE",0.977451614411811,"[0.8, 1.2]",TRUE
+"T rho 0.6: N 1000 vs 5000","T",5000,0.6,"fiml","outcome:rho","root-N ratio of RMSE",0.975848881768037,"[0.8, 1.2]",TRUE
+"T rho 0.6: N 1000 vs 5000","T",5000,0.6,"fiml","ATT","root-N ratio of RMSE",0.986856483457678,"[0.8, 1.2]",TRUE
+"T rho 0.6: N 1000 vs 5000","T",5000,0.6,"fiml","ATE","root-N ratio of RMSE",0.986856483457678,"[0.8, 1.2]",TRUE

@@ -154,8 +154,9 @@ se_build_data <- function(spec, data, weights = NULL, cluster = NULL,
     logical = as.integer(s_raw),
     factor = match(as.character(s_raw), coding$values) - 1L,
     numeric = ifelse(s_raw %in% c(0, 1), as.integer(s_raw), NA_integer_))
-  ord <- se_match_regimes(names(spec$outcomes), coding,
-                          spec$regime_names_given, sel_name)
+  ord <- if (identical(spec$model, "tobit5")) 1:2
+         else se_match_regimes(names(spec$outcomes), coding,
+                               spec$regime_names_given, sel_name)
   labels <- names(spec$outcomes)[ord]
   fout <- lapply(spec$outcomes[ord], function(o) o$formula)
   names(fout) <- labels

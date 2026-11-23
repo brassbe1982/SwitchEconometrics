@@ -4,6 +4,9 @@
 ## Design matrices for new data, built with the fit's terms, factor levels
 ## and contrasts. Rows with missing values give NA predictions.
 se_newdata_design <- function(object, newdata) {
+  if (!is.null(object$terms$outcomes$outcome)) {
+    return(se_newdata_design_obs(object, newdata))
+  }
   if (!is.data.frame(newdata)) se_abort("'newdata' must be a data frame", "data")
   mk <- function(tt, xlev, contr, what) {
     mf <- tryCatch(stats::model.frame(tt, newdata, na.action = stats::na.pass,
@@ -65,6 +68,16 @@ se_newdata_regime <- function(object, newdata) {
 #' conditional standard deviation
 #' \eqn{\sigma_j\sqrt{1 - \rho_j^2\delta_j(w)}} (`"pearson"`).
 #'
+#' For a fit of [heckman()] there is one outcome equation: `"linear"` and
+#' `"unconditional"` give \eqn{x'\beta}, the mean of the latent outcome;
+#' `"conditional"` gives `EY_S1` \eqn{= x'\beta + \sigma\rho\,\phi(w)/\Phi(w)}
+#' (units whose outcome is observed) and `EY_S0`
+#' \eqn{= x'\beta - \sigma\rho\,\phi(w)/(1 - \Phi(w))} (units whose outcome
+#' is not observed); `"observed"` is `EY_S1` for observed units and `NA`
+#' otherwise. For a fit of [treatment()] the predictions are those of the
+#' switching regression it restricts, so `EY1_S1 - EY0_S1` equals
+#' \eqn{d'\delta}.
+#'
 #' @param object A `switch_fit`.
 #' @param newdata Optional data frame; by default the estimation sample (the
 #'   fit must keep its data).
@@ -91,6 +104,10 @@ switch_predict <- function(object, newdata = NULL,
     se_abort("'object' must be a switch_fit", "argument")
   }
   type <- match.arg(type)
+  if (identical(object$model, "heckman")) {
+    return(se_predict_heckman(object, newdata, type, se))
+  }
+  object <- se_esr_view(object)
   reg <- object$regimes
   if (is.null(newdata)) {
     sd <- object$data
@@ -200,8 +217,12 @@ residuals.switch_fit <- function(object, type = c("response", "pearson"), ...) {
   sd <- object$data
   if (is.null(sd)) se_abort("residuals need the data; refit with keep_data = TRUE",
                             "argument")
+  if (identical(object$model, "heckman")) {
+    return(se_residuals_heckman(object, type))
+  }
   r <- sd$y - switch_predict(object, type = "observed")
   if (type == "response") return(r)
+  object <- se_esr_view(object)
   map <- object$map
   th <- object$coefficients
   w <- drop(sd$Z %*% th[map$index$gamma])

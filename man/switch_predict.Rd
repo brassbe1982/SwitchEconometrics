@@ -64,6 +64,16 @@ and \code{residuals()} the differences between the outcome and its conditional
 mean in the observed regime (\code{"response"}), optionally divided by the
 conditional standard deviation
 \eqn{\sigma_j\sqrt{1 - \rho_j^2\delta_j(w)}} (\code{"pearson"}).
+
+For a fit of \code{\link[=heckman]{heckman()}} there is one outcome equation: \code{"linear"} and
+\code{"unconditional"} give \eqn{x'\beta}, the mean of the latent outcome;
+\code{"conditional"} gives \code{EY_S1} \eqn{= x'\beta + \sigma\rho\,\phi(w)/\Phi(w)}
+(units whose outcome is observed) and \code{EY_S0}
+\eqn{= x'\beta - \sigma\rho\,\phi(w)/(1 - \Phi(w))} (units whose outcome
+is not observed); \code{"observed"} is \code{EY_S1} for observed units and \code{NA}
+otherwise. For a fit of \code{\link[=treatment]{treatment()}} the predictions are those of the
+switching regression it restricts, so \code{EY1_S1 - EY0_S1} equals
+\eqn{d'\delta}.
 }
 \examples{
 fit <- switch_fit(

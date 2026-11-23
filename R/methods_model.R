@@ -22,9 +22,11 @@ NULL
 
 se_check_part <- function(x, part) {
   if (!is.character(part) || length(part) != 1L ||
-      !part %in% c("selection", x$regimes)) {
-    se_abort(sprintf("'part' must be \"selection\" or a regime label (%s)",
-                     paste(x$regimes, collapse = ", ")), "argument")
+      !part %in% se_equations(x)) {
+    se_abort(sprintf("'part' must be \"selection\" or %s (%s)",
+                     if (se_is_obs(x$model)) "an equation" else "a regime label",
+                     paste(setdiff(se_equations(x), "selection"),
+                           collapse = ", ")), "argument")
   }
   part
 }
@@ -46,12 +48,17 @@ model.matrix.switch_fit <- function(object, part = "selection", ...) {
   if (is.null(object$data)) {
     se_abort("the fit holds no data; refit with keep_data = TRUE", "argument")
   }
-  if (part == "selection") object$data$Z else object$data$X[[part]]
+  if (part == "selection") object$data$Z
+  else if (part == "shift") object$data$D
+  else if (se_is_obs(object$model)) object$data$X[[1L]]
+  else object$data$X[[part]]
 }
 
 #' @rdname switch_fit-model
 #' @export
 terms.switch_fit <- function(x, part = "selection", ...) {
   part <- se_check_part(x, part)
-  if (part == "selection") x$terms$selection else x$terms$outcomes[[part]]
+  if (part == "selection") x$terms$selection
+  else if (part == "shift") x$terms$shift
+  else x$terms$outcomes[[part]]
 }

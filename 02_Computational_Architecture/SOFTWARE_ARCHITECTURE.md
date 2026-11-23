@@ -269,3 +269,30 @@ tests; the nesting tests of G2 acceptance criterion 2 (region engine with
 $J = 2$ against the frozen G1 engine; Heckman identity; treatment
 restriction); recovery tests; frozen references for each new model from its
 first version.
+
+### 7.5 As built in WP2.1 (version 1.1.0)
+
+| File | Content |
+| --- | --- |
+| `R/spec_observation.R` | specification, data builders and parameter maps of `heckman` and `treatment`; the restriction matrix $A$; `se_esr_view()` |
+| `R/lik_heckman_gaussian.R` | Heckman likelihood (analytic score and Hessian); the treatment likelihood as `lik_esr_gaussian()` at $A\vartheta$ |
+| `R/est_two_step_obs.R` | the two-step estimators of both models (one regression with a generated regressor) and their starting values |
+| `R/post_observation.R` | new-data designs, Heckman predictions, identification checks, simulation and bootstrap pieces |
+| `R/wrappers.R` | `heckman()`, `treatment()`, `tobit5()` |
+| `tests/testthat/test-g1-frozen.R`, `helper-g1-frozen.R`, `fixtures/g1_frozen_1.0.0.rds` | the 1.0.0 results (section 7.1); generator `data-raw/g1_frozen.R` |
+| `tests/testthat/test-observation-models.R` | tests of the three models |
+
+Differences from the plan of section 7.2:
+- The restriction matrix lives in the treatment parameter map
+  (`map$A`, `map$esr`) built in `spec_observation.R`; `par_map.R` was not
+  changed.
+- **The treatment data object has the shape of a switching-regression data
+  object** ($X_0 = X$, $X_1 = (X,$ columns of $d$ not in $X)$). The G1
+  effects, predictions and scenarios are applied to `se_esr_view(fit)`,
+  whose coefficients are $A\hat\vartheta$ and whose covariance is
+  $A\hat VA'$. No effect formula was written twice.
+- `lik_esr_gaussian.R`, `est_two_step.R`, `eff_core.R` and `par_map.R`
+  are unchanged. The other G1 files received dispatch lines only
+  (`se_is_obs()`), listed in the progress note WP2.1.
+- `tobit5` is the G1 engine under a second model name; its equations are
+  matched to the regimes by position (`se_build_data()`).

@@ -13,7 +13,8 @@ switch_model(
   outcome_family = "gaussian",
   dependence = "gaussian",
   family = NULL,
-  identification = "auto"
+  identification = "auto",
+  shift = NULL
 )
 }
 \arguments{
@@ -31,7 +32,9 @@ names are the regime labels used in parameter names; unnamed lists get
 \item{regimes}{Number of regimes; must equal \code{length(outcomes)}. Only 2
 in Generation 1.}
 
-\item{model}{Model type: \code{"esr"}.}
+\item{model}{Model type: \code{"esr"}; from version 1.1.0 also \code{"heckman"},
+\code{"treatment"} and \code{"tobit5"} (see \code{\link[=heckman]{heckman()}}). For \code{"heckman"} and
+\code{"treatment"}, \code{outcomes} is one formula.}
 
 \item{selection_family}{Distribution of the selection disturbance:
 \code{"probit"}.}
@@ -48,6 +51,9 @@ in Generation 1.}
 formulas) or a character vector of variables declared as exclusion
 restrictions. Declared variables must appear in the selection equation
 and in no outcome equation.}
+
+\item{shift}{For \code{model = "treatment"}: one-sided formula of the effect
+modifiers (default \code{~ 1}).}
 }
 \value{
 An object of class \code{switch_spec}.

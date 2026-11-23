@@ -146,6 +146,9 @@ switch_bootstrap <- function(object, R = 999L,
   elapsed <- proc.time()[["elapsed"]] - t0
 
   ok <- vapply(res, function(x) isTRUE(x$ok), logical(1))
+  if (statistics == "effects" && identical(object$model, "heckman")) {
+    se_refuse_heckman("Treatment effects")
+  }
   est <- if (statistics == "coef") object$coefficients
          else se_boot_stat(object$coefficients, sd, object$map, eff)
   B <- if (any(ok)) do.call(rbind, lapply(res[ok], `[[`, "coef"))
@@ -194,6 +197,10 @@ se_boot_stat <- function(coef, sd, map, eff) {
     !is.na(v) & v
   }
   if (!is.null(g)) g <- factor(g, levels = levels(eff$by))
+  if (!is.null(map$A)) {                 # treatment: the restricted ESR
+    coef <- stats::setNames(se_treat_to_esr(map, coef), map$esr$elements$name)
+    map <- map$esr
+  }
   se_eff_values(coef, sd, map, groups = g, set = s)
 }
 
@@ -203,6 +210,7 @@ se_boot_one <- function(object, sd, type, cl_ids, seed, stat = "coef",
   assign(".Random.seed", seed, envir = globalenv())
   sdb <- tryCatch(
     if (type == "nonparametric") se_resample_data(sd, cl_ids)
+    else if (se_is_obs(sd$model)) se_simulate_data_obs(object, sd)
     else se_simulate_data(object, sd),
     error = function(e) e)
   if (inherits(sdb, "error")) {
@@ -243,11 +251,13 @@ se_subset_data <- function(sd, idx) {
   out$y <- sd$y[idx]
   out$Z <- sd$Z[idx, , drop = FALSE]
   out$X <- lapply(sd$X, function(X) X[idx, , drop = FALSE])
+  if (!is.null(sd$D)) out$D <- sd$D[idx, , drop = FALSE]
   out$weights <- if (!is.null(sd$weights)) sd$weights[idx]
   out$cluster <- NULL
   out$n_clusters <- NULL
   out$n <- length(idx)
   out$index <- sd$index[idx]
+  if (se_is_obs(sd$model)) return(se_check_sample_obs(out))
   se_check_sample(out)
 }
 
@@ -293,7 +303,7 @@ se_check_sample <- function(sd) {
 se_refit <- function(object, sd) {
   map <- object$map
   if (object$method == "two_step") {
-    ts <- est_two_step(sd, map, "model")
+    ts <- se_two_step(sd, map, "model")
     return(list(coef = ts$coefficients,
                 code = if (isTRUE(ts$probit$converged)) 0L else 1L))
   }
@@ -303,7 +313,7 @@ se_refit <- function(object, sd) {
                                      origin = "original")),
                   rep(NA_real_, map$p), ctl, "hessian")
   if (est$convergence$code != 0L) {
-    ts <- tryCatch(est_two_step(sd, map, "model"), error = function(e) NULL)
+    ts <- tryCatch(se_two_step(sd, map, "model"), error = function(e) NULL)
     if (!is.null(ts)) {
       est2 <- est_fiml(sd, map, list(list(theta = est_two_step_start(ts, map),
                                           origin = "two_step")),
