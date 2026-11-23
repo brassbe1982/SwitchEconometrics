@@ -65,10 +65,27 @@ repository; the summaries are in `04_Validation/results/`.
 
 ## 5. Release record
 
+Version 1.0.0 has the code of 0.9.1 (release candidate f813103). The
+owner's go-ahead for the CRAN submission ("Submit and push") is also the
+owner's sign-off of Generation 1.
+
+The table is written by `tools/CRAN_prepare.R record` from the results
+recorded by each release stage (times in UTC).
+
+<!-- release-record:start -->
+
 | Step | Date | Record |
 | --- | --- | --- |
-| Release candidate | 23 Nov 2026 | Commit f813103: version 1.0.0, code as in 0.9.1. `tools/CRAN_prepare.R full` passed every stage: tests 650 / 643 / 603 expectations, `verify_math.R` 26/26, `--as-cran` 1 NOTE (V8 absent locally), Monte Carlo smoke run identical to 0.8.1, benchmarks 1275/1378 as in BENCHMARK_G1.md |
-| Outside checks | 23 Nov 2026 | GitHub Actions run 5: all 9 jobs pass. win-builder R-release (4.6.2) and R-devel (r90926): 1 NOTE each ("New submission"; cited surnames). macOS builder: upload refused by the service (HTTP 502) |
-| CRAN submission | 23 Nov 2026, 03:49 UTC | `SwitchEconometrics_1.0.0.tar.gz` (186 954 bytes) with the owner's go-ahead ("Submit and push"), which is also the owner's sign-off of Generation 1. Confirmed by the maintainer; then in CRAN `incoming/pretest/` |
-| Tag and GitHub release | 23 Nov 2026, 03:55 UTC | Tag `v1.0.0` on 3c10ffe; release "SwitchEconometrics 1.0.0" (https://github.com/brassbe1982/SwitchEconometrics/releases/tag/v1.0.0), with the owner's go-ahead |
-| CRAN decision | pending | |
+| Release candidate | 2026-11-22 23:11 UTC | `R CMD check --as-cran`: 1 NOTE (checking HTML version of manual); tests 650 / 643 / 603 expectations (complete, CRAN mode, without Suggests), 0 failed; verify_math.R 26 checks, 26 passed, 0 failed; Monte Carlo smoke run identical to mc_g1_0.8.1_smoke within 1e-06; benchmarks 1378 checks: 1275 passed, 103 failed; 70 documented differences; tarball 186954 bytes; git 8f75c50 plus uncommitted changes (committed as f813103) |
+| GitHub Actions | 2026-11-23 | run 5 on f813103: all 9 jobs pass |
+| win-builder | 2026-11-23 03:28 UTC | R-release (R 4.6.2, results J8KpYTfC0RX8): 1 NOTE; New submission; possibly misspelled: Falco, Heckman, Lokshin, Sajaia, Veronesi, Yesuf; tests 27 s; slowest example 0.70 s; R-devel (r90926, results ApelQEJHS0Y8): 1 NOTE; New submission; possibly misspelled: Falco, Heckman, Lokshin, Sajaia, Veronesi, Yesuf; tests 28 s; slowest example 0.67 s; maintainer's go-ahead: "Yes, push and upload" |
+| macOS builder | 2026-11-23 03:28 UTC | upload refused by the service (HTTP 502 Bad Gateway, 2026-11-23); maintainer's go-ahead: "Yes, push and upload" |
+| CRAN submission | 2026-11-23 03:49 UTC | `SwitchEconometrics_1.0.0.tar.gz` (186954 bytes, MD5 30d9290c7e5dbf0bfa598794a5a4739c), git 3c10ffe; maintainer's go-ahead: "Submit and push"; the maintainer confirms by the link in CRAN's e-mail |
+| CRAN incoming | 2026-11-23 04:22 UTC | in `incoming/pretest/` |
+| Tag | 2026-11-23 03:54 UTC | `v1.0.0` on 3c10ffe; maintainer's go-ahead: "Push, tag, release" |
+| GitHub release | 2026-11-23 03:55 UTC | "SwitchEconometrics 1.0.0", https://github.com/brassbe1982/SwitchEconometrics/releases/tag/v1.0.0; maintainer's go-ahead: "Push, tag, release" |
+| CRAN decision | pending |  |
+
+Note: the results of the check, uploads, submission and tag of 1.0.0, and the maintainer's words approving them, were entered by hand on 2026-11-23 from release/cran_prepare_1.0.0.md, the session and git, because the stages that record them were added after the 1.0.0 release.
+
+<!-- release-record:end -->
