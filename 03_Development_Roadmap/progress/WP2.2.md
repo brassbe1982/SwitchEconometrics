@@ -141,3 +141,19 @@ run was not repeated.
    cores). The model stays marked experimental meanwhile.
 3. **Push.** `main` holds the local commits of WP2.0, WP2.1 and this work
    package; nothing was pushed, as instructed.
+
+## Addendum: version 1.2.1 (24 November 2026)
+
+The owner answered point 1 with "Yes, accept". Recorded as exception
+EX-G2-2 (GENERATION_2.md section 5, ACCEPTANCE_TESTS.md section 7,
+`results/MC_G2.md`); the help page of `multinomial_switch()` gained the
+caution on intervals; version 1.2.1 with a NEWS entry. No code other than
+documentation changed. Evidence for 1.2.1: 1060 test
+expectations, 0 failed, 1 skipped; `R CMD check --as-cran` 0 errors, 0
+warnings, 1 note (`V8` absent locally; tarball `runs/build/1.2.1`).
+1.2.1 is **not** installed in `runs/lib_g2`, which the running Monte
+Carlo uses (1.2.0, identical code apart from documentation). A wording
+error in `results/MC_G2.md` (eight-regime coverage attributed to the
+wrong parameter type) was corrected.
+
+Point 2 (normal-score model) stays open until its Monte Carlo run ends.

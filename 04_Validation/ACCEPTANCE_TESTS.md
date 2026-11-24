@@ -107,3 +107,17 @@ the help page of `heckman()` (version 1.1.1).
 | G2-J8-2 | **met**: a test fits 10 regimes with Lee's model | `test-multinomial.R` |
 | G2-J8-3 | cell L8: **met** (69 of 69 gated checks; convergence 100%); O8 and P8 open | `results/MC_G2.md` |
 | G2-NS-1 | **open.** Met: analytic score equals the numerical gradient (below 1e-6, package test); likelihood equals an independent numerical reference (1e-8, package test). Not yet evaluated: Monte Carlo design G (run in progress). The model is marked experimental and is limited to 2 or 3 regimes | `test-normal-scores.R`; `results/MC_G2.md` |
+
+### Exception EX-G2-2 (owner, 24 November 2026)
+
+G2-AC4, design L, $N = 2000$, FIML of Lee's model: coverage of `r1:sigma`
+0.918 (dependent cell) and 0.977 (independent cell) and of
+`selection[r2]:z1` 0.926 (dependent cell) against the limits
+[0.93, 0.97]. **Accepted by the owner as a documented exception** (words
+recorded in GENERATION_2.md section 5). Basis: the diagnosis of
+`results/MC_G2.md` (small-sample behaviour of $\sigma$ in the base regime
+that is gone at $N = 5000$; one isolated coefficient; no defect found).
+The thresholds are not changed; the three checks remain recorded as
+failed. With this exception G2-AC4 is met for Lee's model. The caution is
+in the help page of `multinomial_switch()` (version 1.2.1). G2-NS-1 stays
+open.

@@ -165,9 +165,13 @@ run was still in progress when this section was written (see below).
   the score and Hessian are analytic and tested against numerical
   derivatives, and the first step equals `mlogit` (BENCHMARK_G2.md).
 
-**Consequence.** The thresholds are not changed. The three checks are
-recorded as failed in `gate_checks_G2.csv`, and the diagnosis goes to the
-owner (MONTE_CARLO_DESIGN.md section 8.4).
+**Consequence.** The thresholds are not changed. Following
+MONTE_CARLO_DESIGN.md section 8.4 the diagnosis went to the owner, who on
+24 November 2026 accepted the three checks as a documented exception
+(EX-G2-2, ACCEPTANCE_TESTS.md section 7). They stay recorded as failed in
+`gate_checks_G2.csv`. From version 1.2.1 the help page of
+`multinomial_switch()` says that intervals for the $\sigma_j$ are not
+reliable in samples of about 2000 observations or fewer.
 
 ### Reported, not gated
 
@@ -197,13 +201,17 @@ owner (MONTE_CARLO_DESIGN.md section 8.4).
   The identification check I6 warned in 248 of 500 replications. This is
   the expected behaviour without usable exclusions; the cell documents
   it.
-- **Design L8:** at $N = 4000$ the bias of one $\rho_j$ is 0.054 and
-  coverage of the dependence parameters falls to 0.846; at $N = 8000$
-  (gated for bias and convergence, both passed) coverage of the
-  dependence parameters ranges from 0.866 to 0.970 and the standard-error
-  ratios from 0.930 to 1.120 ($R = 500$, not gated). With about 1000
-  observations per regime at $N = 8000$, intervals for the $\rho_j$ of an
-  8-regime model are not yet reliable.
+- **Design L8:** at $N = 4000$ the bias of one $\rho_j$ is 0.054;
+  coverage ranges from 0.916 to 0.950 for the $\rho_j$ and from 0.846 to
+  0.958 for the $\sigma_j$. At $N = 8000$ (gated for bias and
+  convergence, both passed) coverage ranges from 0.912 to 0.970 for the
+  $\rho_j$ and from 0.866 to 0.962 for the $\sigma_j$, and the
+  standard-error ratios from 0.930 to 1.120 ($R = 500$, not gated). With
+  about 1000 observations per regime at $N = 8000$, intervals for the
+  $\sigma_j$ and $\rho_j$ of an 8-regime model are not yet reliable.
+  (The version of this paragraph recorded with 1.2.0 attributed the two
+  lowest values to the dependence parameters; they belong to a
+  $\sigma_j$. Corrected in 1.2.1.)
 - **Computing time per fit:** FIML Lee 0.16 to 0.25 s (3 regimes), 0.85 s
   (8 regimes, $N = 8000$); two-step 0.1 to 0.4 s.
 

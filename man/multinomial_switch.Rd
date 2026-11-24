@@ -101,6 +101,16 @@ the boundary of the admissible region (squares summing to one), in which
 case the fit reports that it did not converge and flags the boundary.
 
 The multinomial logit assumes independence of irrelevant alternatives.
+
+\strong{Caution on intervals.} In simulations of a three-regime model with
+about 2000 observations the 95\% intervals of a \eqn{\sigma_j} covered
+the true value between 92\% and 98\% of the time, depending on the
+strength of the dependence; with 5000 observations the coverage was
+between 94\% and 96\%. With eight regimes and about 1000 observations per
+regime the intervals covered between 87\% and 96\% for the
+\eqn{\sigma_j} and between 91\% and 97\% for the \eqn{\rho_j}.
+Intervals of \eqn{\sigma_j} and \eqn{\rho_j} from small regimes should
+be read with that in mind.
 }
 \examples{
 set.seed(3)

@@ -1,9 +1,9 @@
 # Generation 2: Generalized selection (v1.1.0 → v1.5.0)
 
-Status: **WP2.2 delivered as version 1.2.0 (24 November 2026)** with two
-open points: three failed coverage checks of design L await the owner's
-decision, and the Monte Carlo of the normal-score model (design G) was
-still running. Progress note: [progress/WP2.2.md](progress/WP2.2.md).
+Status: **WP2.2 delivered as versions 1.2.0 and 1.2.1 (24 November
+2026).** Three failed coverage checks of design L are the owner's
+documented exception EX-G2-2 (section 5). One open point: the Monte
+Carlo of the normal-score model (design G) was still running. Progress note: [progress/WP2.2.md](progress/WP2.2.md).
 WP2.1 done (versions 1.1.0 and 1.1.1, 24 November 2026), progress
 note: [progress/WP2.1.md](progress/WP2.1.md). The G2 econometric gate was
 closed by the owner on 23 November 2026. Two of the 428 checks of WP2.1
@@ -321,6 +321,30 @@ Done in version 1.1.1:
 **Still with the owner:** compiled code for the multinomial probit with
 many regimes, only if profiling in WP2.3 shows that pure R is impractical;
 the evidence is brought to the owner then.
+
+### Owner's decision after WP2.2 (24 November 2026)
+
+The WP2.2 report put this question to the owner:
+
+> Do you accept the three design-L coverage failures as a documented
+> exception (with a caution in the help page, as for `heckman()`), or do
+> you want more work on them first?
+
+The owner's answer, verbatim: "Yes, accept".
+
+Done in version 1.2.1:
+- **Exception EX-G2-2.** The three failed coverage checks of design L
+  (FIML Lee, $N = 2000$: `r1:sigma` 0.918 in the dependent cell and 0.977
+  in the independent cell, `selection[r2]:z1` 0.926 in the dependent
+  cell; limits [0.93, 0.97]) are accepted as a documented exception. The
+  thresholds are unchanged and the checks stay recorded as failed in
+  `gate_checks_G2.csv`. The help page of `multinomial_switch()` carries
+  the caution. The exception covers these three checks of the 1.2.0 run
+  only; the rerun with the release candidate in WP2.5 is evaluated
+  afresh.
+
+**Still open:** the Monte Carlo of the normal-score model (design G),
+running when the decision was given.
 
 ## 6. Positioning: what G2 contributes, and what may be claimed
 

@@ -1,3 +1,11 @@
+# SwitchEconometrics 1.2.1
+
+* The help page of `multinomial_switch()` gains a caution: confidence
+  intervals of the outcome standard deviations and correlations are not
+  reliable when regimes are small (in simulations, coverage of a 95%
+  interval between 92% and 98% for sigma with about 2000 observations and
+  three regimes). No estimate changes.
+
 # SwitchEconometrics 1.2.0
 
 Second step of Generation 2: switching regression with multinomial-logit
