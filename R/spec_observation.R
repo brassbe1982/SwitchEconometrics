@@ -496,6 +496,7 @@ se_esr_view <- function(object) {
 
 ## Equations of a fit in printing order, and their titles.
 se_equations <- function(object) {
+  if (se_is_multi(object$model)) return(se_equations_multi(object))
   if (se_is_obs(object$model)) {
     c("selection", "outcome", if (object$model == "treatment") "shift")
   } else c("selection", object$regimes)
@@ -503,6 +504,10 @@ se_equations <- function(object) {
 
 se_equation_title <- function(object, eq) {
   if (eq == "selection") return("Selection equation (probit)")
+  if (se_is_multi(object$model) && startsWith(eq, "selection[")) {
+    return(sprintf("Selection, alternative '%s' against '%s' (multinomial logit)",
+                   sub("^selection\\[(.*)\\]$", "\\1", eq), object$base))
+  }
   if (se_is_obs(object$model)) {
     if (eq == "shift") {
       return(sprintf("Shift when the regime is '%s' (treatment effect d'delta)",
@@ -520,5 +525,6 @@ se_model_title <- function(model) {
     heckman = "Sample selection model (Heckman, Tobit-2)",
     treatment = "Endogenous treatment model with a shift",
     tobit5 = "Tobit-5 model (endogenous switching regression)",
+    multinomial_esr = "Multinomial endogenous switching regression",
     "Endogenous switching regression")
 }

@@ -92,3 +92,18 @@ GENERATION_2.md section 5). Basis: the diagnosis of `results/MC_G2.md`
 threshold is not changed; the two checks remain recorded as failed. With
 this exception G2-AC4 is met for the models of WP2.1. The caution is in
 the help page of `heckman()` (version 1.1.1).
+
+### After WP2.2 (version 1.2.0, 24 November 2026)
+
+| Criterion | Status for the models of WP2.2 | Evidence |
+| --- | --- | --- |
+| G2-AC1 (recovery) | **met** for Lee's model (designs L and L8: bias, root-$N$ and convergence checks all pass) and for the Dubin-McFadden and BFG variant 1 corrections (design D: 33 of 33). **Open** for the normal-score model (design G running) | `results/MC_G2.md` |
+| G2-AC2 (nesting) | (e) frozen 1.0.0 results at 1e-8 with 1.2.0; G1 Monte Carlo smoke identical to `runs/mc_g1_0.8.1_smoke` (1e-6). The normal-score likelihood with zero correlations equals the multinomial-logit probability times the normal density (1e-10) | package tests |
+| G2-AC3 (benchmarks) | **met** for what can be benchmarked: first step against `mlogit` and `nnet`; `"bfg1"` against `msel` (differences D-MS-1, D-MS-2 documented). FIML Lee, `"dmf"`, `"bfg2"` and the normal-score model have no external benchmark | `results/BENCHMARK_G2.md` |
+| G2-AC4 (coverage) | **not fully met**: design L, 113 of 116 FIML coverage checks and all 116 standard-error checks pass, 24 of 24 two-step coverage checks pass; three coverage checks fail at $N = 2000$ (0.918, 0.977, 0.926 against [0.93, 0.97]). Diagnosis: small-sample effect for $\sigma$ of the base regime, one isolated coefficient; no defect. **Awaits the owner's decision** | `results/MC_G2.md` |
+| G2-AC5 (effects) | pairwise effects equal their definitions and simulated potential outcomes in the package tests; Monte Carlo bias of ATE and ATT for all pairs within 5% (design L, 24 of 24) | package tests; `results/MC_G2.md` |
+| G2-AC6 (three systems) | open: `R CMD check --as-cran` on Windows only (0 errors, 0 warnings, 1 note: `V8` absent). Nothing was pushed | `runs/build/1.2.0` |
+| G2-J8-1 | **met for the multinomial logit with Lee**: fit, `summary`, pairwise effects and predictions run with 8 regimes (package test); open for the other families (WP2.3, WP2.4) | `test-multinomial.R` |
+| G2-J8-2 | **met**: a test fits 10 regimes with Lee's model | `test-multinomial.R` |
+| G2-J8-3 | cell L8: **met** (69 of 69 gated checks; convergence 100%); O8 and P8 open | `results/MC_G2.md` |
+| G2-NS-1 | **open.** Met: analytic score equals the numerical gradient (below 1e-6, package test); likelihood equals an independent numerical reference (1e-8, package test). Not yet evaluated: Monte Carlo design G (run in progress). The model is marked experimental and is limited to 2 or 3 regimes | `test-normal-scores.R`; `results/MC_G2.md` |

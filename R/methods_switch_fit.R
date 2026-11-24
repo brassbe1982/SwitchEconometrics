@@ -105,7 +105,7 @@ print.switch_fit <- function(x, digits = max(3L, getOption("digits") - 3L),
   if (x$method == "fiml") {
     cat(sprintf("\nConvergence: %s (max |gradient| %.2g)\n", conv$message,
                 conv$gradient_max))
-  } else {
+  } else if (!identical(x$map$kind, "moments")) {
     cat("\nsigma and rho are derived two-step quantities (no closed-form standard errors).\n")
   }
   invisible(x)

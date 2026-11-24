@@ -5,6 +5,9 @@
 ## stored in the data object.
 
 se_lik_engine <- function(sd) {
+  if (se_is_multi(sd$model) && identical(sd$structure, "normal_scores")) {
+    return(list(lik = lik_ns_mnl, components = lik_ns_mnl_components))
+  }
   key <- paste(sd$model, sd$selection_family, sd$outcome_family,
                sd$dependence, sep = "/")
   switch(key,
@@ -14,6 +17,8 @@ se_lik_engine <- function(sd) {
     "heckman/probit/gaussian/gaussian" = list(
       lik = lik_heckman_gaussian,
       components = lik_heckman_gaussian_components),
+    "multinomial_esr/multinomial_logit/gaussian/gaussian" = list(
+      lik = lik_lee_mnl, components = lik_lee_mnl_components),
     "treatment/probit/gaussian/gaussian" = list(
       lik = lik_treatment_gaussian,
       components = lik_treatment_gaussian_components),

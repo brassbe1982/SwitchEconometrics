@@ -202,3 +202,58 @@ Hessian type, base alternative, component order, nesting structure.
   simulation code: it treats values within a relative tolerance as ties
   and breaks them at random (found while writing check X10). The
   simulation scripts use an exact row-wise argmax.
+
+### 7.8 As built in WP2.2 (version 1.2.0)
+
+- **Lee's model:** closed form, analytic score and Hessian, cost $O(NJ)$;
+  fitted with 3, 8 and 10 regimes in the tests.
+- **BFG variant 2:** the function $m(P)$ is tabulated once per session on a
+  grid of $\log P$ (denser near $P = 1$) and interpolated by a cubic
+  spline; error of the interpolant about $10^{-10}$ against direct
+  numerical integration.
+- **Bivariate normal distribution function** (`se_pbvnorm`): Plackett's
+  identity with Gauss-Legendre nodes (12 for $\lvert r\rvert \le 0.5$, 20
+  per subinterval above, the range split near the end point for
+  $\lvert r\rvert > 0.9$); agrees with `mvtnorm` (TVPACK) to $10^{-10}$
+  for correlations from $-0.995$ to $0.99$ (package test).
+- **Normal-score model, integration rule. The plan of section 7.7 (a
+  Gauss-Hermite rule) was not kept.** Measured on 400 simulated
+  observations of one regime against a rule with 3200 nodes (largest error
+  of $\log I$ over the observations; composite rules on $(-7, 7)$, which
+  have the panel width of the rule finally used within 2%):
+
+  | Correlations of the regime | Gauss-Hermite 24 | Gauss-Hermite 96 | composite Gauss-Legendre, 12 panels of 8 | 24 panels | 48 panels | 96 panels |
+  | --- | --- | --- | --- | --- | --- | --- |
+  | $\sum r^2 = 0.30$ | 9e-4 | 3e-10 | 2e-9 | 4e-14 | | |
+  | $\sum r^2 = 0.80$ | 2e-3 | 2e-8 | 5e-9 | 2e-13 | | |
+  | $\sum r^2 = 0.96$ | 3e-2 | 3e-4 | 5e-6 | 7e-10 | | |
+  | $\sum r^2 = 0.99$ | 6e-2 | 5e-3 | 4e-4 | 4e-7 | 2e-11 | |
+  | $\sum r^2 = 0.998$ | 7e-2 | 9e-3 | 2e-3 | 2e-4 | 6e-7 | 6e-11 |
+  | one other correlation zero, conditional sd 0.25 ($\sum r^2 = 0.95$) | 0.19 | 1e-2 | 3e-4 | 2e-7 | 4e-12 | |
+  | the same, conditional sd 0.08 ($\sum r^2 = 0.995$) | 0.36 | 0.16 | 6e-2 | 7e-3 | 3e-5 | 1e-9 |
+
+  Near $\sum_k r_{jk}^2 = 1$ the conditional distribution of the scores
+  given the outcome disturbance becomes singular and the integrand has
+  kinks and steep transitions, for which a Gauss-Hermite rule converges
+  slowly. With 24 Gauss-Hermite nodes the first implementation produced
+  **spurious maxima at the boundary**: on one simulated sample
+  ($N = 2000$) the optimiser reported a log-likelihood of $-4618.98$ at a
+  point whose log-likelihood, computed with 384 and more nodes, is about
+  $-4630$, with a gradient far from zero.
+  The engine therefore uses a composite Gauss-Legendre rule on $(-8, 8)$
+  with 8 nodes per panel: 14 panels when
+  $s_0 = \sqrt{1 - \sum_k r_{jk}^2} \ge 0.35$, 28 for $s_0 \ge 0.18$, 56
+  for $s_0 \ge 0.09$ and 112 below. The package test requires an error of
+  $\log I$ below $10^{-7}$ for $\sum r^2 \le 0.8$ and below $2 \times
+  10^{-5}$ up to $\sum r^2 = 0.995$. The rule changes at three values of
+  $s_0$; the log-likelihood has jumps of at most that size there.
+- **Normal-score model, derivatives.** The score is analytic
+  (differentiation under the integral sign; it equals the numerical
+  gradient to $10^{-7}$ in the tests). The Hessian is the symmetrised
+  forward difference of the score. Optimisation: BFGS on the score, then
+  at most three Newton steps with one differenced Hessian
+  (`se_optimize_costly()`); Newton-Raphson iterations are not used because
+  each Hessian costs as many score evaluations as there are parameters.
+- **Only $J \le 3$** for the normal-score model: the inner probability is
+  univariate or bivariate. $J \ge 4$ needs the trivariate routine or GHK
+  of WP2.3 and is refused with a classed error.

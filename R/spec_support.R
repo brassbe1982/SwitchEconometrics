@@ -7,7 +7,9 @@ se_generations <- c("1" = "0.1.0-1.0.0", "2" = "1.1.0-1.5.0",
 
 ## Values of a later generation that are already available (Generation 2
 ## is delivered in steps: 1.1.0 heckman, treatment, tobit5).
-se_available_later <- list(model = c("heckman", "treatment", "tobit5"))
+se_available_later <- list(model = c("heckman", "treatment", "tobit5",
+                                     "multinomial_esr"),
+                           selection_family = "multinomial_logit")
 
 se_support_table <- function() {
   rows <- list(

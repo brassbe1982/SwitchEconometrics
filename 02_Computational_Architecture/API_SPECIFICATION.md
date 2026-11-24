@@ -497,3 +497,49 @@ removing an alternative from the choice set; non-Gaussian outcomes
 - **Owner's decision (23 November 2026):** `dependence = "lee"` stays the
   default of the multinomial-logit FIML model; `"normal_scores"` is an
   option (section 5.8).
+
+### 5.10 As built in version 1.2.0 (multinomial-logit selection)
+
+- `multinomial_switch(selection, outcomes, data, method = "fiml",
+  base = NULL, correction = "lee", ...)`; the same model through
+  `switch_fit(model = "multinomial_esr")`. `switch_fit()` and
+  `switch_model()` have the new arguments `base`, `correction` and
+  `dependence_structure`.
+- **Deviation from section 5.8:** the argument that chooses between Lee's
+  model and the normal-score model is `dependence_structure = "lee"`
+  (default) or `"normal_scores"`, not `dependence`. `dependence` already
+  names the distribution family of the disturbances (`"gaussian"`) in
+  `switch_model()`, and the two models differ in structure, not in
+  family. The options `dependence_terms = "own"` and `"own_common"` of
+  section 5.8 are **not implemented**: the normal-score model always has
+  $J$ correlations per regime.
+- **Deviation:** the correlations of the normal-score model are named
+  `<regime>:rho[<alternative>]`, not `rho_<j>.<k>`, to match the
+  correction coefficients `<regime>:theta[<alternative>]` of the
+  Dubin-McFadden and BFG two-step fits. Selection coefficients:
+  `selection[<alternative>]:<term>`.
+- **Deviation:** there is no `quadrature_nodes` control argument. The
+  integration rule of the normal-score model is chosen by the engine
+  (NUMERICAL_METHODS.md section 7.8).
+- The regime variable is a factor (or is turned into one); `outcomes` is a
+  list named with its levels (an unnamed list is matched by position, with
+  a message). `base` defaults to the first level.
+- `switch_effects(fit, effects = , pairs = "all", given = NULL)`: `pairs`
+  is `"all"` or a list of pairs of regime labels; `given` names a third
+  regime for the effect of one regime against another among the units of
+  that regime. The result has the class `switch_effects_multi` with the
+  elements `table` and `means` (the $J \times J$ table).
+- `switch_predict()` types: `"probability"`, `"selection_index"`,
+  `"linear"`, `"conditional"` (columns `EY[j]_S[k]`), `"observed"`,
+  `"unconditional"`.
+- `switch_control(bootstrap_R = 999L)`: replicates of the bootstrap over
+  both steps, the default standard errors of the two-step fits with
+  `correction = "dmf"`, `"bfg1"` or `"bfg2"`.
+- Refused with `switch_error_unsupported` in this version: bootstrap
+  standard errors of the effects of a multinomial fit;
+  `switch_counterfactual()` for a multinomial fit; selection formulas that
+  differ between alternatives; the normal-score model with more than three
+  regimes; Pearson residuals outside Lee's model.
+- A model with more than two regimes that is not `"multinomial_esr"` is a
+  `switch_error_argument`; `"multinomial_esr"` with a two-level regime
+  variable is allowed (binary logit selection).

@@ -65,6 +65,9 @@ se_par_natural <- function(map, theta_w) {
     i <- which(map$elements$transform == t)
     out[i] <- se_transform(t)$to_natural(out[i])
   }
+  ## groups of parameters with a joint transformation (the correlations of
+  ## a regime in the normal-score model: unit ball)
+  for (g in map$groups) out[g] <- se_ball_natural(unname(theta_w[g]))
   stats::setNames(out, map$elements$name)
 }
 
@@ -93,6 +96,7 @@ se_par_working <- function(map, theta_n) {
     i <- which(map$elements$transform == t)
     out[i] <- se_transform(t)$to_working(out[i])
   }
+  for (g in map$groups) out[g] <- se_ball_working(unname(as.numeric(theta_n)[g]))
   stats::setNames(out, map$elements$working_name)
 }
 
@@ -110,7 +114,13 @@ se_par_jacobian <- function(map, theta_w) {
 ## Delta method: covariance of natural parameters from the working covariance.
 se_par_vcov_natural <- function(map, theta_w, V_w) {
   j <- se_par_jacobian(map, theta_w)
-  V <- j * V_w * rep(j, each = length(j))
+  if (length(map$groups)) {
+    Jm <- diag(j, length(j))
+    for (g in map$groups) Jm[g, g] <- se_ball_jacobian(unname(theta_w[g]))
+    V <- Jm %*% V_w %*% t(Jm)
+  } else {
+    V <- j * V_w * rep(j, each = length(j))
+  }
   dimnames(V) <- list(map$elements$name, map$elements$name)
   V
 }

@@ -277,3 +277,18 @@ Script `04_Validation/scripts/benchmark_g2.R`; results in
 Convention established for the Heckman two-step: $\hat\sigma$ and
 $\hat\rho$ of `sampleSelection`'s Tobit-2 two-step equal ours to
 $10^{-10}$ (unlike its Tobit-5 two-step, D-SS-1).
+
+### 6.5 Execution record and documented differences (WP2.2, 24 November 2026)
+
+Version 1.2.0 in `runs/lib_g2`; `switchSelection` 2.1.0, `mlogit` 2.0.0,
+`nnet` 7.3-21 from the R library of this machine. Comparisons decided
+before the run: multinomial logit first step against `mlogit` and `nnet`;
+two-step `"bfg1"` against `msel(type3 = "logit", estimator = "2step")`,
+whose convention was read from its help page and confirmed on one
+simulated data set that is not among the benchmark data sets.
+
+| Id | Difference | Cause (established, not assumed) |
+| --- | --- | --- |
+| D-MS-1 | Stacked-sandwich standard errors of the outcome and correction coefficients differ from msel's by up to 1.3% | msel uses the Jacobian of the sample moments; ours leaves out the mean-zero residual term of the cross block. With the sample Jacobian (numerical derivative of the stacked moments) in the same formula the standard errors agree to 5.4e-6 (toleranced row) |
+| D-MS-2 | Outcome and correction coefficients differ from msel's by 5.2e-6 ($N = 2000$) and 1.4e-6 ($N = 10\,000$), outside the tolerance 1e-6 | msel's multinomial logit is not converged to that precision (largest score element 9e-4 and 1.8e-3 at its estimates, below 3e-13 at ours). Our second step at msel's first-step estimates agrees to 2e-15 (toleranced row) |
+| none available | FIML of Lee's model; `"dmf"`; `"bfg2"`; the normal-score model | no software available here estimates them (section 6.3) |

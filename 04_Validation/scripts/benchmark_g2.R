@@ -15,6 +15,13 @@
 ##   treatment()  against sampleSelection::treatReg(), ML and two-step, and
 ##                against endogenous::hybrid() (model-based standard errors)
 ##   tobit5()     against sampleSelection::selection() (Tobit-5), ML
+## Delivered in WP2.2 (decided before the run):
+##   multinomial logit first step against mlogit::mlogit() and
+##                nnet::multinom() (3 and 8 regimes)
+##   multinomial_switch(method = "two_step", correction = "bfg1") against
+##                switchSelection::msel(type3 = "logit", estimator = "2step"),
+##                whose selectivity terms are those of "bfg1" (its help
+##                page; convention confirmed on simulated data)
 ## Tolerances: BENCHMARK_PROTOCOL.md section 3.
 
 args <- commandArgs(trailingOnly = TRUE)
@@ -262,6 +269,183 @@ for (id in c("Th_N2000", "Th_N10000")) {
       tol$est, v <= tol$est)
 }
 
+## ---------------------------------------- multinomial logit selection
+## Data: design L of MONTE_CARLO_DESIGN.md s.8.2 (3 regimes) and the
+## selection part of design L8 (8 regimes), generated here with base R.
+gen_multi <- function(J, N, seed) {
+  set.seed(seed)
+  x1 <- rnorm(N); x2 <- rnorm(N); z1 <- rnorm(N); z2 <- rnorm(N)
+  if (J == 3L) {
+    G <- rbind(c(0.2, 0.3, 0.8, -0.2), c(-0.2, -0.3, 0.2, 0.8))
+    B <- rbind(c(1.0, 0.5, 0.2), c(1.5, 0.8, 0.4), c(2.0, 0.3, -0.3))
+    sig <- c(1, 1, 1.2); rho <- c(0.5, 0.4, -0.4)
+  } else {
+    G <- rbind(c(0.2, 0.3, 0.8, -0.2), c(-0.2, -0.3, 0.2, 0.8),
+               c(0.1, 0.2, -0.6, 0.4), c(0, -0.2, 0.5, 0.5),
+               c(-0.1, 0.4, -0.4, -0.6), c(0.1, -0.1, 0.9, 0.3),
+               c(-0.1, 0.1, -0.3, 0.9))
+    B <- cbind(1 + 0.25 * (0:7), 0.5, 0.2)
+    sig <- rep(1, 8); rho <- c(0.5, 0.4, -0.4, 0.3, -0.3, 0.5, 0.2, -0.5)
+  }
+  V <- cbind(0, cbind(1, x1, z1, z2) %*% t(G))
+  gum <- -log(-log(matrix(runif(N * J), N, J)))
+  Ut <- V + gum
+  S <- integer(N); best <- rep(-Inf, N)
+  for (k in seq_len(J)) { b <- Ut[, k] > best; S[b] <- k; best[b] <- Ut[b, k] }
+  xb <- cbind(1, x1, x2) %*% t(B)
+  y <- numeric(N)
+  for (j in seq_len(J)) {
+    es <- apply(Ut[, -j, drop = FALSE], 1L, max) - gum[, j]
+    lF <- es - log(exp(es) + rowSums(exp(V[, -j, drop = FALSE])))
+    yj <- xb[, j] + sig[j] * (rho[j] * (-qnorm(lF, log.p = TRUE)) +
+                                sqrt(1 - rho[j]^2) * rnorm(N))
+    y[S == j] <- yj[S == j]
+  }
+  labs <- paste0("r", seq_len(J))
+  data.frame(regime = factor(labs[S], levels = labs), y, x1, x2, z1, z2)
+}
+msets <- list(L_N2000 = gen_multi(3L, 2000L, 20261201L),
+              L_N10000 = gen_multi(3L, 10000L, 20261202L),
+              L8_N8000 = gen_multi(8L, 8000L, 20261203L))
+for (id in names(msets)) saveRDS(msets[[id]], file.path(ddir, paste0(id, ".rds")))
+have <- function(p) requireNamespace(p, quietly = TRUE)
+
+for (id in names(msets)) {
+  d <- msets[[id]]
+  labs <- levels(d$regime); J <- length(labs)
+  fo <- stats::setNames(rep(list(y ~ x1 + x2), J), labs)
+  f <- multinomial_switch(regime ~ x1 + z1 + z2, fo, data = d,
+                          method = "two_step", correction = "bfg1",
+                          vcov = "sandwich")
+  ts <- f$two_step
+  g <- ts$probit$gamma
+  names(g) <- names(ts$psi)[ts$index_psi$gamma]
+  seg <- sqrt(diag(ts$Vg))
+  ## ---- first step against mlogit
+  if (have("mlogit") && have("dfidx")) {
+    dd <- dfidx::dfidx(d[, c("regime", "x1", "z1", "z2")], choice = "regime",
+                       shape = "wide")
+    ml <- mlogit::mlogit(regime ~ 0 | x1 + z1 + z2, data = dd,
+                         reflevel = labs[1])
+    cm <- stats::coef(ml)
+    nm <- unlist(lapply(labs[-1], function(a) sprintf(
+      "%s:%s", c("(Intercept)", "x1", "z1", "z2"), a)))
+    stopifnot(all(nm %in% names(cm)))
+    dl <- ts$probit$loglik - as.numeric(stats::logLik(ml))
+    rec(id, "multinomial logit (first step)", "mlogit",
+        "log-likelihood difference", abs(dl), tol$ll,
+        abs(dl) <= tol$ll && dl >= -tol$ll_worse)
+    v <- dest(unname(g), unname(cm[nm]))
+    rec(id, "multinomial logit (first step)", "mlogit", "estimates", v,
+        tol$est, v <= tol$est)
+    sm <- sqrt(diag(stats::vcov(ml)))[nm]
+    v <- max(abs(seg / sm - 1))
+    rec(id, "multinomial logit (first step)", "mlogit",
+        "standard errors (relative)", v, tol$se, v <= tol$se)
+  } else {
+    rec(id, "multinomial logit (first step)", "mlogit", "all", NA, NA, NA,
+        "mlogit or dfidx not installed")
+  }
+  if (have("nnet")) {
+    nn <- nnet::multinom(regime ~ x1 + z1 + z2, data = d, trace = FALSE,
+                         reltol = 1e-14, maxit = 2000)
+    dl <- ts$probit$loglik - as.numeric(stats::logLik(nn))
+    rec(id, "multinomial logit (first step)", "nnet::multinom",
+        "log-likelihood difference", abs(dl), tol$ll,
+        abs(dl) <= tol$ll && dl >= -tol$ll_worse)
+  }
+  if (J != 3L) next
+  ## ---- "bfg1" two-step against msel
+  if (!have("switchSelection")) {
+    rec(id, "two-step \"bfg1\"", "switchSelection::msel 2step", "all", NA, NA,
+        NA, "switchSelection not installed")
+    next
+  }
+  d$zz <- as.integer(d$regime) - 1L
+  m <- switchSelection::msel(
+    formula3 = zz ~ x1 + z1 + z2, formula2 = y ~ x1 + x2, data = d,
+    groups3 = 0:2, groups2 = matrix(0:2, ncol = 1), estimator = "2step",
+    type3 = "logit")
+  bench <- "switchSelection::msel 2step (logit)"
+  ## msel: outcome coefficients by regime (3 x 6: beta, then the three
+  ## selectivity terms); selection coefficients relative to the LAST
+  ## alternative
+  i2 <- m$ind$coef2[[1]]
+  est_m <- as.vector(t(matrix(m$par[i2], 3)))
+  se_m <- as.vector(t(matrix(m$se[i2], 3)))
+  io <- unlist(ts$index_psi[labs])
+  Gm <- matrix(g, 2, 4, byrow = TRUE)
+  g_m <- matrix(m$par[m$ind$coef3], 2)
+  ## the second step recomputed at msel's first-step estimates, and the
+  ## multinomial-logit score at both first-step estimates
+  sdd <- f$data
+  second <- function(G) {
+    P <- exp(ns$se_mnl_logP(sdd$Z, G, sdd$base))
+    sc <- unlist(lapply(1:2, function(k) colSums(((sdd$S == k + 1) -
+                                                    P[, k + 1]) * sdd$Z)))
+    b <- unlist(lapply(1:3, function(j) {
+      sel <- sdd$S == j
+      W <- cbind(sdd$X[[j]][sel, ], ns$se_correction_terms(
+        P[sel, , drop = FALSE], j, "bfg1")$C)
+      stats::lm.fit(W, sdd$y[sel])$coefficients
+    }))
+    list(b = unname(b), score = max(abs(sc)))
+  }
+  at_ours <- second(Gm)
+  at_msel <- second(rbind(g_m[2, ] - g_m[1, ], -g_m[1, ]))
+  v <- dest(unname(ts$psi[io]), est_m)
+  v2 <- dest(at_msel$b, est_m)
+  if (v <= tol$ts) {
+    rec(id, "two-step \"bfg1\"", bench,
+        "outcome and correction coefficients", v, tol$ts, TRUE)
+  } else {
+    rec(id, "two-step \"bfg1\"", bench,
+        "outcome and correction coefficients", v, tol$ts, FALSE,
+        sprintf(paste0("D-MS-2: outside the tolerance. Largest multinomial-",
+                       "logit score at msel's first-step estimates %.1e, at ",
+                       "ours %.1e"), at_msel$score, at_ours$score),
+        status = if (v2 <= tol$ts) "documented" else "outside")
+  }
+  rec(id, "two-step \"bfg1\"", bench,
+      "outcome and correction coefficients, our second step at msel's first-step estimates",
+      v2, tol$ts, v2 <= tol$ts)
+  v <- dest(c(-Gm[2, ], Gm[1, ] - Gm[2, ]), c(g_m[1, ], g_m[2, ]))
+  rec(id, "two-step \"bfg1\"", bench,
+      "selection coefficients (after change of base)", v, tol$est, v <= tol$est)
+  se_o <- sqrt(diag(ts$vcov_sandwich))[io]
+  v <- max(abs(se_o / se_m - 1))
+  rec(id, "two-step \"bfg1\"", bench,
+      "standard errors, our stacked sandwich (relative)", v, NA, NA,
+      paste0("D-MS-1: msel differentiates the sample moments; our sandwich ",
+             "uses the expected derivative of the second-step moments with ",
+             "respect to the selection coefficients"),
+      status = "documented")
+  ## the same sandwich with the Jacobian of the sample moments
+  psi <- ts$psi; idx <- ts$index_psi; sd <- f$data
+  mom_i <- function(pv) {
+    lP <- ns$se_mnl_logP(sd$Z, matrix(pv[idx$gamma], 2, 4, byrow = TRUE),
+                         sd$base)
+    P <- exp(lP)
+    M <- matrix(0, sd$n, length(pv))
+    for (k in 1:2) M[, (k - 1) * 4 + 1:4] <- ((sd$S == k + 1) - P[, k + 1]) * sd$Z
+    for (j in 1:3) {
+      sel <- sd$S == j
+      W <- cbind(sd$X[[j]][sel, ], ns$se_correction_terms(
+        P[sel, , drop = FALSE], j, "bfg1")$C)
+      M[sel, idx[[labs[j]]]] <- drop(sd$y[sel] - W %*% pv[idx[[labs[j]]]]) * W
+    }
+    M
+  }
+  M0 <- mom_i(psi)
+  A <- numDeriv::jacobian(function(pv) colSums(mom_i(pv)), psi)
+  Ai <- solve(A)
+  se_s <- sqrt(diag(Ai %*% crossprod(M0) %*% t(Ai)))[io]
+  v <- max(abs(se_s / se_m - 1))
+  rec(id, "two-step \"bfg1\"", bench,
+      "standard errors, sandwich with the sample Jacobian (relative)", v,
+      tol$ts_se, v <= tol$ts_se)
+}
+
 ## ---------------------------------------------------------------- output
 B <- do.call(rbind, rows)
 utils::write.csv(B, file.path(odir, "benchmark_g2.csv"), row.names = FALSE)
@@ -273,6 +457,10 @@ md <- c("# Benchmarks, Generation 2 (generated)", "",
         sprintf("- SwitchEconometrics %s; sampleSelection %s; endogenous %s; %s",
                 ver("SwitchEconometrics"), ver("sampleSelection"),
                 ver("endogenous"), R.version.string),
+        sprintf("- %s", paste(vapply(c("switchSelection", "mlogit", "nnet"),
+                                     function(p) paste(p, if (have(p)) ver(p)
+                                                       else "not installed"),
+                                     ""), collapse = "; ")),
         sprintf("- date: %s", format(Sys.time())), "",
         sprintf(paste0("Toleranced comparisons: **%d, within tolerance %d, ",
                        "outside %d**; documented differences: %d; not run: %d."),

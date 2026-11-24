@@ -1,11 +1,14 @@
 # Generation 2: Generalized selection (v1.1.0 → v1.5.0)
 
-Status: **WP2.1 done (versions 1.1.0 and 1.1.1, 24 November 2026):**
-`heckman()`, `treatment()` and `tobit5()`. Two of 428 pre-registered Monte
-Carlo checks failed (coverage in one Heckman cell); the owner recorded
-them as a documented exception on 24 November 2026 (section 5). Progress
+Status: **WP2.2 delivered as version 1.2.0 (24 November 2026)** with two
+open points: three failed coverage checks of design L await the owner's
+decision, and the Monte Carlo of the normal-score model (design G) was
+still running. Progress note: [progress/WP2.2.md](progress/WP2.2.md).
+WP2.1 done (versions 1.1.0 and 1.1.1, 24 November 2026), progress
 note: [progress/WP2.1.md](progress/WP2.1.md). The G2 econometric gate was
-closed by the owner on 23 November 2026. Next: WP2.2. Earlier note:
+closed by the owner on 23 November 2026. Two of the 428 checks of WP2.1
+failed and are the owner's documented exception EX-G2-1 (section 5).
+Next: WP2.3 (multinomial probit). Earlier note:
 [progress/WP2.0.md](progress/WP2.0.md).
 
 ## 1. Scope (specification sections 4B, 10.1, 11.3, 13)

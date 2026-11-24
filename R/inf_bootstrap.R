@@ -149,6 +149,10 @@ switch_bootstrap <- function(object, R = 999L,
   if (statistics == "effects" && identical(object$model, "heckman")) {
     se_refuse_heckman("Treatment effects")
   }
+  if (statistics == "effects" && se_is_multi(object$model)) {
+    se_abort(paste0("the effects bootstrap is not available for multinomial ",
+                    "models in this version"), "unsupported")
+  }
   est <- if (statistics == "coef") object$coefficients
          else se_boot_stat(object$coefficients, sd, object$map, eff)
   B <- if (any(ok)) do.call(rbind, lapply(res[ok], `[[`, "coef"))
@@ -211,6 +215,7 @@ se_boot_one <- function(object, sd, type, cl_ids, seed, stat = "coef",
   sdb <- tryCatch(
     if (type == "nonparametric") se_resample_data(sd, cl_ids)
     else if (se_is_obs(sd$model)) se_simulate_data_obs(object, sd)
+    else if (se_is_multi(sd$model)) se_simulate_data_multi(object, sd)
     else se_simulate_data(object, sd),
     error = function(e) e)
   if (inherits(sdb, "error")) {
@@ -258,6 +263,7 @@ se_subset_data <- function(sd, idx) {
   out$n <- length(idx)
   out$index <- sd$index[idx]
   if (se_is_obs(sd$model)) return(se_check_sample_obs(out))
+  if (se_is_multi(sd$model)) return(se_check_sample_multi(out))
   se_check_sample(out)
 }
 
@@ -303,7 +309,8 @@ se_check_sample <- function(sd) {
 se_refit <- function(object, sd) {
   map <- object$map
   if (object$method == "two_step") {
-    ts <- se_two_step(sd, map, "model")
+    ts <- se_two_step(sd, map, if (identical(map$kind, "moments")) "robust"
+                               else "model")
     return(list(coef = ts$coefficients,
                 code = if (isTRUE(ts$probit$converged)) 0L else 1L))
   }
@@ -312,7 +319,7 @@ se_refit <- function(object, sd) {
   est <- est_fiml(sd, map, list(list(theta = object$coef_working,
                                      origin = "original")),
                   rep(NA_real_, map$p), ctl, "hessian")
-  if (est$convergence$code != 0L) {
+  if (est$convergence$code != 0L && !identical(map$kind, "ns")) {
     ts <- tryCatch(se_two_step(sd, map, "model"), error = function(e) NULL)
     if (!is.null(ts)) {
       est2 <- est_fiml(sd, map, list(list(theta = est_two_step_start(ts, map),

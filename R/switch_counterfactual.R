@@ -66,6 +66,11 @@ switch_counterfactual <- function(object,
   if (identical(object$model, "heckman")) {
     se_refuse_heckman("Counterfactual regime scenarios")
   }
+  if (se_is_multi(object$model)) {
+    se_abort(paste0("switch_counterfactual() is not available for multinomial ",
+                    "models in this version; use switch_effects() and ",
+                    "switch_predict()"), "unsupported")
+  }
   if (identical(object$model, "tobit5") && se_responses_differ(object)) {
     se_abort(paste0("counterfactual scenarios are not defined for a Tobit-5 ",
                     "fit with two different response variables"), "unsupported")

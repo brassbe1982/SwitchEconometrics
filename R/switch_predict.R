@@ -107,6 +107,9 @@ switch_predict <- function(object, newdata = NULL,
   if (identical(object$model, "heckman")) {
     return(se_predict_heckman(object, newdata, type, se))
   }
+  if (se_is_multi(object$model)) {
+    return(se_predict_multi(object, newdata, type, se))
+  }
   object <- se_esr_view(object)
   reg <- object$regimes
   if (is.null(newdata)) {
@@ -220,6 +223,7 @@ residuals.switch_fit <- function(object, type = c("response", "pearson"), ...) {
   if (identical(object$model, "heckman")) {
     return(se_residuals_heckman(object, type))
   }
+  if (se_is_multi(object$model)) return(se_residuals_multi(object, type))
   r <- sd$y - switch_predict(object, type = "observed")
   if (type == "response") return(r)
   object <- se_esr_view(object)

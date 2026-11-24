@@ -368,7 +368,7 @@ test_that("argument errors of the new models are classed", {
                           shift = ~ 1), class = "switch_error_argument")
   expect_error(switch_fit(S ~ x1 + z1, list(y ~ x1, y ~ x1, y ~ x1), data = d,
                           model = "multinomial_esr"),
-               class = "switch_error_unsupported")
+               class = "switch_error_data")
   d0 <- d; d0$S <- 1L
   expect_error(suppressMessages(heckman(S ~ x1 + z1, wage ~ x1, data = d0)),
                class = "switch_error_data")

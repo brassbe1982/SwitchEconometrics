@@ -107,7 +107,10 @@ se_test_lr_independence <- function(object) {
   }
   nrho <- length(unlist(object$map$index$rho))
   se_test_object("lr_independence", stat, nrho,
-                 if (nrho == 2L)
+                 if (se_is_multi(object$model)) sprintf(
+                   "all %d rho = 0 (LR, restricted model: multinomial logit + %d regressions)",
+                   nrho, nrho)
+                 else if (nrho == 2L)
                    "rho_1 = rho_0 = 0 (LR, restricted model: probit + two regressions)"
                  else "rho = 0 (LR, restricted model: probit + one regression)",
                  note, list(loglik = object$loglik, loglik_restricted = r$loglik))
@@ -118,14 +121,18 @@ se_test_wald_independence <- function(object) {
     i <- unlist(object$map$index$rho)
     th <- object$coefficients[i]
     V <- object$vcov[i, i, drop = FALSE]
-    hyp <- if (length(i) == 2L) "rho_1 = rho_0 = 0 (Wald, natural scale)"
+    hyp <- if (se_is_multi(object$model)) sprintf(
+             "all %d rho = 0 (Wald, natural scale)", length(i))
+           else if (length(i) == 2L) "rho_1 = rho_0 = 0 (Wald, natural scale)"
            else "rho = 0 (Wald, natural scale)"
   } else {
     ts <- object$two_step
     i <- se_theta_positions(object)
     th <- ts$psi[i]
     V <- ts$vcov_psi[i, i, drop = FALSE]
-    hyp <- if (length(i) == 2L)
+    hyp <- if (se_is_multi(object$model)) sprintf(
+        "all %d selection-correction coefficients = 0 (Wald)", length(i))
+      else if (length(i) == 2L)
       "sigma_1 rho_1 = sigma_0 rho_0 = 0 (Wald on the selection-correction coefficients)"
       else "sigma rho = 0 (Wald on the selection-correction coefficient)"
   }
@@ -138,6 +145,12 @@ se_test_wald_independence <- function(object) {
 se_theta_positions <- function(object) {
   ts <- object$two_step
   eq <- if (se_is_obs(object$model)) "outcome" else object$regimes
+  if (identical(object$map$kind, "moments")) {
+    return(unlist(lapply(eq, function(l) {
+      i <- ts$index_psi[[l]]
+      i[length(object$map$index$beta[[l]]) + seq_along(object$map$index$theta[[l]])]
+    })))
+  }
   unlist(lapply(eq, function(l) ts$index_psi[[l]][length(ts$index_psi[[l]])]))
 }
 

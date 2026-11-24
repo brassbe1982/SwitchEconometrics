@@ -101,6 +101,7 @@ summary.switch_fit <- function(object, level = 0.95, ...) {
     lambda <- cbind(Estimate = th, `Std. Error` = s, `z value` = th / s,
                     `Pr(>|z|)` = 2 * stats::pnorm(-abs(th / s)))
     rownames(lambda) <- if (se_is_obs(object$model)) "sigma*rho"
+                        else if (se_is_multi(object$model)) names(th)
                         else paste0(object$regimes, ": sigma*rho")
   }
   ll <- object$loglik
@@ -150,16 +151,31 @@ print.summary.switch_fit <- function(x, digits = max(3L, getOption("digits") - 3
     stats::printCoefmat(x$coefficients[[eq]], digits = digits,
                         signif.legend = FALSE)
   }
-  cat(sprintf("\nDisturbance parameters (%g%% intervals%s):\n", 100 * x$level,
-              if (x$method == "fiml") " on the log(sigma) / atanh(rho) scale"
-              else ""))
-  print(signif(x$ancillary, digits))
+  if (nrow(x$ancillary)) {
+    cat(sprintf("\nDisturbance parameters (%g%% intervals%s):\n", 100 * x$level,
+                if (x$method == "fiml") " on the log(sigma) / atanh(rho) scale"
+                else ""))
+    print(signif(x$ancillary, digits))
+    if (se_is_multi(x$model) && any(grepl("rho\\[", rownames(x$ancillary)))) {
+      cat("rho[k] of a regime: correlation of its outcome disturbance with the normal score\n",
+          "of the utility disturbance of alternative k (normal-score model).\n",
+          sep = "")
+    } else if (se_is_multi(x$model)) {
+      cat("rho of a regime: correlation of its outcome disturbance with its own selection\n",
+          "index (Lee 1983); positive when unobservables favouring the regime raise its outcome.\n",
+          sep = "")
+    }
+  }
   if (!is.null(x$lambda)) {
     cat("\nSelection-correction coefficients (two-step):\n")
     stats::printCoefmat(x$lambda, digits = digits, signif.legend = FALSE)
-    cat("sigma and rho are derived two-step quantities; use switch_bootstrap() for their standard errors.\n")
+    cat(if (nrow(x$ancillary))
+      "sigma and rho are derived two-step quantities; use switch_bootstrap() for their standard errors.\n"
+      else "Moment model: sigma and correlations are not defined; standard errors as stated above.\n")
   }
   cat(if (identical(x$nrho, 1L)) "\nIndependent equations (H0: rho = 0):\n"
+      else if (se_is_multi(x$model))
+        "\nNo selection on unobservables (H0: all dependence parameters = 0):\n"
       else "\nIndependent equations (H0: rho_1 = rho_0 = 0):\n")
   if (!is.null(x$tests$lr)) {
     cat(sprintf("  LR test:   chi2(%d) = %.3f, p = %s\n",

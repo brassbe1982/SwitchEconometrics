@@ -16,7 +16,8 @@ switch_control(
   boundary_rho = 0.995,
   hessian_condition = 1e+10,
   keep_data = TRUE,
-  trace = 0L
+  trace = 0L,
+  bootstrap_R = 999L
 )
 }
 \arguments{
@@ -59,6 +60,11 @@ flagged as ill-conditioned.}
 later by \code{predict()} without new data, the bootstrap and \code{update()}).}
 
 \item{trace}{Reserved for progress output (0 = silent).}
+
+\item{bootstrap_R}{Number of bootstrap replicates for the standard errors
+of two-step estimators that have no closed-form covariance (the
+Dubin-McFadden and Bourguignon-Fournier-Gurgand corrections of
+\code{\link[=multinomial_switch]{multinomial_switch()}}).}
 }
 \value{
 A list of class \code{switch_control}.

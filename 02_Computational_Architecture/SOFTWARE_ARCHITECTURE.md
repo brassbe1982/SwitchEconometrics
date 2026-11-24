@@ -296,3 +296,35 @@ Differences from the plan of section 7.2:
   (`se_is_obs()`), listed in the progress note WP2.1.
 - `tobit5` is the G1 engine under a second model name; its equations are
   matched to the regimes by position (`se_build_data()`).
+
+### 7.6 As built in WP2.2 (version 1.2.0)
+
+| File | Content |
+| --- | --- |
+| `R/spec_multinomial.R` | specification, data builder (regime index 1..J by factor level, base alternative) and parameter maps of the multinomial models: `"lee"` (sigma, rho), `"moments"` (correction coefficients) and `"ns"` (normal scores) |
+| `R/sel_mnl.R` | multinomial logit: probabilities and Newton estimation with step halving |
+| `R/lik_lee.R` | Lee's likelihood for any $J$ (analytic score and Hessian) |
+| `R/est_two_step_multi.R` | correction terms of Lee, Dubin-McFadden and BFG (variant 2 by a tabulated spline), their derivatives, the two-step estimators with the stacked sandwich and the bootstrap over both steps |
+| `R/eff_multi.R` | pairwise effects and the $J \times J$ table of means, predictions, simulation |
+| `R/post_multinomial.R` | identification checks and residuals |
+| `R/num_mvnorm.R` | Gauss-Hermite, Gauss-Legendre and composite Gauss-Legendre rules; the bivariate normal distribution function |
+| `R/lik_normal_scores.R` | normal-score likelihood for $J \le 3$ (analytic score, Hessian by differences of the score), its starting values and simulator |
+| `R/wrappers.R` | `multinomial_switch()` |
+| `tests/testthat/test-multinomial.R`, `test-normal-scores.R` | tests |
+| `data-raw/financing.R`, `data/financing.rda` | example data |
+
+Differences from the plan:
+- G1 files received dispatch lines (`se_is_multi()`), as in WP2.1, with
+  three exceptions that add behaviour: `par_map.R` (a group transform,
+  used by the normal-score correlations: a vector of working parameters
+  mapped onto the open unit ball), `est_optimizer.R` (a second optimiser
+  path, `se_optimize_costly()`, for engines whose Hessian is obtained by
+  differencing the score) and `switch_control.R` (`bootstrap_R`). The
+  binary models do not use any of the three; their results are unchanged
+  (frozen 1.0.0 test).
+- The multinomial models have their own effect and prediction code
+  (`eff_multi.R`). The G1 effect code works on two regimes with a probit
+  index and was not generalised.
+- The normal-score integral uses a composite Gauss-Legendre rule, not the
+  Gauss-Hermite rule planned in NUMERICAL_METHODS.md section 7.7 (see
+  section 7.8 there for the measurements).

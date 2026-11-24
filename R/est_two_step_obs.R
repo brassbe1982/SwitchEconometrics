@@ -135,12 +135,18 @@ est_naive_start_obs <- function(sd, map) {
 ## Dispatch used by switch_fit(), the tests and the bootstrap.
 se_two_step <- function(sd, map, vcov_type = "model") {
   if (se_is_obs(sd$model)) est_two_step_obs(sd, map, vcov_type)
+  else if (se_is_multi(sd$model)) est_two_step_multi(
+    sd, map, vcov_type, type = sd$correction %||% "lee",
+    bootstrap_R = sd$bootstrap_R %||% 999L)
   else est_two_step(sd, map, vcov_type)
 }
 se_naive_start <- function(sd, map) {
   if (se_is_obs(sd$model)) est_naive_start_obs(sd, map)
+  else if (se_is_multi(sd$model)) est_naive_start_multi(sd, map)
   else est_naive_start(sd, map)
 }
 se_parmap <- function(sd) {
-  if (se_is_obs(sd$model)) se_parmap_obs(sd) else se_parmap_esr(sd)
+  if (se_is_obs(sd$model)) se_parmap_obs(sd)
+  else if (se_is_multi(sd$model)) se_parmap_multi(sd)
+  else se_parmap_esr(sd)
 }

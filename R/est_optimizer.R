@@ -42,15 +42,47 @@ se_objective <- function(sd, map) {
     gr = function(tf) unname(eval_at(tf, 1L)$gradient[free]),
     gr2 = function(tf) unname(eval_at(tf, 2L)$gradient[free]),
     hs = function(tf) unname(eval_at(tf, 2L)$hessian[free, free, drop = FALSE]),
-    ## TRUE when a correlation is within 1e-6 of +-1 (working |alpha| > 7.25)
+    ## TRUE when a correlation is within 1e-6 of +-1 (working |alpha| > 7.25);
+    ## for correlations mapped onto a unit ball (map$groups, the
+    ## normal-score model): when sqrt(1 - sum r^2) = 1/sqrt(1 + |a|^2) of a
+    ## group is below 0.09 (sum r^2 > 0.9919)
     at_boundary = function(tf) {
+      if (!is.null(map$groups)) {
+        th <- se_par_expand(map, tf)
+        return(any(vapply(map$groups, function(g)
+          1 / sqrt(1 + sum(th[g]^2)) < 0.09, logical(1))))
+      }
       length(alpha_pos) > 0L && any(abs(tanh(tf[alpha_pos])) > 1 - 1e-6)
     },
     fn_i = function(tf) om * eval_at(tf, 0L)$ll_i,
     gr_i = function(tf) {
       unname((om * eval_at(tf, 1L)$score_i)[, free, drop = FALSE])
     },
-    eval_at = eval_at)
+    eval_at = eval_at,
+    ## engines whose Hessian is a difference of scores (costly): no
+    ## Newton-Raphson iterations, see se_optimize()
+    costly_hessian = isTRUE(map$costly_hessian),
+    ## the same log-likelihood and score with a coarser integration rule,
+    ## for the first stage of se_optimize_costly()
+    coarse = if (isTRUE(map$costly_hessian) && !is.null(map$nodes_coarse)) {
+      map_c <- map
+      map_c$nodes <- map$nodes_coarse
+      cc <- new.env(parent = emptyenv())
+      ev <- function(tf, deriv) {
+        tf <- unname(tf)
+        if (!is.null(cc$tf) && identical(cc$tf, tf) && cc$deriv >= deriv) {
+          return(cc$val)
+        }
+        val <- loglik_switch(se_par_expand(map_c, tf), sd, map_c, deriv = deriv)
+        cc$tf <- tf; cc$deriv <- deriv; cc$val <- val
+        val
+      }
+      list(fn = function(tf) {
+             v <- ev(tf, 0L)$loglik
+             if (is.finite(v)) v else NA_real_
+           },
+           gr = function(tf) unname(ev(tf, 1L)$gradient[free]))
+    })
 }
 
 se_run_optimizer <- function(method, obj, start, control) {
@@ -129,6 +161,7 @@ se_check_optimum <- function(obj, tf, control) {
 ## vignette (WP1.8 benchmark D6b) took 51-82 s, running every fallback from
 ## every start to the same boundary value (BENCHMARK_G1.md s.4.2).
 se_optimize <- function(obj, start, control) {
+  if (isTRUE(obj$costly_hessian)) return(se_optimize_costly(obj, start, control))
   methods <- unique(c(control$optimizer, "NR", "BFGS", "BHHH", "optim"))
   path <- character()
   best <- NULL
@@ -168,4 +201,83 @@ se_optimize <- function(obj, start, control) {
   }
   best$path <- path
   best
+}
+
+## Optimisation for engines without an analytic Hessian (the normal-score
+## model). Newton-Raphson iterations are not used because every Hessian
+## costs as many score evaluations as there are parameters.
+##   Stage 1: BFGS (stats::optim) on the score, with the coarse integration
+##     rule when the objective provides one. Points at the boundary
+##     (obj$at_boundary) are rejected by the line search, so the search
+##     stays where the integration rule is accurate and affordable; a run
+##     that ends against this barrier is reported as not converged, with
+##     the boundary flag.
+##   Stage 2: at most three Newton steps with one differenced Hessian of
+##     the accurate log-likelihood, each kept only if it does not lower it.
+se_optimize_costly <- function(obj, start, control) {
+  start <- unname(start)
+  o1 <- obj$coarse %||% obj
+  barrier <- function(t) {
+    if (isTRUE(obj$at_boundary(t))) return(1e300)
+    v <- o1$fn(t)
+    if (is.na(v)) 1e300 else -v
+  }
+  path <- "BFGS"
+  r <- tryCatch(stats::optim(start, barrier, function(t) -o1$gr(t),
+                             method = "BFGS",
+                             control = list(maxit = 4L * control$maxit,
+                                            reltol = 1e-12)),
+                error = function(e) NULL)
+  if (is.null(r) || !all(is.finite(r$par))) {
+    best <- list(estimate = start, maximum = NA_real_, method = "none",
+                 iterations = 0L, message = "all optimisers failed",
+                 check = se_check_optimum(obj, start, control))
+    best$check$code <- 4L
+    best$path <- path
+    return(best)
+  }
+  res <- list(estimate = r$par, maximum = obj$fn(r$par), code = r$convergence,
+              message = r$message %||% "", iterations = r$counts[[1L]],
+              method = "BFGS")
+  g <- obj$gr(res$estimate)
+  near <- function(t) {
+    ## within reach of the barrier: no Newton steps (they would be taken
+    ## across it)
+    isTRUE(obj$at_boundary(t * 1.15))
+  }
+  if (is.finite(max(abs(g))) && max(abs(g)) >= control$gradient_tolerance &&
+      !near(res$estimate)) {
+    H <- tryCatch(obj$hs(res$estimate), error = function(e) NULL)
+    if (!is.null(H) && all(is.finite(H))) {
+      tf <- res$estimate
+      for (it in 1:3) {
+        step <- tryCatch(solve(H, g), error = function(e) NULL)
+        if (is.null(step) || !all(is.finite(step))) break
+        new <- tf - step
+        if (isTRUE(obj$at_boundary(new))) break
+        vn <- obj$fn(new)
+        if (!is.finite(vn) || vn < obj$fn(tf) - 1e-10) break
+        tf <- new
+        g <- obj$gr(tf)
+        if (max(abs(g)) < control$gradient_tolerance) break
+      }
+      res$estimate <- tf
+      res$maximum <- obj$fn(tf)
+      res$method <- "BFGS+Newton step"
+      path <- c(path, "Newton step")
+    }
+  }
+  if (near(res$estimate)) {
+    ## no differenced Hessian at the boundary: it is costly there and the
+    ## fit is reported as not converged whatever its value
+    gmax <- max(abs(g))
+    res$check <- list(loglik = res$maximum, gradient_max = gmax,
+                      gradient_norm = sqrt(sum(g^2)), eigen = NA_real_,
+                      negative_definite = FALSE, condition = NA, code = 1L)
+    path <- c(path, "boundary-stop")
+  } else {
+    res$check <- se_check_optimum(obj, res$estimate, control)
+  }
+  res$path <- path
+  res
 }

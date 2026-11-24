@@ -86,6 +86,14 @@ switch_simulate <- function(model, data, parameters = NULL, nsim = 1L,
                             seed = NULL, potential_outcomes = FALSE,
                             r10 = NULL) {
   if ((inherits(model, "switch_fit") || inherits(model, "switch_spec")) &&
+      se_is_multi(model$model)) {
+    if (!is.null(r10)) {
+      se_abort("'r10' applies to the binary switching model only", "argument")
+    }
+    return(se_simulate_multi(model, data, parameters, nsim, seed,
+                             potential_outcomes))
+  }
+  if ((inherits(model, "switch_fit") || inherits(model, "switch_spec")) &&
       se_is_obs(model$model)) {
     if (!is.null(r10)) {
       se_abort("'r10' applies to the switching model only", "argument")
@@ -167,6 +175,18 @@ simulate.switch_fit <- function(object, nsim = 1, seed = NULL, ...) {
   if (is.null(sd)) se_abort("simulate() needs the data; refit with keep_data = TRUE",
                             "argument")
   if (se_is_obs(object$model)) return(se_simulate_fit_obs(object, nsim, seed))
+  if (se_is_multi(object$model)) {
+    pt <- se_multi_sim_parts(object, sd)
+    draws <- se_with_seed(seed, lapply(seq_len(nsim), function(k) {
+      dr <- se_multi_draw(pt)
+      stats::setNames(data.frame(factor(sd$regimes[dr$S], levels = sd$regimes),
+                                 dr$Y[cbind(seq_len(sd$n), dr$S)]),
+                      paste0(c("S_", "y_"), k))
+    }))
+    out <- do.call(cbind, draws)
+    attr(out, "seed") <- seed
+    return(out)
+  }
   map <- object$map
   th <- object$coefficients
   reg <- sd$regimes

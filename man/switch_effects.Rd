@@ -16,6 +16,8 @@ switch_effects(
   data = NULL,
   R = 999L,
   seed = NULL,
+  pairs = "all",
+  given = NULL,
   ...
 )
 
@@ -43,6 +45,12 @@ or a one-sided formula or column name evaluated in \code{data}.}
 is a formula or column name).}
 
 \item{R, seed}{Bootstrap replicates and seed (\code{se = "bootstrap"}).}
+
+\item{pairs}{For a multinomial fit: \code{"all"} (every pair of regimes) or a
+list of pairs of regime labels, each \code{c(regime, against)}.}
+
+\item{given}{For a multinomial fit: labels of regimes for whose units the
+effect of each pair is also reported (effect \code{"TE"}).}
 
 \item{...}{Not used.}
 
@@ -97,6 +105,18 @@ For a fit of \code{\link[=treatment]{treatment()}} the effects are averages of t
 A fit of \code{\link[=heckman]{heckman()}} has one potential outcome, and a fit of \code{\link[=tobit5]{tobit5()}}
 with two different response variables has no common outcome scale: both
 are refused with an error of class \code{switch_error_unsupported}.
+
+For a multinomial fit (\code{\link[=multinomial_switch]{multinomial_switch()}}) the effects are reported
+for pairs of regimes: for the pair (regime \eqn{j}, against \eqn{k}),
+ATE is the mean of \eqn{x_j'\beta_j - x_k'\beta_k} over all units, ATT
+the mean of \eqn{E[Y(j) - Y(k) \mid S = j]} over the units of regime
+\eqn{j}, ATU the mean of \eqn{E[Y(j) - Y(k) \mid S = k]} over the units
+of regime \eqn{k}, and TH their difference. The result has the class
+\code{switch_effects_multi}; its element \code{means} is the table of the mean
+expected outcome of every regime for the units of every regime. Standard
+errors are delta-method standard errors; \code{by} and \code{subset} work as for
+the binary model; \code{se = "bootstrap"} and \code{"BH"} are not available for
+multinomial fits in this version.
 }
 
 \examples{

@@ -42,7 +42,7 @@ switch_compare <- function(..., test = c("lr", "none")) {
   rows <- lapply(seq_along(fits), function(k) {
     f <- fits[[k]]
     rho <- f$coefficients[unlist(f$map$index$rho)]
-    eff <- if (!is.null(f$data)) tryCatch(
+    eff <- if (!is.null(f$data) && !se_is_multi(f$model)) tryCatch(
       switch_effects(f, effects = c("ATT", "ATU", "ATE"), se = "none")$table,
       error = function(e) NULL)
     ev <- function(e) if (is.null(eff)) NA_real_ else eff$estimate[eff$effect == e]
@@ -51,9 +51,11 @@ switch_compare <- function(..., test = c("lr", "none")) {
                loglik = ll,
                AIC = if (is.finite(ll)) -2 * ll + 2 * f$npar else NA_real_,
                BIC = if (is.finite(ll)) -2 * ll + log(f$nobs) * f$npar else NA_real_,
-               rho_0 = if (identical(f$model, "heckman")) NA_real_
+               rho_0 = if (identical(f$model, "heckman") ||
+                           se_is_multi(f$model)) NA_real_
                        else unname(rho[1L]),
-               rho_1 = unname(rho[length(rho)]),
+               rho_1 = if (se_is_multi(f$model)) NA_real_
+                       else unname(rho[length(rho)]),
                ATT = ev("ATT"), ATU = ev("ATU"), ATE = ev("ATE"),
                converged = f$convergence$code == 0L, stringsAsFactors = FALSE)
   })

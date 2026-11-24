@@ -1,3 +1,62 @@
+# SwitchEconometrics 1.2.0
+
+Second step of Generation 2: switching regression with multinomial-logit
+selection among any number of regimes. Results of `esr()` are unchanged
+from 1.0.0 (tested at 1e-8 against stored 1.0.0 results), and the tests of
+`heckman()`, `treatment()` and `tobit5()` pass unchanged.
+
+## New
+
+* `multinomial_switch()`, and `switch_fit(model = "multinomial_esr")`:
+  the regime is a factor with two or more levels, selection is a
+  multinomial logit with a base regime (`base = `), and every regime has
+  its own outcome equation.
+  * Full-information maximum likelihood for Lee's (1983) model, with one
+    correlation per regime and an analytic gradient and Hessian. Tested
+    with 3, 8 and 10 regimes.
+  * Two-step estimation with the correction of Lee (`correction = "lee"`,
+    closed-form corrected covariance, sigma and rho recovered), of Dubin
+    and McFadden (`"dmf"`) and of Bourguignon, Fournier and Gurgand
+    (`"bfg1"`, `"bfg2"`). For the last three the default standard errors
+    are bootstrap standard errors over both steps
+    (`switch_control(bootstrap_R = )`, default 999); `vcov = "sandwich"`
+    gives the stacked sandwich without resampling.
+* `switch_effects()` for multinomial fits: for every pair of regimes (or
+  the pairs given in `pairs = `) the average treatment effect, the effects
+  on the units of either regime and their difference, the effect given a
+  third regime (`given = `), and the table of mean expected outcomes of
+  every regime for the units of every regime. Standard errors by the delta
+  method. Under Lee's model the counterfactual means need one further
+  assumption, which the output names.
+* `switch_predict()` (regime probabilities, selection indices, conditional,
+  observed and unconditional means), `switch_simulate()`,
+  `switch_validate()`, `switch_test()`, `switch_compare()`, `summary()`,
+  `residuals()` and the other methods work for multinomial fits.
+* Example data `financing` (simulated): 3000 firms choosing among
+  internal, bank and digital financing.
+* **Experimental:** `dependence_structure = "normal_scores"` in
+  `switch_fit()` replaces Lee's single correlation per regime by one
+  correlation with the utility disturbance of every regime (FIML, 2 or 3
+  regimes). The likelihood is an integral
+  computed numerically, so a fit takes minutes; the correlations with the
+  disturbances of the other regimes are weakly identified in samples of a
+  few thousand observations, and the estimate can lie on the boundary of
+  the admissible region, which the fit reports as non-convergence. See
+  `?multinomial_switch`.
+
+## Changed
+
+* `switch_fit()` and `switch_model()` gain the arguments `base`,
+  `correction` and `dependence_structure`; `switch_effects()` gains `pairs`
+  and `given`; `switch_control()` gains `bootstrap_R`.
+* A model with more than two regimes that is not a multinomial model now
+  stops with an argument error.
+
+## Not yet available for multinomial fits
+
+Bootstrap standard errors of the effects, `switch_counterfactual()`, and
+selection equations that differ between alternatives.
+
 # SwitchEconometrics 1.1.1
 
 * New warning (class `switch_warning_local_maximum`) when the highest
