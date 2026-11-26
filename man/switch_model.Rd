@@ -13,11 +13,7 @@ switch_model(
   outcome_family = "gaussian",
   dependence = "gaussian",
   family = NULL,
-  identification = "auto",
-  shift = NULL,
-  base = NULL,
-  correction = NULL,
-  dependence_structure = NULL
+  identification = "auto"
 )
 }
 \arguments{
@@ -32,13 +28,10 @@ data are attached; otherwise the first element is regime 0 (S = 0). The
 names are the regime labels used in parameter names; unnamed lists get
 \code{regime_0} and \code{regime_1}.}
 
-\item{regimes}{Number of regimes; must equal \code{length(outcomes)}. More
-than 2 only for \code{model = "multinomial_esr"}, where it may be omitted.}
+\item{regimes}{Number of regimes; must equal \code{length(outcomes)}. Only 2
+in Generation 1.}
 
-\item{model}{Model type: \code{"esr"}; from version 1.1.0 also \code{"heckman"},
-\code{"treatment"} and \code{"tobit5"} (see \code{\link[=heckman]{heckman()}}); from version 1.2.0
-also \code{"multinomial_esr"} (see \code{\link[=multinomial_switch]{multinomial_switch()}}). For \code{"heckman"} and
-\code{"treatment"}, \code{outcomes} is one formula.}
+\item{model}{Model type: \code{"esr"}.}
 
 \item{selection_family}{Distribution of the selection disturbance:
 \code{"probit"}.}
@@ -55,12 +48,6 @@ also \code{"multinomial_esr"} (see \code{\link[=multinomial_switch]{multinomial_
 formulas) or a character vector of variables declared as exclusion
 restrictions. Declared variables must appear in the selection equation
 and in no outcome equation.}
-
-\item{shift}{For \code{model = "treatment"}: one-sided formula of the effect
-modifiers (default \code{~ 1}).}
-
-\item{base, correction, dependence_structure}{For
-\code{model = "multinomial_esr"}: see \code{\link[=multinomial_switch]{multinomial_switch()}}.}
 }
 \value{
 An object of class \code{switch_spec}.

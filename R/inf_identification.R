@@ -58,31 +58,16 @@ switch_validate <- function(model, data = NULL, weights = NULL, cluster = NULL,
       se_abort("the fit holds no data; refit with switch_control(keep_data = TRUE)",
                "argument")
     }
-    if (se_is_obs(model$model)) {
-      return(se_validate_obs(model$spec, model$data, model))
-    }
-    if (se_is_multi(model$model)) {
-      return(se_validate_multi(model$spec, model$data, model))
-    }
     return(se_validate_core(model$spec, model$data, model))
   }
   if (!inherits(model, "switch_spec")) {
     se_abort("'model' must be a switch_spec or a switch_fit", "argument")
   }
   if (is.null(data)) se_abort("'data' is required with a switch_spec", "argument")
-  obs <- se_is_obs(model$model)
-  multi <- se_is_multi(model$model)
-  sd <- tryCatch(
-    if (multi) se_build_data_multi(model, data, weights = weights,
-                                   cluster = cluster, subset = subset,
-                                   missing = "drop", check_rank = FALSE)
-    else if (obs) se_build_data_obs(model, data, weights = weights,
+  sd <- tryCatch(se_build_data(model, data, weights = weights,
                                cluster = cluster, subset = subset,
-                               missing = "drop", check_rank = FALSE)
-    else se_build_data(model, data, weights = weights,
-                       cluster = cluster, subset = subset,
-                       missing = "drop", check_rank = FALSE),
-    error = function(e) e)
+                               missing = "drop", check_rank = FALSE),
+                 error = function(e) e)
   if (inherits(sd, "error")) {
     tab <- data.frame(code = "I0", check = "data and specification",
                       status = "error", value = "",
@@ -90,8 +75,7 @@ switch_validate <- function(model, data = NULL, weights = NULL, cluster = NULL,
     return(structure(list(table = tab, classification = NULL, fitted = FALSE),
                      class = "switch_validation"))
   }
-  if (multi) return(se_validate_multi(model, sd, NULL))
-  if (obs) se_validate_obs(model, sd, NULL) else se_validate_core(model, sd, NULL)
+  se_validate_core(model, sd, NULL)
 }
 
 se_validate_core <- function(spec, sd, fit = NULL) {

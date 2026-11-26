@@ -44,10 +44,6 @@
 #' @param data The data frame used for fitting (needed when `by` or `subset`
 #'   is a formula or column name).
 #' @param R,seed Bootstrap replicates and seed (`se = "bootstrap"`).
-#' @param pairs For a multinomial fit: `"all"` (every pair of regimes) or a
-#'   list of pairs of regime labels, each `c(regime, against)`.
-#' @param given For a multinomial fit: labels of regimes for whose units the
-#'   effect of each pair is also reported (effect `"TE"`).
 #' @param x A `switch_effects` object.
 #' @param digits Significant digits printed.
 #' @param ... Not used.
@@ -63,25 +59,6 @@
 #' climate change provide food security? A micro-perspective from Ethiopia.
 #' *American Journal of Agricultural Economics*, 93(3), 829--846.
 #' \doi{10.1093/ajae/aar006}
-#' @section Other models:
-#' For a fit of [treatment()] the effects are averages of the shift
-#' \eqn{d'\delta} over the treated (ATT), the untreated (ATU) and all units
-#' (ATE); with a constant shift they all equal \eqn{\delta} and TH is zero.
-#' A fit of [heckman()] has one potential outcome, and a fit of [tobit5()]
-#' with two different response variables has no common outcome scale: both
-#' are refused with an error of class `switch_error_unsupported`.
-#'
-#' For a multinomial fit ([multinomial_switch()]) the effects are reported
-#' for pairs of regimes: for the pair (regime \eqn{j}, against \eqn{k}),
-#' ATE is the mean of \eqn{x_j'\beta_j - x_k'\beta_k} over all units, ATT
-#' the mean of \eqn{E[Y(j) - Y(k) \mid S = j]} over the units of regime
-#' \eqn{j}, ATU the mean of \eqn{E[Y(j) - Y(k) \mid S = k]} over the units
-#' of regime \eqn{k}, and TH their difference. The result has the class
-#' `switch_effects_multi`; its element `means` is the table of the mean
-#' expected outcome of every regime for the units of every regime. Standard
-#' errors are delta-method standard errors; `by` and `subset` work as for
-#' the binary model; `se = "bootstrap"` and `"BH"` are not available for
-#' multinomial fits in this version.
 #' @examples
 #' fit <- switch_fit(
 #'   digital_adoption ~ internet_access + management_quality + firm_size +
@@ -96,23 +73,10 @@
 switch_effects <- function(object, effects = c("ATT", "ATU", "ATE", "TH", "BH"),
                            se = c("delta", "bootstrap", "none"), level = 0.95,
                            by = NULL, subset = NULL, individual = FALSE,
-                           data = NULL, R = 999L, seed = NULL, pairs = "all",
-                           given = NULL, ...) {
+                           data = NULL, R = 999L, seed = NULL, ...) {
   if (!inherits(object, "switch_fit")) {
     se_abort("'object' must be a switch_fit", "argument")
   }
-  if (se_is_multi(object$model)) {
-    return(se_effects_multi(object, effects, match.arg(se), level, by, subset,
-                            data, pairs, given, individual))
-  }
-  if (identical(object$model, "heckman")) se_refuse_heckman("Treatment effects")
-  if (identical(object$model, "tobit5") && se_responses_differ(object)) {
-    se_abort(paste0("effects are not defined for a Tobit-5 fit with two ",
-                    "different response variables: their difference is not a ",
-                    "treatment effect"), "unsupported")
-  }
-  fit0 <- object
-  object <- se_esr_view(object)
   sd <- object$data
   if (is.null(sd)) {
     se_abort("effects need the estimation data; refit with switch_control(keep_data = TRUE)",
@@ -150,7 +114,7 @@ switch_effects <- function(object, effects = c("ATT", "ATU", "ATE", "TH", "BH"),
                            "argument")
   }
   if (se == "bootstrap") {
-    boot <- switch_bootstrap(fit0, R = R, statistics = "effects", seed = seed,
+    boot <- switch_bootstrap(object, R = R, statistics = "effects", seed = seed,
                              level = level,
                              .effects = list(by = grp, subset = sel))
   }

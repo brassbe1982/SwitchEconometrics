@@ -27,16 +27,9 @@
 #'   data are attached; otherwise the first element is regime 0 (S = 0). The
 #'   names are the regime labels used in parameter names; unnamed lists get
 #'   `regime_0` and `regime_1`.
-#' @param regimes Number of regimes; must equal `length(outcomes)`. More
-#'   than 2 only for `model = "multinomial_esr"`, where it may be omitted.
-#' @param model Model type: `"esr"`; from version 1.1.0 also `"heckman"`,
-#'   `"treatment"` and `"tobit5"` (see [heckman()]); from version 1.2.0
-#'   also `"multinomial_esr"` (see [multinomial_switch()]). For `"heckman"` and
-#'   `"treatment"`, `outcomes` is one formula.
-#' @param shift For `model = "treatment"`: one-sided formula of the effect
-#'   modifiers (default `~ 1`).
-#' @param base,correction,dependence_structure For
-#'   `model = "multinomial_esr"`: see [multinomial_switch()].
+#' @param regimes Number of regimes; must equal `length(outcomes)`. Only 2
+#'   in Generation 1.
+#' @param model Model type: `"esr"`.
 #' @param selection_family Distribution of the selection disturbance:
 #'   `"probit"`.
 #' @param outcome_family Distribution of the outcome disturbances:
@@ -68,41 +61,13 @@
 switch_model <- function(selection, outcomes, regimes = 2L, model = "esr",
                          selection_family = "probit",
                          outcome_family = "gaussian", dependence = "gaussian",
-                         family = NULL, identification = "auto",
-                         shift = NULL, base = NULL, correction = NULL,
-                         dependence_structure = NULL) {
+                         family = NULL, identification = "auto") {
   cl <- match.call()
   se_check_choice("model", model)
-  if (se_is_multi(model) && identical(selection_family, "probit")) {
-    selection_family <- "multinomial_logit"
-  }
   se_check_choice("selection_family", selection_family)
   se_check_choice("outcome_family", outcome_family)
   se_check_choice("dependence", dependence)
   if (!is.null(family)) se_check_choice("family", family)
-  if (se_is_obs(model)) {
-    return(se_spec_observation(selection, outcomes, model, shift,
-                               selection_family, outcome_family, dependence,
-                               family, identification, cl))
-  }
-  if (!is.null(shift)) {
-    se_abort("'shift' applies to model = \"treatment\" only", "argument")
-  }
-  if (se_is_multi(model)) {
-    if (!identical(selection_family, "multinomial_logit")) {
-      se_abort(sprintf(paste0(
-        "model \"%s\" needs selection_family = \"multinomial_logit\" in ",
-        "this version"), model), "argument")
-    }
-    return(se_spec_multi(selection, outcomes, model, selection_family,
-                         outcome_family, dependence, family, identification,
-                         base, correction, dependence_structure, cl))
-  }
-  if (!is.null(base) || !is.null(correction) ||
-      !is.null(dependence_structure)) {
-    se_abort(paste0("'base', 'correction' and 'dependence_structure' apply to ",
-                    "model = \"multinomial_esr\" only"), "argument")
-  }
 
   if (!inherits(selection, "formula") || length(selection) != 3L) {
     se_abort("'selection' must be a two-sided formula, e.g. regime ~ z1 + z2",
@@ -129,12 +94,11 @@ switch_model <- function(selection, outcomes, regimes = 2L, model = "esr",
   }
   if (regimes > 2) {
     se_abort(sprintf(paste0(
-      "model \"%s\" has two regimes; for %d regimes use ",
-      "model = \"multinomial_esr\" (multinomial_switch())"), model,
-      as.integer(regimes)), "argument")
+      "models with %d regimes are planned for Generation 2 (versions %s) and ",
+      "are not available in SwitchEconometrics %s"), as.integer(regimes),
+      se_generations[["2"]], se_version()), "unsupported", generation = 2L)
   }
 
-  if (model == "tobit5") names(outcomes) <- NULL   # matched by position
   nm <- names(outcomes)
   named <- !is.null(nm)
   if (named && (any(is.na(nm)) || !all(nzchar(nm)))) {
@@ -214,8 +178,6 @@ switch_model <- function(selection, outcomes, regimes = 2L, model = "esr",
 
 #' @export
 format.switch_spec <- function(x, ...) {
-  if (se_is_obs(x$model)) return(se_format_spec_obs(x))
-  if (se_is_multi(x$model)) return(se_format_spec_multi(x))
   lab <- c("Model", "Observation", "Selection", "Dependence", "Excluded",
            x$regimes)
   w <- max(nchar(lab)) + 2L
@@ -225,8 +187,6 @@ format.switch_spec <- function(x, ...) {
   c("Switching model specification (SwitchEconometrics)",
     sprintf("  %s%s", pad("Model"),
             if (x$model == "esr") "esr (binary endogenous switching regression)"
-            else if (x$model == "tobit5")
-              "tobit5 (two-regime selection; equations matched by position)"
             else x$model),
     sprintf("  %s%s", pad("Observation"), x$observation),
     sprintf("  %s%s   [%s]", pad("Selection"),
@@ -243,15 +203,6 @@ format.switch_spec <- function(x, ...) {
 #' @export
 print.switch_spec <- function(x, ...) {
   cat(format(x), sep = "\n")
-  if (se_is_multi(x$model)) return(invisible(x))
-  if (se_is_obs(x$model)) {
-    if (!length(x$identification$exclusions$outcome)) {
-      cat("  Note: no selection variable is excluded from the outcome equation;",
-          "identification of rho\n        then rests on the normality",
-          "assumption alone.\n")
-    }
-    return(invisible(x))
-  }
   if (any(lengths(x$identification$exclusions) == 0L)) {
     cat("  Note: an outcome equation has no excluded selection variable;",
         "identification of its rho\n        then rests on the normality",

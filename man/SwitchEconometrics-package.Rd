@@ -37,14 +37,6 @@ Lokshin, M. and Sajaia, Z. (2004). Maximum likelihood estimation of
 endogenous switching regression models. \emph{The Stata Journal}, 4(3),
 282--289. \doi{10.1177/1536867X0400400306}
 }
-\seealso{
-Useful links:
-\itemize{
-  \item \url{https://github.com/brassbe1982/SwitchEconometrics}
-  \item Report bugs at \url{https://github.com/brassbe1982/SwitchEconometrics/issues}
-}
-
-}
 \author{
 \strong{Maintainer}: Ibrahim Niankara \email{Ibrahim.niankara@aau.ac.ae}
 

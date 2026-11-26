@@ -38,15 +38,14 @@ test_that("later-generation values name their generation", {
                     class = "switch_error_unsupported")
   expect_match(conditionMessage(e), "Generation 3")
   expect_identical(e$generation, 3)
-  expect_error(esr_spec(model = "ordered_esr"),
+  expect_error(esr_spec(model = "multinomial_esr"),
                class = "switch_error_unsupported")
   expect_error(esr_spec(outcome_family = "poisson"), "Generation 4")
   expect_error(esr_spec(selection_family = "multinomial_probit"),
                "Generation 2")
   expect_error(esr_spec(family = "binary"), class = "switch_error_unsupported")
-  ## more than two regimes: the multinomial model (version 1.2.0)
   expect_error(switch_model(S ~ z1, list(y ~ x1, y ~ x1, y ~ x1),
-                            regimes = 3), class = "switch_error_argument")
+                            regimes = 3), class = "switch_error_unsupported")
   expect_s3_class(esr_spec(family = "continuous"), "switch_spec")
 })
 

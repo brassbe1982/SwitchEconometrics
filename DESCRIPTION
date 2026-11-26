@@ -1,7 +1,7 @@
 Package: SwitchEconometrics
 Type: Package
 Title: Unified Estimation of Endogenous Regime-Dependent Economic Systems
-Version: 1.2.1
+Version: 1.0.0
 Authors@R: c(
     person("Ibrahim", "Niankara", role = c("aut", "cre"),
            email = "Ibrahim.niankara@aau.ac.ae"),
@@ -9,16 +9,10 @@ Authors@R: c(
            comment = "LLC registered in Burkina Faso, RCCM BF-OUA-01-2026-B13-02466; https://brassbe1982-bdlweb.share.connect.posit.cloud/"))
 Description: Estimation and inference for the classical binary endogenous
     switching regression model (Heckman (1979) <doi:10.2307/1912352>;
-    Lokshin and Sajaia (2004) <doi:10.1177/1536867X0400400306>), the sample
-    selection model and the endogenous treatment model with a shift (Heckman
-    (1978) <doi:10.2307/1909757>), and switching regression with
-    multinomial-logit selection among any number of regimes (Lee (1983)
-    <doi:10.2307/1912003>; Dubin and McFadden (1984) <doi:10.2307/1911493>;
-    Bourguignon, Fournier and Gurgand (2007)
-    <doi:10.1111/j.1467-6419.2007.00503.x>), built on a
+    Lokshin and Sajaia (2004) <doi:10.1177/1536867X0400400306>), built on a
     general model of regime selection and regime-specific outcomes that is
-    designed to extend to multinomial switching, copula dependence and
-    panel data. Provides full-information maximum
+    designed to extend to endogenous treatment, multinomial switching,
+    copula dependence and panel data. Provides full-information maximum
     likelihood with an analytic gradient and Hessian, two-step estimation
     with corrected covariances, Hessian, sandwich and cluster-robust
     standard errors, bootstrap, likelihood-ratio and Wald tests,
@@ -37,8 +31,6 @@ Imports:
     stats
 Suggests:
     knitr,
-    mvtnorm,
-    nnet,
     numDeriv,
     rmarkdown,
     sampleSelection,

@@ -14,7 +14,7 @@ se_fiml_starts <- function(map, start_list, se_scale, control) {
   origin <- vapply(start_list, function(s) s$origin, character(1))
   n_more <- control$starts - length(rows)
   if (n_more > 0L) {
-    coef_blk <- map$elements$block %in% c("gamma", "beta", "delta")
+    coef_blk <- map$elements$block %in% c("gamma", "beta")
     sc <- ifelse(coef_blk, se_scale, 1)
     bad <- !is.finite(sc) | sc <= 0
     sc[bad] <- 0.1 * (abs(base[bad]) + 1)

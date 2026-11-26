@@ -21,10 +21,6 @@ switch_fit(
   vcov = c("hessian", "opg", "sandwich", "cluster"),
   missing = c("drop", "fail"),
   control = switch_control(),
-  shift = NULL,
-  base = NULL,
-  correction = NULL,
-  dependence_structure = NULL,
   ...
 )
 
@@ -34,16 +30,12 @@ esr(selection, outcomes, data, method = "fiml", ...)
 \item{selection}{Two-sided formula of the selection equation (see
 \code{\link[=switch_model]{switch_model()}}). Must be \code{NULL} when \code{model} is a \code{switch_spec}.}
 
-\item{outcomes}{List of outcome formulas, one per regime (see
-\code{\link[=switch_model]{switch_model()}} and, for more than two regimes,
-\code{\link[=multinomial_switch]{multinomial_switch()}}).}
+\item{outcomes}{List of two outcome formulas (see \code{\link[=switch_model]{switch_model()}}).}
 
 \item{data}{Data frame.}
 
-\item{model}{Model type (\code{"esr"}; from version 1.1.0 also \code{"heckman"},
-\code{"treatment"} and \code{"tobit5"}, see \code{\link[=heckman]{heckman()}}; from version 1.2.0 also
-\code{"multinomial_esr"}, see \code{\link[=multinomial_switch]{multinomial_switch()}}) or a \code{switch_spec}
-from \code{\link[=switch_model]{switch_model()}}.}
+\item{model}{Model type (\code{"esr"}) or a \code{switch_spec} from
+\code{\link[=switch_model]{switch_model()}}.}
 
 \item{selection_family, outcome_family, dependence}{Families; see
 \code{\link[=switch_model]{switch_model()}}.}
@@ -62,13 +54,6 @@ length \code{nrow(data)}.}
 and a record in \code{fit$na_report}; \code{"fail"} makes them an error.}
 
 \item{control}{Numerical controls from \code{\link[=switch_control]{switch_control()}}.}
-
-\item{shift}{For \code{model = "treatment"}: one-sided formula of the effect
-modifiers (see \code{\link[=treatment]{treatment()}}).}
-
-\item{base, correction, dependence_structure}{For
-\code{model = "multinomial_esr"}: the base alternative, the two-step
-correction and the dependence structure (see \code{\link[=multinomial_switch]{multinomial_switch()}}).}
 
 \item{...}{Not used; unknown arguments give an error.}
 }

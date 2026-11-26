@@ -72,16 +72,13 @@ summary.switch_fit <- function(object, level = 0.95, ...) {
   tab <- cbind(Estimate = est, `Std. Error` = se, `z value` = zval,
                `Pr(>|z|)` = 2 * stats::pnorm(-abs(zval)))
   ci <- confint(object, level = level)
-  eqs <- se_equations(object)
-  coef_tables <- lapply(eqs, function(eq) {
-    i <- which(e$equation == eq & e$block %in% c("gamma", "beta", "delta"))
+  coef_tables <- lapply(c("selection", object$regimes), function(eq) {
+    i <- which(e$equation == eq & e$block %in% c("gamma", "beta"))
     m <- tab[i, , drop = FALSE]
     rownames(m) <- e$term[i]
     m
   })
-  names(coef_tables) <- eqs
-  eq_titles <- vapply(eqs, function(eq) se_equation_title(object, eq),
-                      character(1))
+  names(coef_tables) <- c("selection", object$regimes)
   ia <- which(e$block %in% c("sigma", "rho"))
   anc <- cbind(tab[ia, 1:2, drop = FALSE], ci[ia, , drop = FALSE])
 
@@ -95,20 +92,17 @@ summary.switch_fit <- function(object, level = 0.95, ...) {
   lambda <- NULL
   if (object$method == "two_step") {
     ts <- object$two_step
-    i <- se_theta_positions(object)
+    i <- unlist(lapply(object$regimes, function(l)
+      ts$index_psi[[l]][length(ts$index_psi[[l]])]))
     th <- ts$psi[i]
     s <- sqrt(diag(ts$vcov_psi)[i])
     lambda <- cbind(Estimate = th, `Std. Error` = s, `z value` = th / s,
                     `Pr(>|z|)` = 2 * stats::pnorm(-abs(th / s)))
-    rownames(lambda) <- if (se_is_obs(object$model)) "sigma*rho"
-                        else if (se_is_multi(object$model)) names(th)
-                        else paste0(object$regimes, ": sigma*rho")
+    rownames(lambda) <- paste0(object$regimes, ": sigma*rho")
   }
   ll <- object$loglik
   structure(list(
     call = object$call, method = object$method, vcov_type = object$vcov_type,
-    model = object$model, titles = eq_titles,
-    nrho = length(unlist(object$map$index$rho)),
     nobs = object$nobs, n_regime = object$n_regime, regimes = object$regimes,
     loglik = ll, aic = if (is.finite(ll)) -2 * ll + 2 * object$npar else NA,
     bic = if (is.finite(ll)) -2 * ll + log(object$nobs) * object$npar else NA,
@@ -127,8 +121,8 @@ summary.switch_fit <- function(object, level = 0.95, ...) {
 #' @export
 print.summary.switch_fit <- function(x, digits = max(3L, getOption("digits") - 3L),
                                      ...) {
-  cat(se_model_title(x$model %||% "esr"), " (SwitchEconometrics ",
-      se_version(), ")\n\n", sep = "")
+  cat("Endogenous switching regression (SwitchEconometrics ", se_version(),
+      ")\n\n", sep = "")
   cat("Call:\n", paste(deparse(x$call, width.cutoff = 70L), collapse = "\n"),
       "\n\n", sep = "")
   meth <- if (x$method == "fiml") "full-information maximum likelihood"
@@ -145,41 +139,23 @@ print.summary.switch_fit <- function(x, digits = max(3L, getOption("digits") - 3
                 format(x$bic, digits = digits + 3L)))
   }
   for (eq in names(x$coefficients)) {
-    cat(sprintf("\n%s:\n", x$titles[[eq]] %||%
-                  if (eq == "selection") "Selection equation (probit)"
-                  else sprintf("Outcome equation, regime '%s'", eq)))
+    cat(if (eq == "selection") "\nSelection equation (probit):\n"
+        else sprintf("\nOutcome equation, regime '%s':\n", eq))
     stats::printCoefmat(x$coefficients[[eq]], digits = digits,
                         signif.legend = FALSE)
   }
-  if (nrow(x$ancillary)) {
-    cat(sprintf("\nDisturbance parameters (%g%% intervals%s):\n", 100 * x$level,
-                if (x$method == "fiml") " on the log(sigma) / atanh(rho) scale"
-                else ""))
-    print(signif(x$ancillary, digits))
-    if (se_is_multi(x$model) && any(grepl("rho\\[", rownames(x$ancillary)))) {
-      cat("rho[k] of a regime: correlation of its outcome disturbance with the normal score\n",
-          "of the utility disturbance of alternative k (normal-score model).\n",
-          sep = "")
-    } else if (se_is_multi(x$model)) {
-      cat("rho of a regime: correlation of its outcome disturbance with its own selection\n",
-          "index (Lee 1983); positive when unobservables favouring the regime raise its outcome.\n",
-          sep = "")
-    }
-  }
+  cat(sprintf("\nDisturbance parameters (%g%% intervals%s):\n", 100 * x$level,
+              if (x$method == "fiml") " on the log(sigma) / atanh(rho) scale"
+              else ""))
+  print(signif(x$ancillary, digits))
   if (!is.null(x$lambda)) {
     cat("\nSelection-correction coefficients (two-step):\n")
     stats::printCoefmat(x$lambda, digits = digits, signif.legend = FALSE)
-    cat(if (nrow(x$ancillary))
-      "sigma and rho are derived two-step quantities; use switch_bootstrap() for their standard errors.\n"
-      else "Moment model: sigma and correlations are not defined; standard errors as stated above.\n")
+    cat("sigma and rho are derived two-step quantities; use switch_bootstrap() for their standard errors.\n")
   }
-  cat(if (identical(x$nrho, 1L)) "\nIndependent equations (H0: rho = 0):\n"
-      else if (se_is_multi(x$model))
-        "\nNo selection on unobservables (H0: all dependence parameters = 0):\n"
-      else "\nIndependent equations (H0: rho_1 = rho_0 = 0):\n")
+  cat("\nIndependent equations (H0: rho_1 = rho_0 = 0):\n")
   if (!is.null(x$tests$lr)) {
-    cat(sprintf("  LR test:   chi2(%d) = %.3f, p = %s\n",
-                as.integer(x$tests$lr$df), x$tests$lr$statistic,
+    cat(sprintf("  LR test:   chi2(2) = %.3f, p = %s\n", x$tests$lr$statistic,
                 format.pval(x$tests$lr$p_value, digits = 4)))
   }
   if (!is.null(x$tests$wald)) {

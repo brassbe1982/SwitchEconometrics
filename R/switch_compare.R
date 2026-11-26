@@ -42,7 +42,7 @@ switch_compare <- function(..., test = c("lr", "none")) {
   rows <- lapply(seq_along(fits), function(k) {
     f <- fits[[k]]
     rho <- f$coefficients[unlist(f$map$index$rho)]
-    eff <- if (!is.null(f$data) && !se_is_multi(f$model)) tryCatch(
+    eff <- if (!is.null(f$data)) tryCatch(
       switch_effects(f, effects = c("ATT", "ATU", "ATE"), se = "none")$table,
       error = function(e) NULL)
     ev <- function(e) if (is.null(eff)) NA_real_ else eff$estimate[eff$effect == e]
@@ -51,11 +51,7 @@ switch_compare <- function(..., test = c("lr", "none")) {
                loglik = ll,
                AIC = if (is.finite(ll)) -2 * ll + 2 * f$npar else NA_real_,
                BIC = if (is.finite(ll)) -2 * ll + log(f$nobs) * f$npar else NA_real_,
-               rho_0 = if (identical(f$model, "heckman") ||
-                           se_is_multi(f$model)) NA_real_
-                       else unname(rho[1L]),
-               rho_1 = if (se_is_multi(f$model)) NA_real_
-                       else unname(rho[length(rho)]),
+               rho_0 = unname(rho[1L]), rho_1 = unname(rho[2L]),
                ATT = ev("ATT"), ATU = ev("ATU"), ATE = ev("ATE"),
                converged = f$convergence$code == 0L, stringsAsFactors = FALSE)
   })
@@ -85,16 +81,7 @@ se_lr_nested <- function(a, b, na, nb) {
   a_small <- a$npar <= b$npar
   small <- if (a_small) a else b
   big <- if (a_small) b else a
-  if (small$npar == big$npar) return(NULL)
-  ## a treatment fit is nested in the switching regression with the same
-  ## outcome regressors in both regimes when its modifiers are among them
-  treat_in_esr <- identical(small$model, "treatment") &&
-    big$model %in% c("esr", "tobit5") && !is.null(small$data) &&
-    !is.null(big$data) && !anyNA(small$map$d_in) &&
-    isTRUE(all.equal(unname(small$data$X[[1L]]), unname(big$data$X[[1L]]))) &&
-    isTRUE(all.equal(unname(small$data$X[[1L]]), unname(big$data$X[[2L]]))) &&
-    isTRUE(all.equal(unname(small$data$Z), unname(big$data$Z)))
-  if (!treat_in_esr &&
+  if (small$npar == big$npar ||
       !all(names(small$coefficients) %in% names(big$coefficients))) return(NULL)
   stat <- max(0, 2 * (big$loglik - small$loglik))
   df <- big$npar - small$npar

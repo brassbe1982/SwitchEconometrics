@@ -32,10 +32,6 @@
 #' @param keep_data Keep the estimation data in the fitted object (needed
 #'   later by `predict()` without new data, the bootstrap and `update()`).
 #' @param trace Reserved for progress output (0 = silent).
-#' @param bootstrap_R Number of bootstrap replicates for the standard errors
-#'   of two-step estimators that have no closed-form covariance (the
-#'   Dubin-McFadden and Bourguignon-Fournier-Gurgand corrections of
-#'   [multinomial_switch()]).
 #' @return A list of class `switch_control`.
 #' @examples
 #' switch_control(starts = 5, gradient_tolerance = 1e-8)
@@ -45,8 +41,7 @@ switch_control <- function(starts = 3L, maxit = 500L,
                            optimizer = c("NR", "BFGS", "BHHH", "optim"),
                            start = NULL, perturb_sd = 0.5, seed = 20261122L,
                            boundary_rho = 0.995, hessian_condition = 1e10,
-                           keep_data = TRUE, trace = 0L,
-                           bootstrap_R = 999L) {
+                           keep_data = TRUE, trace = 0L) {
   optimizer <- match.arg(optimizer)
   pos_int <- function(x, nm) {
     if (!is.numeric(x) || length(x) != 1L || is.na(x) || x < 1 ||
@@ -77,7 +72,6 @@ switch_control <- function(starts = 3L, maxit = 500L,
     perturb_sd = pos_num(perturb_sd, "perturb_sd"), seed = seed,
     boundary_rho = pos_num(boundary_rho, "boundary_rho", 1),
     hessian_condition = pos_num(hessian_condition, "hessian_condition"),
-    keep_data = keep_data, trace = as.integer(trace),
-    bootstrap_R = pos_int(bootstrap_R, "bootstrap_R")),
+    keep_data = keep_data, trace = as.integer(trace)),
     class = "switch_control")
 }

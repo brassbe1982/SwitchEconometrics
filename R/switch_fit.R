@@ -49,19 +49,10 @@
 #'
 #' @param selection Two-sided formula of the selection equation (see
 #'   [switch_model()]). Must be `NULL` when `model` is a `switch_spec`.
-#' @param outcomes List of outcome formulas, one per regime (see
-#'   [switch_model()] and, for more than two regimes,
-#'   [multinomial_switch()]).
+#' @param outcomes List of two outcome formulas (see [switch_model()]).
 #' @param data Data frame.
-#' @param shift For `model = "treatment"`: one-sided formula of the effect
-#'   modifiers (see [treatment()]).
-#' @param base,correction,dependence_structure For
-#'   `model = "multinomial_esr"`: the base alternative, the two-step
-#'   correction and the dependence structure (see [multinomial_switch()]).
-#' @param model Model type (`"esr"`; from version 1.1.0 also `"heckman"`,
-#'   `"treatment"` and `"tobit5"`, see [heckman()]; from version 1.2.0 also
-#'   `"multinomial_esr"`, see [multinomial_switch()]) or a `switch_spec`
-#'   from [switch_model()].
+#' @param model Model type (`"esr"`) or a `switch_spec` from
+#'   [switch_model()].
 #' @param selection_family,outcome_family,dependence Families; see
 #'   [switch_model()].
 #' @param method `"fiml"` or `"two_step"`.
@@ -106,8 +97,7 @@ switch_fit <- function(selection = NULL, outcomes = NULL, data, model = "esr",
                        subset = NULL,
                        vcov = c("hessian", "opg", "sandwich", "cluster"),
                        missing = c("drop", "fail"),
-                       control = switch_control(), shift = NULL, base = NULL,
-                       correction = NULL, dependence_structure = NULL, ...) {
+                       control = switch_control(), ...) {
   cl <- match.call()
   se_check_dots(list(...))
   na_mode <- match.arg(missing)
@@ -129,12 +119,6 @@ switch_fit <- function(selection = NULL, outcomes = NULL, data, model = "esr",
                "argument")
     }
     spec <- model
-    if (!is.null(shift) || !is.null(base) || !is.null(correction) ||
-        !is.null(dependence_structure)) {
-      se_abort(paste0("give 'shift', 'base', 'correction' and ",
-                      "'dependence_structure' to switch_model() when 'model' ",
-                      "is a switch_spec"), "argument")
-    }
   } else {
     if (is.null(selection) || is.null(outcomes)) {
       se_abort("'selection' and 'outcomes' are required unless 'model' is a switch_spec",
@@ -143,23 +127,7 @@ switch_fit <- function(selection = NULL, outcomes = NULL, data, model = "esr",
     spec <- switch_model(selection, outcomes, model = model,
                          selection_family = selection_family,
                          outcome_family = outcome_family,
-                         dependence = dependence, shift = shift, base = base,
-                         correction = correction,
-                         dependence_structure = dependence_structure)
-  }
-  obs <- se_is_obs(spec$model)
-  multi <- se_is_multi(spec$model)
-  if (multi) {
-    if (method == "fiml" && spec$correction != "lee") {
-      se_abort(sprintf(paste0(
-        "correction = \"%s\" is a moment model without a likelihood; use ",
-        "method = \"two_step\""), spec$correction), "unsupported")
-    }
-    if (method == "two_step" && spec$dependence$structure != "lee") {
-      se_abort(paste0("the normal-score model is estimated by FIML; its ",
-                      "two-step counterpart is correction = \"bfg2\""),
-               "argument")
-    }
+                         dependence = dependence)
   }
 
   vcov <- if (missing(vcov)) {
@@ -178,43 +146,16 @@ switch_fit <- function(selection = NULL, outcomes = NULL, data, model = "esr",
       "use \"sandwich\" or \"cluster\""), vcov), "vcov")
   }
 
-  sd <- if (obs) se_build_data_obs(spec, data, weights = weights,
-                                   cluster = cluster, subset = subset,
-                                   missing = na_mode)
-        else if (multi) se_build_data_multi(spec, data, weights = weights,
-                                            cluster = cluster, subset = subset,
-                                            missing = na_mode)
-        else se_build_data(spec, data, weights = weights, cluster = cluster,
-                           subset = subset, missing = na_mode)
-  if (multi) {
-    spec$regimes <- sd$regimes
-    if (spec$regime_names_given) spec$outcomes <- spec$outcomes[sd$regimes]
-    else names(spec$outcomes) <- sd$regimes
-    sd$correction_fit <- method == "two_step" && spec$correction != "lee"
-    sd$bootstrap_R <- control$bootstrap_R
-    if (!sd$correction_fit) sd$correction <- "lee"
-  }
-  map <- se_parmap(sd)
-  ns <- multi && identical(sd$structure, "normal_scores")
-  if (ns) {
-    if (sd$J > 3L) {
-      se_abort(paste0("the normal-score model is available for 2 and 3 ",
-                      "regimes in this version; use dependence_structure = ",
-                      "\"lee\" or a two-step correction for more regimes"),
-               "unsupported")
-    }
-    ## no analytic Hessian: quasi-Newton iterations unless the user chose
-    if (identical(control$optimizer, "NR")) control$optimizer <- "BFGS"
-  }
+  sd <- se_build_data(spec, data, weights = weights, cluster = cluster,
+                      subset = subset, missing = na_mode)
+  map <- se_parmap_esr(sd)
 
   ## two-step: the estimator itself, or the FIML start
   ts_type <- switch(vcov, hessian = "model", opg = "model",
                     sandwich = "robust", cluster = "cluster")
-  ts <- tryCatch(
-    if (ns) est_two_step_multi(sd, se_parmap_multi(sd, "lee"), "model",
-                               type = "lee")
-    else se_two_step(sd, map, if (method == "two_step") ts_type else "model"),
-    error = function(e) e)
+  ts <- tryCatch(est_two_step(sd, map, if (method == "two_step") ts_type
+                              else "model"),
+                 error = function(e) e)
   if (inherits(ts, "error")) {
     if (method == "two_step") stop(ts)
     se_warn(paste0("two-step estimation failed (", conditionMessage(ts),
@@ -240,11 +181,10 @@ switch_fit <- function(selection = NULL, outcomes = NULL, data, model = "esr",
     est$loglik <- NA_real_
     est$convergence <- list(
       code = if (isTRUE(ts$probit$converged)) 0L else 1L,
-      message = if (isTRUE(ts$probit$converged)) "first step converged"
-                else "first step did not converge",
+      message = if (isTRUE(ts$probit$converged)) "probit converged"
+                else "probit did not converge",
       iterations = ts$probit$iterations, gradient_max = NA_real_,
-      gradient_norm = NA_real_, optimizer = if (multi) "Newton (multinomial logit) + least squares"
-                  else "IRLS + least squares",
+      gradient_norm = NA_real_, optimizer = "IRLS + least squares",
       path = "two_step", time = NA_real_)
     est$starts <- NULL
     start_info <- NULL
@@ -254,18 +194,14 @@ switch_fit <- function(selection = NULL, outcomes = NULL, data, model = "esr",
       start_list[[1L]] <- list(theta = se_par_working(map, control$start),
                                origin = "user")
     }
-    if (ns) {
-      start_list[[length(start_list) + 1L]] <- list(
-        theta = se_ns_start(sd, map), origin = "bfg2")
-      se_scale <- rep(NA_real_, map$p)
-    } else if (!is.null(ts)) {
+    if (!is.null(ts)) {
       th_ts <- est_two_step_start(ts, map)
       se_scale <- sqrt(pmax(diag(ts$vcov), 0))
       se_scale[!is.finite(se_scale)] <- NA_real_
       start_list[[length(start_list) + 1L]] <- list(theta = th_ts,
                                                     origin = "two_step")
     } else {
-      th0 <- se_naive_start(sd, map)
+      th0 <- est_naive_start(sd, map)
       se_scale <- rep(NA_real_, map$p)
       start_list[[length(start_list) + 1L]] <- list(theta = th0,
                                                     origin = "probit_ols")
@@ -276,15 +212,8 @@ switch_fit <- function(selection = NULL, outcomes = NULL, data, model = "esr",
 
   fit <- new_switch_fit(est, spec, sd, map, ts, control, method, vcov, cl,
                         start_info)
-  fit$identification <- tryCatch(
-    if (obs) se_validate_obs(spec, sd, fit)
-    else if (multi) se_validate_multi(spec, sd, fit)
-    else se_validate_core(spec, sd, fit),
-    error = function(e) NULL)
-  if (multi) {
-    fit$base_index <- sd$base
-    fit$base <- sd$regimes[sd$base]
-  }
+  fit$identification <- tryCatch(se_validate_core(spec, sd, fit),
+                                 error = function(e) NULL)
   if (!control$keep_data) fit$data <- NULL
   se_fit_warnings(fit)
   fit
@@ -315,19 +244,10 @@ new_switch_fit <- function(est, spec, sd, map, ts, control, method, vcov, cl,
   th <- est$coefficients
   rho <- th[unlist(map$index$rho)]
   sig <- th[unlist(map$index$sigma)]
-  rho_b <- names(rho)[is.finite(rho) & abs(rho) > control$boundary_rho]
-  if (!is.null(map$groups)) {
-    ## correlations on a unit ball (normal-score model): a regime is at the
-    ## boundary when its squared correlations sum to more than 0.99
-    rho_b <- unlist(lapply(map$groups, function(g) {
-      if (isTRUE(sum(th[g]^2) > 0.99)) names(th)[g]
-    }))
-    if (is.null(rho_b)) rho_b <- character()
-  }
   flags <- list(
-    rho_boundary = rho_b,
+    rho_boundary = names(rho)[is.finite(rho) & abs(rho) > control$boundary_rho],
     sigma_boundary = names(sig)[is.finite(sig) &
-                                  sig < 1e-6 * stats::sd(sd$y, na.rm = TRUE)],
+                                  sig < 1e-6 * stats::sd(sd$y)],
     hessian_not_nd = method == "fiml" && est$convergence$code == 2L,
     ill_conditioned = method == "fiml" &&
       isTRUE(est$hessian_condition > control$hessian_condition))
@@ -371,12 +291,7 @@ se_fit_warnings <- function(fit) {
             "convergence")
   }
   f <- fit$diagnostics$flags
-  if (length(f$rho_boundary) && !is.null(fit$map$groups)) {
-    se_warn(sprintf(paste0(
-      "estimated %s at the boundary (squared correlations of the regime sum ",
-      "to more than 0.99): inference is unreliable"),
-      paste(f$rho_boundary, collapse = ", ")), "boundary")
-  } else if (length(f$rho_boundary)) {
+  if (length(f$rho_boundary)) {
     se_warn(sprintf("estimated %s at the boundary (|rho| > %g): inference is unreliable",
                     paste(f$rho_boundary, collapse = ", "),
                     fit$record$control$boundary_rho), "boundary")
@@ -394,42 +309,12 @@ se_fit_warnings <- function(fit) {
     i4 <- idn$table[idn$table$code == "I4" & idn$table$status == "warning", ]
     for (m in i4$message) se_warn(m, "identification")
   }
-  ## the best maximum lies close to rho = +-1 and another start converged to
-  ## a lower local maximum (owner's decision of 24 November 2026, after the
-  ## Mroz example of BENCHMARK_PROTOCOL.md s.6.4, D-SS-2)
-  near <- se_near_boundary_maximum(fit)
-  if (!is.null(near)) {
-    se_warn(sprintf(paste0(
-      "the highest of the maxima found has %s = %.3f, close to the boundary, ",
-      "and %d other start%s converged to a lower local maximum (best of them: ",
-      "log-likelihood %.3f against %.3f). Compare the solutions (fit$starts); ",
-      "switch_control(starts = 1) starts from the two-step estimates only"),
-      near$name, near$rho, near$n, if (near$n == 1L) "" else "s",
-      near$loglik_other, fit$loglik), "local_maximum")
-  }
   if (isTRUE(fit$diagnostics$multistart_flat)) {
     se_warn(paste0("different parameter values reach the same maximum ",
                    "log-likelihood: the likelihood is flat (weak identification)"),
             "multistart")
   }
   invisible(fit)
-}
-
-## NULL, or the description of a best maximum close to the boundary of rho
-## (|rho| > 0.95) when at least one other start converged to a lower local
-## maximum.
-se_near_boundary_maximum <- function(fit, limit = 0.95) {
-  if (fit$method != "fiml" || is.null(fit$starts) ||
-      !isTRUE(fit$diagnostics$local_maxima > 0)) return(NULL)
-  rho <- fit$coefficients[unlist(fit$map$index$rho)]
-  rho <- rho[is.finite(rho) & abs(rho) > limit]
-  if (!length(rho)) return(NULL)
-  st <- fit$starts
-  lower <- st$code == 0L & is.finite(st$loglik) & st$loglik < fit$loglik - 1e-6
-  if (!any(lower)) return(NULL)
-  k <- which.max(abs(rho))
-  list(name = names(rho)[k], rho = rho[[k]], n = sum(lower),
-       loglik_other = max(st$loglik[lower]))
 }
 
 #' @rdname switch_fit
